@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-06-24</title>
+  <meta name="description" content="24th June 2014: Releases, ARM, TLS and Repos">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-06-24">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-06-24</h1>
+  </header>
+
+  <div class="article-content">
+    <p>24th June 2014: Releases, ARM, TLS and Repos</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage 1.2 release
+    <ul>
+      <li>repo liveness</li>
+    </ul>
+  </li>
+  <li>ARM update</li>
+  <li>Blog posts pre-OSCON</li>
+  <li>Bytemark machines</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Hannes Mehnert and David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-12-release">Mirage 1.2 release</h4>
+
+<p>Looks in pretty good shape for a release soon. Just makefiles and SSL,
+Should be one last change. Hannes will send patch to add entropy type in v1.
+Need 16 bytes. Could generate a fixed amount of entropy in kernel but have
+to be careful not to use same unikernel twice (not great).</p>
+
+<p>Xen doesn’t provide anything but Dave just added frontend and backend things
+for Xen that might help. Should have something better by next Xen release
+Overall, won’t block on this for 1.2.0.</p>
+
+<p>For makefiles, may need to go back through tutorials and add relevant bits.</p>
+
+<p><strong>Repos</strong> -  Balraj did a lot of work to pull together the libs and you can
+see them in the <a href="https://github.com/mirage/mirage-www/blob/master/TROVE">TROVE file</a> so if there are others please add
+them there (also see the <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-06/msg00133.html">email to the list</a>. This is partly
+about increasing visibility so people know what is available. For example,
+could add 0install there.</p>
+
+<h4 id="arm-update">ARM update</h4>
+
+<p>Testing on Xen unstable branch where addresses are changed. Means rewriting
+early boot stuff to do fancy virtual memory mapping stuff (collective groan).</p>
+
+<p>Others should try external minios. Just try to getting it compiling and that
+will be useful.</p>
+
+<h4 id="blog-posts-pre-oscon">Blog posts pre-OSCON</h4>
+
+<p>The TLS library is getting ready for a public alpha and they are writing
+blog posts for each of the new libs. There are other libs too, which we
+should write about before OSCON.</p>
+
+<ul>
+  <li>TLS (Hannes/David): overview of TLS, Post on API, TLS attacks/mitigations, Mirage integration, asn1 lib, x509 lib, nocrypto lib.</li>
+  <li>Vchan (Jon L)</li>
+  <li>Ctypes (Jeremy): Useful for inter-VM lib linking</li>
+  <li>Minios/ARM (Thomas L)</li>
+  <li>Irmin (Thomas G)</li>
+  <li>Conduit (Anil)</li>
+</ul>
+
+<p>These posts should be written in advance and reviewed by others before going
+up on the site. Amir will help coordinate this.</p>
+
+<h4 id="bytemark-machines">Bytemark machines</h4>
+
+<p>Amir still hasn’t sorted out his access in order to deploy his dusty
+unikernels. He’ll keep mentioning it until he actually get around to sorting
+out an SSH key with Anil/Dave.</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>We should get a clear list of new libraries since the 1.0 release. Trove
+helps with this</p>
+  </li>
+  <li>
+    <p>Discussion of Conduit</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

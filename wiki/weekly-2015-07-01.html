@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-07-01</title>
+  <meta name="description" content="1st July 2015: Network stack testing and Mirage 2.5 release">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-07-01">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-07-01</h1>
+  </header>
+
+  <div class="article-content">
+    <p>1st July 2015: Network stack testing and Mirage 2.5 release</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Networking stack</li>
+  <li>Mirage 2.5 release recap</li>
+  <li>AoB (live stats, Irmin/Xen)</li>
+</ul>
+
+<p>Attendees: Anil Madhavapeddy (chair), Hannes Mehnert, David Kaloper, Thomas
+Leonard, Jeremy Yallop, Magnus Skjegstad, David Sheets, Justin Cormack, Mindy
+Preston, Richard Mortier, Thomas Gazagnaire.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="networking-stack">Networking stack</h4>
+
+<p>There were various issues around duplicate acks and TCP retransmission
+which were exposed due to the TLS stack integration.  Many of these were 
+just regressions or lurking issues due to Lwt mvars, and are now fixed.</p>
+
+<p>To stop them from coming back, we now have tests that run per PR within
+Travis.  This uses vnetif to create virtual interfaces that directly short
+circuit the need for a real <code class="highlighter-rouge">tuntap</code> device, and so happily work great inside a
+container.  Coverage is patchy at the moment but is steadily improving (see
+<a href="https://github.com/mirage/mirage-tcpip/issues/160">mirage/mirage-tcpip#160</a>
+for coverage instructions).</p>
+
+<p>ThomasG/L have put in <a href="https://github.com/mirage/mirage-tcpip/pull/152">debug logging</a>
+so we now have full trace viewer capability.  When ThomasL looked at it, every connection ends with
+an exception being thrown, that noone had noticed before!  (The stack resolved
+a thread in RST processing and then looped again).  That issue is now fixed,
+but everyone is encouraged to use the browser profiler and find other lurking
+issues.</p>
+
+<p>Hannes has a TCP/IP test harness and will generate traces based on Peter
+Sewells <a href="http://www.cl.cam.ac.uk/~pes20/Netsem/">Netsem</a>. This has not been
+used much since 2005, but is being modernised for testing against Mirage
+TCP/IP.</p>
+
+<p>Magnus and Mindy have written some iperf tests using the virtual vnetif
+interface.  Travis is timing out all the time due to very variable performance
+within their infrastructure, so its hard to figure out how much to test.  Anil
+suggested that we run them from cron against a repo like
+<a href="https://github.com/mirage/is-mirage-broken">mirage/is-mirage-broken</a>.</p>
+
+<p>The next feature that we are aiming for is to get IPv6 working with the stack.
+Nicolas Ojeda Bar has implemented everything needed, but the only thing
+blocking it is the configuration interface (which should be the easiest bit).
+Hannes, Justin and many others are keen on this…</p>
+
+<p>#### Mirage 2.5 release</p>
+
+<p>This was a very complex release due to the growing number of libraries that
+we have in the project.  It all went well this time, but Anil suggested recapping
+what went right and wrong in the release this time.  A poll around the team revealed:</p>
+
+<ul>
+  <li>
+    <p>The blog posts were very close to the actual libraries releases, and it was
+hard to predict when something would work without a beta cycle.  Made schedulig
+the posts challenging.</p>
+  </li>
+  <li>
+    <p>We do not explicitly document API breakage for end users as we go along, and
+so it had to be pieced together from the changelog.  This is getting more painful
+for users as we grow in size and have more production infrastruture.</p>
+  </li>
+  <li>
+    <p>Do not release on a Friday afternoon and then go to the pub (or in the case of
+ThomasG, a wedding)</p>
+  </li>
+  <li>
+    <p>The library changes are still happening in big chunks. This is partly due to the
+fact that some of the core Channel APIs were revved.  We are getting better at
+testing reverse dependencies, but this still needs some infrastructural help
+from OPAM to do bulk builds after a large set of releases.</p>
+  </li>
+  <li>
+    <p>The use of a <a href="https://github.com/mirage/mirage-dev">mirage-dev</a> remote <em>generally</em>
+worked successfully.  Unfortunately, remotes in OPAM are global and not per-switch,
+and Anil pointed out that it would be nice to have some switches that were pristine
+upstream.  This is possible when using just <code class="highlighter-rouge">opam pin</code>, but not with a remote.</p>
+  </li>
+</ul>
+
+<p><em>ThomasG:</em> Mirage is a set of libraries that work together and a frontend tool that glues
+them together.  Its fine to release libraries as a batch since we have OPAM, but what we
+didnt manage well is evolving the API of the Mirage DSL itself which glues it all together
+(Anil: this is referring to the <code class="highlighter-rouge">config.ml</code> API).
+<em>Mort:</em> the Mirage DSL eis an implicit collation of a bunch of library versions and it is
+hard to track since its not captured in OPAM.
+<em>ThomasG:</em> we can fix this by adding conflicts in the OPAM metadata.</p>
+
+<p><em>ThomasL:</em> a number of Mirage packages have gone upstream into the OPAM package
+repository and their unit tests fails. More testing on OPAM import is needed to
+prevent dependent packages from breaking their unit tests due to an import of a
+dependency.  <em>DavidS:</em> we only test the package version we are importing and so
+we only test for one solution. Further changes will break upstream. We dont do
+reverse dependencies for OPAM dependency tests.
+<em>Anil</em>: The OPAM maintainers (several of whom are on this call) are aware of the
+issue and are working on improving testing reverse dependencies on new package import.</p>
+
+<p><em>Mort/DavidS</em>: the Mirage libraries should use the <a href="https://github.com/ocaml/ocaml-travisci-skeleton">ocaml-travis-ci-skeleton</a> so that they take advantage of the improvements in reverse depenedency testing.
+<em>Mort</em>: we need to figure out how to get around the Travis 50 minute limit.</p>
+
+<h4 id="any-other-business">Any Other Business</h4>
+
+<p><strong>Irmin/Xen</strong> is at the pull request stage, and is green! ThomasG will do some more testing,
+but is confident that we can merge it in now that the Xen/TLS changes are all in.
+It is still memory-only, so we will need to put together a block device store for
+persistence (perhaps using <a href="https://github.com/Incubaid/baardskeerder">baardskeerder</a>
+or LevelDB.</p>
+
+<p><strong>Log files</strong>: David Sheets and Jeremy Yallop have a design for a logging library that
+they are planning to write up soon.  This needs to be coalesced with the recent logging
+work in the TCP/IP stack.  One of the backends could be Irmin/Xen, but optional of course.
+Hannes notes that the Bitcoin pinata uses a different logging system with a dom0 proxy,
+which works fine if you control the Xen host (not the case with EC2).</p>
+
+<p><strong>Live stats</strong>: are <a href="https://mirage.io/stats/gc">now working</a> on the mirage-www website 
+thanks to Dave Scott and are very fancy!  Anil encourages everyone to not put functionality
+directly into the mirage-www repo, but to create a small library with it instead.</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

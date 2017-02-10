@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-09-16</title>
+  <meta name="description" content="16th Sep 2014: Mirage 2.0 lib releases, Cohttp, Doc day and ARM dev">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-09-16">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-09-16</h1>
+  </header>
+
+  <div class="article-content">
+    <p>16th Sep 2014: Mirage 2.0 lib releases, Cohttp, Doc day and ARM dev</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage 2.0 libs
+    <ul>
+      <li><code class="highlighter-rouge">cohttp</code> point release</li>
+      <li>other library releases</li>
+    </ul>
+  </li>
+  <li>OCaml 4.02.0: adding support</li>
+  <li>Reminder: Xen doc day on the 24th!</li>
+  <li>Xen/ARM development environment</li>
+</ul>
+
+<p>Attendees: Marlon Brasil, Marco Cesare, Amir Chaudhry (chair),
+Thomas Gazagnaire, David John, Vicky Khan, Jon Ludlam, Anil Madhavapeddy,
+Mindy Preston, Dave Scott and Magnus Skjegstad (with guest appearances from
+Wanda and Bella).</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-20-libs">Mirage 2.0 libs</h4>
+
+<p><strong>cohttp point release</strong> - <a href="https://github.com/mirage/ocaml-cohttp">cohttp</a> has external users and there have been
+bug-fixes waiting for months. Ideally, would like to cut a release based on
+<code class="highlighter-rouge">master</code> but can’t do that without also doing all of the Mirage 2.0 and related
+libraries (e.g <a href="https://github.com/mirage/ocaml-conduit">conduit</a>). In order to support the current users, the plan is
+to roll back and do a point release (e.g 0.11.3 or 0.12.0) that includes these
+fixes so that others are unblocked.</p>
+
+<p><strong>Mirage 2.0 library releases</strong></p>
+
+<p>This is still primarily driven by <a href="https://github.com/mirage/ocaml-conduit">conduit</a>, which requires a set of
+simultaneous releases (tracked in <a href="https://github.com/mirage/mirage/issues/287">mirage/mirage#287</a>).</p>
+
+<p>Once these releases are done, we should be able to remove the reliance on the
+Mirage opam remote.  There are about 12 dev repos in there now and since
+they’re working, it would be good to get them properly tagged and released.
+That would simply a lot of other work as we’d all have fewer things to pin and
+keep track of and we’d also have to refresh the tutorials. There was some
+discussion on <code class="highlighter-rouge">V1</code> and <code class="highlighter-rouge">V2</code>, FLOWs and vchan, as well as the conventions we
+might want to follow for such interfaces going forward.</p>
+
+<p>All of this should be written down and various aspects considered and discussed
+on the mailing list.  The issue linked above should be updated and expanded (or
+a new one created) to keep track of things (including which instructions need
+updating).</p>
+
+<p>Mindy has a cubieboard and can take a look at the ARM instructions again.  So
+far, got it to boot using the images from <a href="http://blobs.openmirage.org">blobs.openmirage.org</a>. Once
+there are releases it would be good to get more eyes on this.</p>
+
+<h4 id="ocaml-4020-adding-support">OCaml 4.02.0: adding support</h4>
+
+<p><a href="http://ocaml.org/releases/4.02.0.html">OCaml 4.02.0</a> was released a couple of weeks ago and there are some
+useful features that Mirage might benefit from. We should consider when and how
+we add support for 4.02.0 but first we should ensure that we have proper
+support for 4.01.0!</p>
+
+<p>There may even be issues with the current 4.02.0 release that may necessitate a
+4.02.1. If that’s the case, we may decide to not support 4.02.0 at all.  We’ll
+see how things stand in due course.</p>
+
+<h4 id="xen-doc-day">Xen Doc Day</h4>
+
+<p>There is an outstanding request to get more information up on the
+<a href="http://wiki.xen.org/wiki/Category:Mirage_Devel">Xen.org wiki</a> and it would be useful for us to refresh some of our
+material.  We can do this during the Xen Doc Day (24th Sep). Amir may be able
+to spend some time on this in advance.</p>
+
+<h4 id="xenarm-dev-setup">Xen/ARM dev setup</h4>
+
+<p>A question was posed on the list about development environment for Xen+ARM
+work (specifically Chromebooks, see <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-09/msg00068.html">the thread</a>). This was raised
+during the call as this kind of set up may be a useful way of working.
+Apparently, it’s actually quite difficult to work with these devices where Xen
+is concerned. The easiest way is still to use a cubieboard and work directly
+from there. We should expand xen-arm-builder to make it easier for people to
+get going.</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Hannes is back from travels and will be working on <a href="http://openmirage.org/blog/introducing-ocaml-tls">TLS</a> integration.</p>
+  </li>
+  <li>
+    <p>Would be good to remove Xenstore from <code class="highlighter-rouge">mirage-platform</code>. This might break
+things. It’s the core coordination in Xen but doesn’t work well with Unix.
+Although, Xenstore is now Xen independent, so maybe we should call it
+IrminStore instead?</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>30th September</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-11-11</title>
+  <meta name="description" content="11th November 2015: Functoria, Logs, Protocol lists and unikernel logos">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-11-11">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-11-11</h1>
+  </header>
+
+  <div class="article-content">
+    <p>11th November 2015: Functoria, Logs, Protocol lists and unikernel logos</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Functoria release</li>
+  <li>Logging</li>
+  <li>Pioneer Projects</li>
+  <li>List of Protocols</li>
+  <li>mirage-www deployment</li>
+  <li>Unikernel logo contest</li>
+</ul>
+
+<p>Attendees:
+Atluxitiv, Daniel Bunzli, Amir Chaudhry (chair), Justin Cormack,
+Thomas Gazagnaire, David Kaloper, Thomas Leonard, Anil Madhavapeddy,
+Richard (Mort) Mortier, Mindy Preston, Gabriel Radanne and Dave Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="functoria-release">Functoria release</h4>
+
+<p><em>See release tracking in <a href="https://github.com/mirage/mirage/issues/447">mirage/mirage#447</a></em></p>
+
+<p>Work on functoria is progressing and ThomasG finished doing his review and is
+generally happy with the PRs. There are a few issues to deal with that are not
+related to functoria itself.  The most important issues have been resolved. A
+few people have tried things and said they were happy with it. It would really
+benefit from more public testing and we’ve asked MattG to take a look.</p>
+
+<p>Need to fix the <code class="highlighter-rouge">mirage-www</code> deployment scripts first (see below) and then use
+functoria there and see that it works properly. Gabriel offered to redo the
+commits that ThomasG had to revert.</p>
+
+<p>Mindy and Jeremy have also been trying to write a front end to functoria
+(ncurses etc) — Mindy was trying to write a JavaScript one. This would
+showcase the other side of functoria for users of the libs (rather than just
+for MirageOS developers).</p>
+
+<p>There’s a blog post to go along with the release (<a href="https://github.com/mirage/mirage-www/pull/396">mirage/mirage-www#369</a>),
+which has been reviewed and the remaining TODOs have been addressed. Waiting
+for a few things to be fixed before release and we don’t want to rush this.
+The next step will be to begin tagging things.</p>
+
+<h4 id="logging">Logging</h4>
+
+<p>A few people are trying out Daniel’s <a href="http://erratique.ch/software/logs">Logs</a> library. It would be good if
+ThomasL can take a look at it in an <code class="highlighter-rouge">lwt</code> context. It’s actually being tried
+out in the ocaml-9p lib (<a href="https://github.com/mirage/ocaml-9p/pull/18">mirage/ocaml-9p#18</a>).  We might be able to use
+this in functoria but needs more discussion.</p>
+
+<p>We should prod for more of the logging discussion to happen on the main
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a>.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p><strong>Outreachy</strong> — We’re still in the <a href="https://wiki.gnome.org/Outreachy/2015/DecemberMarch#Participating_Organizations">Outreachy</a> process and Hannes has been
+taking care of things. The current stage is the application process so we’re
+waiting to hear the outcome (due on 17th Nov).</p>
+
+<p><strong>Charrua</strong> — There’s a PR to <code class="highlighter-rouge">mirage-skeleton</code> to look at
+(<a href="https://github.com/mirage/mirage-skeleton/pull/105">mirage/mirage-skeleton#105</a>), which should be tried out. Currently, it
+doesn’t seem to compile with OCaml 4.01 so should fix that and come back. Mort
+will look in on this and report back in the next call.</p>
+
+<h4 id="list-of-implemented-protocols">List of implemented protocols</h4>
+
+<p>There was a suggestion to create a list of implemented protocols and their
+status. This means manually making a list on the wiki-page. There was a
+reminder that we also want to start using the Opam metadata tags to track the
+MirageOS libraries in Opam — adding a <code class="highlighter-rouge">protocol</code> tag might help filter these.
+Sometimes you need more data that you’d find in the opam metadata field so a
+wiki-page is still useful.</p>
+
+<p>The types of Opam tags were also discussed as we would use one to denote those
+libraries that are maintained by MirageOS and others that offer certain
+features that MirageOS can make use of.</p>
+
+<h4 id="mirage-www-deployment-issues">mirage-www deployment issues</h4>
+
+<p><em>See discussion in <a href="https://github.com/mirage/mirage-www/issues/404">mirage/mirage-www#404</a></em></p>
+
+<p>Recently there have been a few issues with the MirageOS website unikernel. 
+We’ve now put couple of fixes in scripts so they’re run from outside the
+<code class="highlighter-rouge">script</code> directory and things should start properly.  Also pushed a PR this
+morning that will remove all the old bzip images as we don’t need them.
+Haven’t yet updated the TravisCI scripts to remove the old scripts.</p>
+
+<p>A suggestion that having an Opam repo hash would be useful (i.e. the state of
+Opam repo at the time the unikernel was built).  That way we can reconstruct
+anything with the just the hash and the config.ml</p>
+
+<p>There were issues with <code class="highlighter-rouge">xvda</code> and <code class="highlighter-rouge">xvdb</code>, where it seems there was a mismatch
+between assumptions in the various scripts. ThomasG can try to test things on
+the live site today.</p>
+
+<p>We also want to get <a href="http://blobs.openmirage.org">blobs.openmirage.org</a> running as a unikernel too,
+probably using the <code class="highlighter-rouge">Crunch</code> file system.  However, this will need to have
+something dynamically attached so will need to work on that.</p>
+
+<h4 id="unikernel-logo-contest">Unikernel logo contest</h4>
+
+<p>Amir has started a <a href="http://99designs.co.uk/logo-design/contests/make-fun-logo-open-source-unikernel-projects-562612">Unikernel Logo contest</a> on 99designs. The intent is
+to come up with a design that the community can use to promote unikernels. 
+The initial phase is to prepare a brief and then allow designers to submit
+initial designs.  At some point, the process needs to involve more members of
+the community so their views can also be incorporated (though we should be
+wary of ‘design by committee’).  This process is likely to take several weeks
+— it shouldn’t be rushed as we intend to use the winning logo for some time.</p>
+
+<p>At the moment, there are 211 logos to look through!</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Delayed notes: apologies that notes have not been on the website quickly
+after the call.  Suggestion that perhaps we put them on a GitHub wiki and
+build the website from there (using functoria).</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">nocrypto</code> on OpenBSD - DavidK has been working on this and needs feedback.
+Things are broken on OpenBSD as versions of <code class="highlighter-rouge">gcc</code> etc seem to be different.
+Anil can try this out and also suggested emailing OpenBSD ports. Once things
+work, we can cut a release!</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 25th November</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

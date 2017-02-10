@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Building mirage-www</title>
+  <meta name="description" content="This assumes that you’ve followed the Hello Worldinstructions from earlier and are now familiar with the basic console, blockdevice and networking configurat...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/mirage-www">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Building mirage-www</h1>
+  </header>
+
+  <div class="article-content">
+    <p>This assumes that you’ve followed the <a href="/wiki/hello-world">Hello World</a>
+instructions from earlier and are now familiar with the basic console, block
+device and networking configurations from the
+<a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a> repository. To
+build the live MirageOS website, we’ll need several device drivers: two block
+devices for the static HTML content and the templates, and a network device to
+actually serve the traffic.</p>
+
+<p>First, clone the website <a href="https://github.com/mirage/mirage-www">source code</a>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ git clone git://github.com/mirage/mirage-www
+$ cd mirage-www/src
+$ cat config.ml
+</code></pre>
+</div>
+
+<p>This <code class="highlighter-rouge">config.ml</code> is more complex to reflect all the different ways we want to
+statically build the website, but it also does a lot more! We’ll walk through it
+step by step.</p>
+
+<h2 id="building-a-unix-version">Building a Unix version</h2>
+
+<p>In order to configure the unikernel, we can use the mirage tool. To see all the available options:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd src
+mirage configure --help
+</code></pre>
+</div>
+
+<p>Alternatively, You can get a quick overview of all the options (and their current value):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mirage describe
+</code></pre>
+</div>
+
+<h3 id="a-unix-development-workflow">A Unix development workflow</h3>
+
+<p>For editing content and generally working with the website on a day-to-day
+basis, we simply compile it using kernel sockets and a pass-through filesystem.
+This is pretty similar a conventional web server, and means you can edit content
+using your favourite editor (though you must restart the website binary to make
+edits visible).</p>
+
+<p>First, if you wish to build the site to present the site statistics (garbage
+collection, etc) data, build the JavaScript:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make prepare
+</code></pre>
+</div>
+
+<p>Then configure and build the website itself:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd src
+$ mirage configure -t unix --kv_ro crunch --net socket
+$ make
+</code></pre>
+</div>
+
+<p>Finally, run the website application:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo ./mir-www
+</code></pre>
+</div>
+
+<p>The website will now be available on <code class="highlighter-rouge">http://localhost/</code>.</p>
+
+<h2 id="building-the-direct-networking-version">Building the direct networking version</h2>
+
+<p>Now you can build the Unix unikernel using the direct stack, via a similar
+procedure to the <a href="/wiki/hello-world">hello world</a> examples. As before,
+Mirage will configure the stack to use the
+<a href="http://en.wikipedia.org/wiki/TUN/TAP">tap0 interface</a> with an address
+of <code class="highlighter-rouge">10.0.0.2/255.255.255.0</code>. Verify that you have an existing <code class="highlighter-rouge">tap0</code>
+interface by reviewing <code class="highlighter-rouge">$ sudo ip link show</code>; if you do not,
+load the tuntap kernel module (<code class="highlighter-rouge">$ sudo modprobe tun</code>)
+and create a <code class="highlighter-rouge">tap0</code> interface owned by root (<code class="highlighter-rouge">$ sudo tunctl</code>). Bring <code class="highlighter-rouge">tap0</code> up
+using <code class="highlighter-rouge">$ sudo ifconfig tap0 10.0.0.1 up</code>, then:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd src
+$ mirage configure -t unix --net direct
+$ make
+$ sudo ./mir-www
+</code></pre>
+</div>
+
+<p>You should now be able to ping the unikernel’s interface:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ping 10.0.0.2
+</code></pre>
+</div>
+
+<p>If you see ping responses, then you are now communicating with the MirageOS
+unikernel via the OCaml TCP/IP stack! Point your web browser at
+<code class="highlighter-rouge">http://10.0.0.2</code> and you should be able to surf this website too.</p>
+
+<h3 id="serving-the-site-from-a-fat-filesystem-instead">Serving the site from a FAT filesystem instead</h3>
+
+<p>This site won’t quite compile to Xen yet. Despite doing all networking via an
+OCaml TCP/IP stack, we still have a dependency on the Unix filesystem for our
+files. MirageOS provides a <a href="http://github.com/mirage/ocaml-fat">FAT filesystem</a>
+which we’ll use as an alternative. Our new <code class="highlighter-rouge">config.ml</code> will now contain this:</p>
+
+<p>The FAT filesystem needs to be installed onto a block device, which we assign to
+a Unix file. The driver for this is provided via <em>mmap</em> in the
+<a href="https://github.com/mirage/mirage-block-unix">mirage/mirage-block-unix</a> module.</p>
+
+<p>Now build the FAT version of the website. The <code class="highlighter-rouge">config.ml</code> supplied in the real
+<code class="highlighter-rouge">mirage-www</code> repository uses an environment variable to switch to these
+variables, so we can quickly try it as follows.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd src
+$ mirage configure -t unix --kv_ro fat
+$ make
+$ sudo ./mir-www &amp; sudo ifconfig tap0 10.0.0.1 255.255.255.0 &amp;&amp; fg
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">make-fat_*-images.sh</code> script uses the <code class="highlighter-rouge">fat</code> command-line helper installed by
+the <code class="highlighter-rouge">ocaml-fat</code> package to build the FAT block image for you. If you now access
+the website, it is serving the traffic straight from the FAT image you just
+created, without requiring a Unix filesystem at all!</p>
+
+<p>You can inspect the resulting FAT images for yourself by using the <code class="highlighter-rouge">fat</code> command
+line tool, and the generated scripts.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ file fat_block1.img
+fat1.img: x86 boot sector, code offset 0x0, OEM-ID "ocamlfat",
+sectors/cluster 4, FAT  1, root entries 512, Media descriptor 0xf8,
+sectors/FAT 2, sectors 1728 (volumes &gt; 32 MB) , dos &lt; 4.0 BootSector (0x0)
+
+$ fat list fat_block1.img
+/wiki (DIR)(1856 bytes)
+/wiki/xen-synthesize-virtual-disk.md (FILE)(8082 bytes)
+/wiki/xen-suspend.md (FILE)(14120 bytes)
+/wiki/xen-events.md (FILE)(10921 bytes)
+/wiki/xen-boot.md (FILE)(5244 bytes)
+/wiki/weekly (DIR)(768 bytes)
+</code></pre>
+</div>
+
+<p>(The details of the file listing may vary if, for example, new posts have been
+added to the site recently.)</p>
+
+<h2 id="building-a-xen-kernel">Building a Xen kernel</h2>
+
+<p>We’re now ready to build a Xen kernel.  This can use eithr FAT or a builtin
+crunch (to avoid the need for an external block device).  The latter is the
+default, for simplicity’s sake.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd src
+$ mirage configure -t xen
+$ make
+</code></pre>
+</div>
+
+<p>This will build a static kernel that uses the <code class="highlighter-rouge">ocaml-crunch</code> tool to convert the
+static website files into an OCaml module that is linked directly into the
+image. While it of course will not work for very large websites, it’s just fine
+for this website (or for configuration files that will never be very large). The
+advantage of this mode is that you don’t need to worry about configuring any
+external block devices for your VM, and boot times are much faster as a result.</p>
+
+<p>You can now boot the <code class="highlighter-rouge">mir-www.xen</code> kernel using <code class="highlighter-rouge">sudo xl create -c www.xl</code> –
+don’t forget to edit <code class="highlighter-rouge">www.xl</code> to supply a VIF first though!</p>
+
+<h3 id="modifying-networking-to-use-dhcp-or-static-ip">Modifying networking to use DHCP or static IP</h3>
+
+<p>Chances are that the Xen kernel you just built doesn’t have a useful IP address,
+since it was hardcoded to <code class="highlighter-rouge">10.0.0.2</code>. You can modify the HTTP driver to give it
+a static IP address, as the
+<a href="https://github.com/mirage/mirage-www/blob/master/.travis-www.ml">live deployment script</a>
+does.</p>
+
+<p>We’ve shown you the very low-levels of the configuration system in MirageOS
+here. While it’s not instantly user-friendly, it’s an extremely powerful way of
+assembling your own components for your unikernel for whatever specialised
+unikernels you want to build.</p>
+
+<p>We’ll talk about the deployment scripts that run the
+<a href="http://openmirage.org">live site</a> in the
+<a href="/docs/deploying-via-ci">next article</a>.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

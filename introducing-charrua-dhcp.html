@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Introducing Charrua — a DHCP implementation</title>
+  <meta name="description" content="Almost every network needs to supportDHCP(DynamicHost Configuration Protocol), that is, a way for clients to request networkparameters from the environment. ...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//introducing-charrua-dhcp">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Introducing Charrua — a DHCP implementation</h1>
+    <p class="article_meta"><time datetime="2015-12-29T00:00:00+00:00" itemprop="datePublished">Dec 29, 2015</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>Almost every network needs to support
+<a href="https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol">DHCP</a>
+(Dynamic
+Host Configuration Protocol), that is, a way for clients to request network
+parameters from the environment. Common parameters are an IP address, a network
+mask, a default gateway and so on.</p>
+
+<p>DHCP can be seen as a critical security component, since it deals usually with
+unauthenticated/unknown peers, therefore it is of special interest to run a
+server as a self-contained MirageOS unikernel.</p>
+
+<p><a href="http://www.github.com/haesbaert/charrua-core">Charrua</a> is a DHCP implementation
+written in OCaml and it started off as an excuse to learn more about the language.
+While in development it got picked up on the MirageOS mailing lists and became one
+of the <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">Pioneer
+Projects</a>.</p>
+
+<p>The name <code class="highlighter-rouge">Charrua</code> is a reference to the, now extinct, semi-nomadic people of
+southern South America — nowadays it is also used to refer to Uruguayan
+nationals. The logic is that DHCP handles dynamic (hence nomadic) clients.</p>
+
+<p>The library is platform agnostic and works outside of MirageOS as well. It
+provides two main modules:
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html">Dhcp_wire</a> and
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.html">Dhcp_server</a>.</p>
+
+<h3 id="dhcpwire">Dhcp_wire</h3>
+
+<p><a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html">Dhcp_wire</a> provides
+basic functions for dealing with the protocol, essentially
+marshalling/unmarshalling and helpers for dealing with the various DHCP options.</p>
+
+<p>The central record type of
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html">Dhcp_wire</a> is a
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEpkt">pkt</a>, which
+represents a full DHCP packet, including layer 2 and layer 3 data as well as the
+many possible DHCP options. The most important functions are:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">pkt_of_buf</span> <span class="p">:</span> <span class="nn">Cstruct</span><span class="p">.</span><span class="n">t</span> <span class="p">-&gt;</span> <span class="kt">int</span> <span class="p">-&gt;</span> <span class="p">[&gt;</span> <span class="err">`</span><span class="nc">Error</span> <span class="k">of</span> <span class="kt">string</span> <span class="p">|</span> <span class="err">`</span><span class="nc">Ok</span> <span class="k">of</span> <span class="n">pkt</span> <span class="p">]</span>
+<span class="k">val</span> <span class="n">buf_of_pkt</span> <span class="p">:</span> <span class="n">pkt</span> <span class="p">-&gt;</span> <span class="nn">Cstruct</span><span class="p">.</span><span class="n">t</span>
+</code></pre>
+</div>
+
+<p><a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALpkt_of_buf">pkt_of_buf</a> takes
+a <a href="https://github.com/mirage/ocaml-cstruct">Cstruct.t</a> buffer and a length and it
+then attempts to build a DHCP packet. Unknown DHCP options are ignored, invalid
+options or malformed data are not accepted and you get an <code class="highlighter-rouge">`Error of string</code>.</p>
+
+<p><a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALbuf_of_pkt">buf_of_pkt</a> is
+the mirror function, but it never fails.  It could for instance fail in case of
+two duplicate DHCP options, but that would imply too much policy in a
+marshalling function.</p>
+
+<p>The DHCP options from RFC2132 are implemented in
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEdhcp_option">dhcp_option</a>.
+There are more, but the most common ones look like this:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="n">dhcp_option</span> <span class="p">=</span>
+  <span class="p">|</span> <span class="nc">Subnet_mask</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span>
+  <span class="p">|</span> <span class="nc">Time_offset</span> <span class="k">of</span> <span class="n">int32</span>
+  <span class="p">|</span> <span class="nc">Routers</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+  <span class="p">|</span> <span class="nc">Time_servers</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+  <span class="p">|</span> <span class="nc">Name_servers</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+  <span class="p">|</span> <span class="nc">Dns_servers</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+  <span class="p">|</span> <span class="nc">Log_servers</span> <span class="k">of</span> <span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+</code></pre>
+</div>
+
+<h3 id="dhcpserver">Dhcp_server</h3>
+
+<p><a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.html">Dhcp_server</a>
+Provides a library for building a DHCP server and is divided into two sub-modules:
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html">Config</a>,
+which handles the building of a suitable DHCP server configuration record and
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html">Input</a>,
+which handles the input of DHCP packets.</p>
+
+<p>The logic is modelled in a pure functional style and
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.html">Dhcp_server</a> does
+not perform any IO of its own. It works by taking an input
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEpkt">packet</a>,
+ a
+ <a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html#TYPEt">configuration</a>
+ and returns a possible reply to be sent by the caller, or an error/warning:</p>
+
+<h4 id="input">Input</h4>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="n">result</span> <span class="p">=</span> 
+<span class="p">|</span> <span class="nc">Silence</span>                 <span class="c">(* Input packet didn't belong to us, normal nop event. *)</span>
+<span class="p">|</span> <span class="nc">Reply</span> <span class="k">of</span> <span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">pkt</span>  <span class="c">(* A reply packet to be sent on the same subnet. *)</span>
+<span class="p">|</span> <span class="nc">Warning</span> <span class="k">of</span> <span class="kt">string</span>       <span class="c">(* An odd event, could be logged. *)</span>
+<span class="p">|</span> <span class="nc">Error</span> <span class="k">of</span> <span class="kt">string</span>         <span class="c">(* Input packet is invalid, or some other error ocurred. *)</span>
+
+<span class="k">val</span> <span class="n">input_pkt</span> <span class="p">:</span> <span class="nn">Dhcp_server</span><span class="p">.</span><span class="nn">Config</span><span class="p">.</span><span class="n">t</span> <span class="p">-&gt;</span> <span class="nn">Dhcp_server</span><span class="p">.</span><span class="nn">Config</span><span class="p">.</span><span class="n">subnet</span> <span class="p">-&gt;</span>
+   <span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">pkt</span> <span class="p">-&gt;</span> <span class="kt">float</span> <span class="p">-&gt;</span> <span class="n">result</span>
+<span class="c">(** input_pkt config subnet pkt time Inputs packet pkt, the resulting action
+    should be performed by the caller, normally a Reply packet is returned and
+    must be sent on the same subnet. time is a float representing time as in
+    Unix.time or MirageOS's Clock.time. **)</span>
+</code></pre>
+</div>
+
+<p>A typical main server loop would work by:
+ 1. Reading a packet from the network.
+ 2. Unmarshalling with <a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALpkt_of_buf">Dhcp_wire.pkt_of_buf</a>.
+ 3. Inputting the result with <a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt">Dhcp_server.Input.input_pkt</a>.
+ 4. Sending the reply, or logging the event from the <a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt">Dhcp_server.Input.input_pkt</a> call.</p>
+
+<p>A mainloop example can be found in
+<a href="https://github.com/mirage/mirage-skeleton/blob/master/dhcp/unikernel.ml#L28">mirage-skeleton</a>:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code>  <span class="k">let</span> <span class="n">input_dhcp</span> <span class="n">c</span> <span class="n">net</span> <span class="n">config</span> <span class="n">subnet</span> <span class="n">buf</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="k">open</span> <span class="nn">Dhcp_server</span><span class="p">.</span><span class="nc">Input</span> <span class="k">in</span>
+    <span class="k">match</span> <span class="p">(</span><span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">pkt_of_buf</span> <span class="n">buf</span> <span class="p">(</span><span class="nn">Cstruct</span><span class="p">.</span><span class="n">len</span> <span class="n">buf</span><span class="o">))</span> <span class="k">with</span>
+    <span class="p">|</span> <span class="err">`</span><span class="nc">Error</span> <span class="n">e</span> <span class="p">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="p">(</span><span class="n">log</span> <span class="n">c</span> <span class="p">(</span><span class="n">red</span> <span class="s2">"Can't parse packet: %s"</span> <span class="n">e</span><span class="o">))</span>
+    <span class="p">|</span> <span class="err">`</span><span class="nc">Ok</span> <span class="n">pkt</span> <span class="p">-&gt;</span>
+      <span class="k">match</span> <span class="p">(</span><span class="n">input_pkt</span> <span class="n">config</span> <span class="n">subnet</span> <span class="n">pkt</span> <span class="p">(</span><span class="nn">Clock</span><span class="p">.</span><span class="n">time</span> <span class="bp">()</span><span class="o">))</span> <span class="k">with</span>
+      <span class="p">|</span> <span class="nc">Silence</span> <span class="p">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return_unit</span>
+      <span class="p">|</span> <span class="nc">Warning</span> <span class="n">w</span> <span class="p">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="p">(</span><span class="n">log</span> <span class="n">c</span> <span class="p">(</span><span class="n">yellow</span> <span class="s2">"%s"</span> <span class="n">w</span><span class="o">))</span>
+      <span class="p">|</span> <span class="nc">Error</span> <span class="n">e</span> <span class="p">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="p">(</span><span class="n">log</span> <span class="n">c</span> <span class="p">(</span><span class="n">red</span> <span class="s2">"%s"</span> <span class="n">e</span><span class="o">))</span>
+      <span class="p">|</span> <span class="nc">Reply</span> <span class="n">reply</span> <span class="p">-&gt;</span>
+        <span class="n">log</span> <span class="n">c</span> <span class="p">(</span><span class="n">blue</span> <span class="s2">"Received packet %s"</span> <span class="p">(</span><span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">pkt_to_string</span> <span class="n">pkt</span><span class="o">));</span>
+        <span class="nn">N</span><span class="p">.</span><span class="n">write</span> <span class="n">net</span> <span class="p">(</span><span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">buf_of_pkt</span> <span class="n">reply</span><span class="p">)</span>
+        <span class="o">&gt;&gt;=</span> <span class="k">fun</span> <span class="bp">()</span> <span class="p">-&gt;</span>
+        <span class="n">log</span> <span class="n">c</span> <span class="p">(</span><span class="n">blue</span> <span class="s2">"Sent reply packet %s"</span> <span class="p">(</span><span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">pkt_to_string</span> <span class="n">reply</span><span class="o">));</span>
+        <span class="nn">Lwt</span><span class="p">.</span><span class="n">return_unit</span>
+</code></pre>
+</div>
+
+<p>As stated,
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt">Dhcp_server.Input.input_pkt</a>
+does not perform any IO of its own, it only deals with the logic of analyzing a
+DHCP packet and building a possible answer, which should then be sent by the
+caller. This allows a design where all the side effects are controlled in one
+small chunk, which makes it easier to understand the state transitions since they
+are made explicit.</p>
+
+<p>At the time of this writing,
+<a href="http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt">Dhcp_server.Input.input_pkt</a>
+is not side effect free, as it manipulates a database of leases, this will be
+changed in the next version to be pure as well.</p>
+
+<p>Storing leases in permanent storage is also unsupported at this time and
+should be available soon, with Irmin and other backends. The main idea is to
+always return a new lease database for each input, or maybe just the updates to
+be applied, and in this scenario, the caller would be able to store the database in
+permanent storage as he sees fit.</p>
+
+<h4 id="configuration">Configuration</h4>
+
+<p>This project started independently of MirageOS and at that time, the best
+configuration I could think of was the well known <code class="highlighter-rouge">ISC</code> <code class="highlighter-rouge">dhcpd.conf</code>. Therefore,
+the configuration uses the same format but it does not support the myriad of
+options of the original one.</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code>  <span class="k">type</span> <span class="n">t</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="n">addresses</span> <span class="p">:</span> <span class="p">(</span><span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="n">t</span> <span class="p">*</span> <span class="nn">Macaddr</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="kt">list</span><span class="p">;</span>
+    <span class="n">subnets</span> <span class="p">:</span> <span class="n">subnet</span> <span class="kt">list</span><span class="p">;</span>
+    <span class="n">options</span> <span class="p">:</span> <span class="nn">Dhcp_wire</span><span class="p">.</span><span class="n">dhcp_option</span> <span class="kt">list</span><span class="p">;</span>
+    <span class="n">hostname</span> <span class="p">:</span> <span class="kt">string</span><span class="p">;</span>
+    <span class="n">default_lease_time</span> <span class="p">:</span> <span class="n">int32</span><span class="p">;</span>
+    <span class="n">max_lease_time</span> <span class="p">:</span> <span class="n">int32</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">val</span> <span class="n">parse</span> <span class="p">:</span> <span class="kt">string</span> <span class="p">-&gt;</span> <span class="p">(</span><span class="nn">Ipaddr</span><span class="p">.</span><span class="nn">V4</span><span class="p">.</span><span class="nn">Prefix</span><span class="p">.</span><span class="n">addr</span> <span class="p">*</span> <span class="nn">Macaddr</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="kt">list</span> <span class="p">-&gt;</span> <span class="n">t</span>
+  <span class="c">(** [parse cf l] Creates a server configuration by parsing [cf] as an ISC
+      dhcpd.conf file, currently only the options at [sample/dhcpd.conf] are
+      supported. [l] is a list of network addresses, each pair is the output
+      address to be used for building replies and each must match a [network
+      section] of [cf]. A normal usage would be a list of all interfaces
+      configured in the system *)</span>
+</code></pre>
+</div>
+
+<p>Although it is a great format, it doesn’t exactly play nice with MirageOS and
+OCaml, since the unikernel needs to parse a string at runtime to build the
+configuration, this requires a file IO backend and other complications. The
+next version should provide OCaml helpers for building the configuration, which
+would drop the requirements of a file IO backend and facilitate writing tests.</p>
+
+<h3 id="building-a-simple-server">Building a simple server</h3>
+
+<p>The easiest way is to follow the <a href="https://github.com/mirage/mirage-skeleton/blob/master/dhcp/README.md">mirage-skeleton DHCP
+README</a>.</p>
+
+<h3 id="future">Future</h3>
+
+<p>The next steps would be:</p>
+
+<ul>
+  <li>Provide helpers for building the configuration.</li>
+  <li>Expose the lease database in an immutable structure, possibly a <code class="highlighter-rouge">Map</code>, adding
+also support/examples for <a href="https://github.com/mirage/irmin">Irmin</a>.</li>
+  <li>Use <a href="https://github.com/mirage/functoria">Functoria</a> to pass down the
+configuration in <a href="https://github.com/mirage/mirage-skeleton/blob/master/dhcp/README.md">mirage-skeleton</a>. Currently
+it is awkward since the user has to edit <code class="highlighter-rouge">unikernel.ml</code> and <code class="highlighter-rouge">config.ml</code>, with
+<a href="https://github.com/mirage/functoria">Functoria</a> we would be able to have it
+much nicer and only touch <code class="highlighter-rouge">config.ml</code>.</li>
+  <li>Convert MirageOS DHCP client code to use <a href="http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html">Dhcp_wire</a>, or perhaps add a
+client logic functionality to <a href="http://www.github.com/haesbaert/charrua-core">Charrua</a>.</li>
+</ul>
+
+<h3 id="finishing-words">Finishing words</h3>
+
+<p>This is my first real project in OCaml and I’m more or less a newcomer to
+functional programming as well, my background is mostly kernel hacking as an
+ex-OpenBSD developer.
+I’d love to hear how people are actually using it and any problems they’re
+finding, so please do let me know via the
+<a href="https://github.com/haesbaert/charrua-core/issues">issue tracker</a>!</p>
+
+<p>Prior to this project I had no contact with any of the MirageOS folks, but I’m
+amazed about how easy the interaction and communication with the community has been,
+everyone has been incredibly friendly and supportive. I’d say MirageOS is a gold
+project for anyone wanting to work with smart people and hack OCaml.</p>
+
+<p>My many thanks to <a href="http://anil.recoil.org">Anil</a>, <a href="http://mort.io">Richard</a>, <a href="https://github.com/hannesm">Hannes</a>, <a href="https://twitter.com/amirmc">Amir</a>, Scott, Gabriel and others.
+Thanks also to <a href="http://roscidus.com/blog/">Thomas</a> and <a href="https://github.com/Chris00/">Christophe</a> for comments on this post.
+I also
+would like to thank my <a href="https://www.genua.de">employer</a> for letting me work on this
+project in our hackathons.</p>
+
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+     <li><a href="/videos-around-world-2015">Videos from around the world!</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

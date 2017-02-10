@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Technical Background of Mirage</title>
+  <meta name="description" content="(based on the article by Anil Madhavapeddy and David J. Scott)">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//doc/technical-background.html">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Technical Background of Mirage</h1>
+  </header>
+
+  <div class="article-content">
+    <p><em>(based on the <a href="http://queue.acm.org/detail.cfm?id=2566628">article</a> by Anil Madhavapeddy and David J. Scott)</em></p>
+
+<p>Operating system virtualization such as Xen or VMWare allows to multiplex virtual machines (VMs) on a shared cluster of physical machines. Each VM presents as a self-contained computer, booting a standard OS kernel and running unmodified applications just as if it were executing on a physical machine.</p>
+
+<p>While this is useful in many situations, it adds yet another layer to an already highly-layered software stack now including: support for old physical protocols (e.g. disk standards developed in the 80s such as IDE); irrelevant optimisations (e.g. disk elevator algorithms on SSD drives); backward-compatible interfaces (e.g. POSIX); user-space processes and threads (in addition to VMs on a hypervisor); managed code runtimes (e.g. OCaml, .NET or Java) which all sit beneath your application code. Are we really doomed to adding new layers of indirection and abstraction every few years, leaving future generations of programmers to become virtual archeologists as they dig through hundreds of layers of software emulation to debug even the simplest applications?</p>
+
+<p>Our goal with Mirage is to restructure entire VMs - including all kernel and userspace code - into more modular components that are flexible, secure and reusable in the style of a library operating system.</p>
+
+<h2 id="unikernels--library-operating-system">Unikernels &amp; Library operating system</h2>
+
+<p>Our architecture is dubbed unikernels. Unikernels are specialised OS kernels written in a high-level language which act as individual software components. A full application (or appliance) consists of a set of running unikernels working together as a distributed system.</p>
+
+<div class="image-thumbnail-right">
+    <a href="/assets/img/comparison-vm-unikernel.png"><img src="/assets/resized/190/comparison-vm-unikernel.png" /></a>
+    <div class="image_caption">Comparison between vm and unikernel</div>
+</div>
+
+<p>They are based on a radical operating system architecture from the 1990s, called library operating system (or libOS). In a libOS, protection boundaries are pushed to the lowest hardware layers, resulting in: (i) a set of libraries that implement mechanisms, such as those needed to drive hardware or talk network protocols; and (ii) a set of policies that enforce access control and isolation in the application layer.</p>
+
+<p>The libOS architecture has several advantages over more conventional designs. For applications where performance is required, a libOS wins by allowing applications to access hardware resources directly without having to make repeated privilege transitions to move data between userspace and kernelspace. The libOS does not have a central “networking service” into which both high priority network packets (such as those from a video conference call) and low priority packets (such as from a background file download) are forced to mix, join the same queues and generally interfere. Instead libOS applications will have entirely separate queues, and packets will only mix together when they arrive at the network device itself.</p>
+
+<p>A libOS running as a VM needs to implement drivers for the virtual hardware devices provided by the hypervisor. Furthermore it needs to create the protocol libraries to replace the services of a traditional OS.</p>
+
+<h2 id="why-ocaml">Why OCaml</h2>
+
+<p>Modern kernels are all written in C, which excels at low-level programs such as device drivers but lacks the abstraction facilities of higher-level languages and demands careful manual tracking of resources such as memory buffers. Beside this high-level languages are steadily gaining ground in general application development, some of them include:</p>
+
+<ul>
+  <li>
+    <p>Static type checking rejects unsafe code at compilation time rather than execution time</p>
+  </li>
+  <li>
+    <p>Automatic memory management, which eliminiates many resource leaks.</p>
+  </li>
+  <li>
+    <p>Modules help software development scale as internal implementation details can be abstracted</p>
+  </li>
+  <li>
+    <p>Metaprogramming: if the run-time configuration of a system is partially understood at compile-time, then a compiler can optimise the program much more than it would normally be able to</p>
+  </li>
+</ul>
+
+<p>We chose OCaml as the sole base language for Mirage. It is a full-fledged systems programming language with a flexible programming model that supports functional, imperative and object-oriented styles. It also features a portable single-threaded runtime that makes it ideal for porting to restricted environments such as a barebones Xen VM. The compiler heavily emphasises static type checking, and the resulting binaries are fast native code with no runtime type information and the module system is among the most powerful in a general-purpose programming language in terms of permitting flexible and safe code reuse and refactoring. Finally, we had several examples of large-scale uses of OCaml in industry at Jane Street and within Xen itself, and the positive results were encouraging before embarking on the large multi-year project that Mirage turned out to be.</p>
+
+<h2 id="modular-os-libraries">Modular OS Libraries</h2>
+
+<p>Mirage provides modular OS libraries, which can be switched when needed.</p>
+
+<div class="image-thumbnail-right">
+    <a href="/assets/img/mirage-sample-application.png"><img src="/assets/resized/190/mirage-sample-application.png" /></a>
+    <div class="image_caption">Example application</div>
+</div>
+
+<p>The application MyHomePage depends on an HTTP signature that is provided by the Cohttp library. A developer just starting out wants to explore their code interactively using a Unix-style development environment. The Cohttp library needs a TCP implementation to satisfy its module signature, which can be provided by the UnixSocket library. When development is finished, the on Unix is entirely dropped, and the application is recompiled using the MirNet module to directly link against a Xen network driver, which in turn pulls in all the dependencies it needs to boot on Xen.</p>
+
+<h2 id="development-workflow">Development Workflow</h2>
+
+<ul>
+  <li>
+    <p><strong>Build System</strong>: All source code dependencies of the input application
+are explicitly tracked, including all the libraries required to implement kernel functionality</p>
+  </li>
+  <li>
+    <p><strong>Compiler</strong>: The compiler outputs a full standalone kernel instead of just a Unix executable. It is linked against a minimal embedded runtime which provides boot support and the garbage collector. There is no preemptive threading and the kernel is
+event-driven via an I/O loop that polls Xen devices.</p>
+  </li>
+  <li>
+    <p><strong>Deployment</strong>: The specialized unikernels are deployed online on the public cloud and are recompiled to reconfigure them. They have a significantly smaller attack surface than
+the conventional virtualized equivalents, and are more  resource-efficient in terms of boot time, binary size and runtime performance.</p>
+  </li>
+</ul>
+
+<h2 id="other-unikernels">Other Unikernels</h2>
+
+<p>Mirage is certainly not the only unikernel that has emerged in the last few years:</p>
+
+<ul>
+  <li>Haskell: <a href="https://github.com/GaloisInc/HaLVM#readme">HalVM</a></li>
+  <li>Erlang: <a href="http://erlangonxen.org">ErlangOnXen</a></li>
+  <li>Java: <a href="https://kenai.com/projects/guestvm">GuestVM</a></li>
+</ul>
+
+<p>You can find more resources about unikernels at <a href="http://unikernel.org">http://unikernel.org</a>.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

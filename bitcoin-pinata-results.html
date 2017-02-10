@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Reviewing the Bitcoin Pinata</title>
+  <meta name="description" content="TL;DR: Nobody took our BTC.  Random people from the Internet even donatedinto our BTC wallet.We showed the feasibility of atransparent self-service bounty.  ...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//bitcoin-pinata-results">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Reviewing the Bitcoin Pinata</h1>
+    <p class="article_meta"><time datetime="2015-06-29T00:00:00+00:00" itemprop="datePublished">Jun 29, 2015</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>TL;DR: Nobody took our BTC.  Random people from the Internet even donated
+into our BTC wallet.
+We showed the feasibility of a
+transparent self-service bounty.  In the style of Dijkstra: security
+bounties can be a very effective way to show the presence of
+vulnerabilities, but they are hopelessly inadequate for showing their
+absence.</p>
+
+<h4 id="what-are-you-talking-about">What are you talking about?</h4>
+
+<p>Earlier this year, we <a href="https://mirage.io/blog/announcing-bitcoin-pinata">released a Bitcoin Piñata</a>.
+The <a href="http://ownme.ipredator.se">Piñata</a> was a security bounty
+containing 10 BTC and it’s been online since 10th February 2015.
+Upon successful
+mutual authentication, where the Piñata has only a single trust anchor, it sends the
+private key to the Bitcoin address.</p>
+
+<p><a href="https://github.com/mirleft/btc-pinata">It is open source</a>,
+and exposes both the client and server side of
+<a href="https://github.com/mirleft/ocaml-tls">ocaml-tls</a>, running as an 8.2MB
+<a href="http://openmirage.org">MirageOS</a> unikernel.  You can see the <a href="https://github.com/mirleft/btc-pinata/blob/master/opam-full.txt">code manifest</a> to find out which libraries are involved.  We put this online and invited people to attack it.</p>
+
+<p>Any approach was permitted in attacking the Piñata:
+the host system, the MirageOS <a href="https://github.com/mirage/mirage-tcpip">TCP/IP
+stack</a>, our TLS,
+X.509 and ASN.1 implementations, as well as the Piñata code.
+A successful attacker could do whatever they want with the BTC, no
+questions asked (though we would <a href="https://blockchain.info/address/183XuXTTgnfYfKcHbJ4sZeF46a49Fnihdh">notice the transaction</a>).</p>
+
+<p>The exposed server could even be short-circuited to the exposed
+client: you could proxy a TLS connection in which the (encrypted!)
+secret was transmitted via your machine.</p>
+
+<p>This post summarises what we’ve seen so far and what we’ve learned about attempts people have made to take the BTC.</p>
+
+<h4 id="accesses">Accesses</h4>
+
+<p>There were 50,000 unique IP addresses who accessed the website.
+1000 unique IP addresses initiated more than 20,000 TLS
+connections to the Piñata, trying to break it.  Cumulative numbers of
+the HTTP and TLS accesses are shown in the diagram:</p>
+
+<p><img src="/graphics/pinata_access.png" alt="Cumulative Piñata accesses" /></p>
+
+<p>There were more than 9000 failing and 12000 successful TLS sessions,
+comprised of short-circuits described earlier, and our own tests.</p>
+
+<p>No X.509 certificate was presented in 1200 of the failed TLS
+connections.  Another 1000 failed due to invalid input as the first
+bytes.  This includes attempts using telnet — I’m looking at you,
+xx.xxx.74.126 <code class="highlighter-rouge">please give key</code> (on 10th February at 16:00) and
+xx.xxx.166.143 <code class="highlighter-rouge">hi give me teh btcs</code> (on 11th February at 05:57)!</p>
+
+<h4 id="we-are-not-talking-to-everybody">We are not talking to everybody</h4>
+
+<p>Our implementation first parses the record version of a client hello,
+and if it fails, an unknown record version is reported.  This happened
+in 10% of all TLS connections (including the 1000 with invalid input in the
+last section).</p>
+
+<p>Another big class, 6%, were attempted Heartbeat packets (popular due
+to <a href="https://en.wikipedia.org/wiki/Heartbleed">Heartbleed</a>), which we
+do not implement.</p>
+
+<p>Recently, issues in the state machines of TLS implementations were
+published in <a href="http://smacktls.com">smacktls</a> (and <a href="http://ccsinjection.lepidum.co.jp/">CCS
+injection</a>).  3% of the Piñata connections
+received an unexpected handshake record at some point, which the Piñata handled
+correctly by shutting down the connection.</p>
+
+<p>In 2009, the <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security#Renegotiation_attack">renegotiation
+attack</a>
+on the TLS protocol was published, which allowed a person in the
+middle to inject prefix bytes, because a renegotiated handshake was
+not authenticated with data from the previous handshake.  OCaml-TLS
+closes a connection if the <a href="https://tools.ietf.org/html/rfc5746">renegotiation
+extension</a> is not present, which
+happened in 2% of the connections.
+Another 2% did not propose a ciphersuite supported by OCaml-TLS; yet
+another 2% tried to talk SSL version 3 with us, which we do not
+implement (for <a href="https://tools.ietf.org/html/rfc7568">good reasons</a>, such as
+<a href="https://www.us-cert.gov/ncas/alerts/TA14-290A">POODLE</a>).</p>
+
+<p>In various other (old versions of) TLS implementations, these
+connections would have been successful and insecure!</p>
+
+<h4 id="attempts-worth-noting">Attempts worth noting</h4>
+
+<p>Interesting failures were: 31 connections which sent too many or too
+few bytes, leading to parse errors.</p>
+
+<p>TLS requires each communication partner who authenticates themselves to
+present a certificate.  To prove ownership of the private key of the
+certificate, a hash of the concatenated handshake records needs to be
+signed and transmitted over the wire.  22 of our TLS traces had
+invalid signatures.  Not verifying such signatures was the problem of Apple’s famous <a href="https://www.imperialviolet.org/2014/02/22/applebug.html">goto
+fail</a>.</p>
+
+<p>Another 100 failure traces tested our X.509 validation:
+The majority of these failures (58) sent us certificates which were not signed by our trust
+anchor, such as <code class="highlighter-rouge">CN=hacker/emailAddress=hacker@hacker</code> and <code class="highlighter-rouge">CN=Google
+Internal SNAX Authority</code> and various Apple and Google IDs – we’re still trying to figure out what SNAX is, Systems Network Architecture maybe?</p>
+
+<p>Several certificates contained invalid X.509 extensions: we require
+that a server certificate does not contain the <code class="highlighter-rouge">BasicConstraints =
+true</code> extension, which marks this certificate as certificate
+authority, allowing to sign other certificates.  While not explicitly
+forbidden, best practices (e.g. from
+<a href="https://wiki.mozilla.org/SecurityEngineering/mozpkix-testing#Behavior_Changes">Mozilla</a>)
+reject them.  Any sensible systems administrator would not accept a CA
+as a server certificate.</p>
+
+<p>Several other certificates were self-signed or contained an invalid
+signature: one certificate was our client certificate, but with a
+different RSA public key, thus the signature on the certificate was
+invalid; another one had a different RSA public key, and the signature
+was zeroed out.</p>
+
+<p>Some certificates were not of X.509 version 3, or were expired.
+Several certificate chains were not pairwise signed, a <a href="https://crypto.stanford.edu/~dabo/pubs/abstracts/ssl-client-bugs.html">common attack
+vector</a>.</p>
+
+<p>Two traces contained certificate structures which our ASN.1 parser
+rejected.</p>
+
+<p>Another two connections (both initiated by ourselves) threw an
+exception which lead to <a href="https://github.com/mirleft/btc-pinata/blob/master/logger.ml#L116">shutdown of the connection</a>: there
+<a href="https://github.com/mirleft/ocaml-tls/commit/80117871679d57dde8c8e3b73392024ef4b42c38">was</a>
+an out-of-bounds access while parsing handshake records.  This did not
+lead to arbitrary code execution.</p>
+
+<h4 id="conclusion">Conclusion</h4>
+
+<p>The BTC Piñata was the first transparent self-service bounty, and it
+was a success: people showed interest in the topic; some even donated
+BTC; we enjoyed setting it up and running it; we fixed a non-critical
+out of bounds access in our implementation; a large fraction of our
+stack has been covered by the recorded traces.</p>
+
+<p>There are several points to improve a future Piñata: attestation that the code
+running is the open sourced code, attestation that the service owns
+the private key (maybe by doing transactions or signatures with input
+from any user).</p>
+
+<p>There are several applications using OCaml-TLS, using MirageOS as well
+as Unix:</p>
+
+<ul>
+  <li><a href="https://github.com/mirage/mirage-seal">mirage-seal</a> compiles to
+a unikernel container which serves a given directory over https;</li>
+  <li><a href="https://github.com/hannesm/tlstunnel">tlstunnel</a> is a
+(<a href="https://github.com/bumptech/stud">stud</a> like) TLS proxy, forwarding
+to a backend server;</li>
+  <li><a href="https://github.com/hannesm/jackline">jackline</a> is a
+(alpha version) terminal-based XMPP client;</li>
+  <li><a href="https://github.com/mirage/ocaml-conduit">conduit</a> is an abstraction
+over network connections – to make it use OCaml-TLS, set
+<code class="highlighter-rouge">CONDUIT_TLS=native</code>.</li>
+</ul>
+
+<p>Again, a big thank you to <a href="https://ipredator.se">IPredator</a> for
+hosting our BTC Piñata and lending us the BTC!</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-10-28</title>
+  <meta name="description" content="28th October 2015: Logging, Pioneer Projects and Error Handling">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-10-28">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-10-28</h1>
+  </header>
+
+  <div class="article-content">
+    <p>28th October 2015: Logging, Pioneer Projects and Error Handling</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>Logging</li>
+  <li>Pioneer Projects</li>
+  <li>Blog posts</li>
+  <li>Error handling</li>
+</ul>
+
+<p>Attendees:
+Reynir Björnsson, Daniel Bunzli, Amir Chaudhry (chair), Justin Cormack,
+Thomas Gazagnaire, Matt Gray, David Kaloper, Thomas Leonard,
+Anil Madhavapeddy, Hannes Mehnert, Richard (mort) Mortier, Mindy Preston,
+Gabriel (Drup) Radanne, Dave Scott, Magnus Skjegstad and Jeremy Yallop</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<p>Some discussion about using CircleCI for automated builds.  There seems to be
+a free option now so possibly worth exploring.  However, it doesn’t appear to
+show logs publicly the way TravisCI does (CircleCI requires login). Will put
+this on hold until someone has time to look at it further.</p>
+
+<h4 id="logging">Logging</h4>
+
+<p>ThomasL was wondering what the plans were regarding the new logging library.
+Do we need support for <code class="highlighter-rouge">lwt</code> in the logging library? It’s intended to be a
+logging lib for OCaml.</p>
+
+<p>Drup looked at the API and asked Daniel. The logging function is returning a
+string at the moment. Messages could be out of order if scheduler doesn’t keep
+up (there’s an open issue about this). ThomasL pointed out that ordering
+things is solvable but he’s more worried about running out of memory. We want
+to separate logging from the reporting.</p>
+
+<p>Discussion diverged into one of collecting logs and also of where/how to push
+them.  We should keep these discussions focused as both aspects are important.</p>
+
+<!-- Irmin is using dolog? -->
+
+<p>Is there a plan of how to put part of this into mirage? Someone should use the
+lib (dolog?) and write a reporter for Mirage. Right now there’s reporter for
+the console.  ThomasL will look at this and will check back in a couple of
+weeks.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p>Outreachy is ongoing and we may be able to request funds for a third
+participant. Will have to see how this phase goes. Hannes is signed up as a
+mentor on the Outreachy website but not sure what the next step is. The
+participant is willing to implement NTP as the project. Mindy would like to
+use it to get the rhythm for dom0 in the TCP/IP stack. Anyone on ARM will be
+particularly keen to have this too, as they don’t have a clock.</p>
+
+<p>Mort is supervising a number of undergrad projects that relate to MirageOS.
+Loosely, the areas are:
+- The work that Mindy did for ARP can be done for TCP.
+- Cosmin Boaca is getting started with multi-process/vm ocaml-ctypes.
+- Some work with docs over Irmin.
+- Collection of IoT type data (bus locations every 30s).
+- Tweaking the TCP stack to make it look like it’s a Windows stack.</p>
+
+<p>We can check how these are going in due course.</p>
+
+<h4 id="blog-posts">Blog posts</h4>
+
+<p>A blog post on Charrua is in a PR to <code class="highlighter-rouge">mirage-www</code>.  At the moment the code
+doesn’t compile with 4.01 so will fix that and then come back.  Mort will
+check the PR but will also need some other people to try out the instructions.</p>
+
+<h4 id="error-handling">Error handling</h4>
+
+<p>This has been discussed before but we still need to make a decision. Now that
+we have a <code class="highlighter-rouge">`Result</code> in the standard library we can just use that. There’s
+also a <code class="highlighter-rouge">Result</code> lib we can use.</p>
+
+<p>Some questions about the benefits of using <code class="highlighter-rouge">Result</code> over polymorphic variants.
+Should help us get sensible errors and easily turn them into strings to report
+them (rather than having abstract types). We just need to make sure we choose
+something consistent.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">nocrypto</code> — Turns out that it’s non-trivial to fix the openBSD issue. The
+release has been blocked on that. DavidK had to refactor c-include and other
+pieces and hasn’t had time yet (will ask again on the next call).</p>
+  </li>
+  <li>
+    <p>MattG, working on Clock things, wanted to know whether he should wait for
+functoria to be released. Others mentioned that he should be able to use
+functoria now as it’s in <code class="highlighter-rouge">mirage-dev</code>. There’s also a
+<a href="https://github.com/mirage/mirage-www/pull/396">draft blog post</a> which should help him get started.</p>
+  </li>
+  <li>
+    <p>Seems that Jitsi is not as slick to use as Google Hangout. After some minor
+initial hiccups it worked in the end.  Seems there are some issues with
+networking (UDP, VLAN, etc) for people on certain networks.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 11th November</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

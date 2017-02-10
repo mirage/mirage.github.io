@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-05-06</title>
+  <meta name="description" content="6th May 2015: TLS integration, Irmin-in-browser and MirageOS Hangout">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-05-06">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-05-06</h1>
+  </header>
+
+  <div class="article-content">
+    <p>6th May 2015: TLS integration, Irmin-in-browser and MirageOS Hangout</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>TLS support</li>
+  <li>IndexedDB / Irmin-in-the-browser</li>
+  <li>MirageOS Q&amp;A hangout?</li>
+</ul>
+
+<p>Attendees: Reynir Björnsson, Amir Chaudhry (chair), Justin Cormack,
+Thomas Gazagnaire, Masoud Koleini, Thomas Leonard, Hannes Mehnert,
+Richard Mortier, Mindy Preston and Jeremy Yallop</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<p>Been provisioning a number of backends on one of our machines (punk), which is
+serving <a href="https://mirage.io">https://mirage.io</a>, including tuntap and unix. Would also like to
+have an ARM backend running but that’s blocked on Scaleway as they haven’t
+finished looking into the Xen support
+(<a href="https://github.com/scaleway/kernel-tools/issues/14">scaleway/kernel-tools#14</a>). We will also need a logging
+interface for unikernels but that can wait until the other work is done.</p>
+
+<p>Ultimately, we’d like to use Mirage.io as the main site and load-balance the
+incoming connections across all our supported backends (x86/ARM, Unix/Xen).
+Would also like this to work across multiple providers, including AWS. We’d
+need a method to inform the visitor which version of the site they’re looking
+at in order to triage and fix incoming bug reports.</p>
+
+<h4 id="tls-support">TLS support</h4>
+
+<p>This is working but we need to fix a memory leak in Entropy and maybe also
+resurrect <code class="highlighter-rouge">xentropyd</code>. Anil mentioned that he’d write up instructions on how
+to go from getting certificates, all the way to a deployed https website —
+likely based on his experience with certs from Gandi.net</p>
+
+<p>Amir will coordinate a set of blog posts for the TLS related releases and we
+should publish things when we’re all back. For the moment we should focus on
+testing things with the new stack.</p>
+
+<h4 id="indexeddb--irmin-in-the-browser">IndexedDB / Irmin-in-the-browser</h4>
+
+<p>ThomasL mentioned that he announced Cuekeeper and published a blog post about
+it and today he also got it working with Safari! It turns out that Safari’s
+database implementation can’t cope with concurrent reads, so when it throws an
+exception, Cuekeeper has to back off and try again.</p>
+
+<p>Anil will be speaking at an OCaml user group meeting
+(<a href="http://www.meetup.com/sv-ocaml/events/222052290/">Silicon Valley OCaml Meetup</a>) and will be showing the crowd an
+Irmin demo and Cuekeeper.</p>
+
+<p>ThomasG is putting together docs on how to run some of our existing demos and
+it should be almost a step by step, repeatable guide. Would appreciate
+feedback on this.</p>
+
+<p>It turns out that lots of people have been trying out MirageOS and have found
+their way to Amir’s <a href="http://amirchaudhry.com/from-jekyll-to-unikernel-in-fifty-lines/">Jekyll to Unikernel</a> post and Mindy’s
+post on <a href="http://www.somerandomidiot.com/blog/2014/08/19/i-am-unikernel/">deploying unikernels to EC2</a>. Getting deployments up
+to EC2 is still quite tricky and a nicer way to do this would be very welcome.
+Lots of people seem to have scripts for this including Anil, Mindy and
+Jyostna, and it would be good to publicise or consolidate these. We’d also
+have to ensure they work when we have SSL support.</p>
+
+<h4 id="mirageos-qa-hangout">MirageOS Q&amp;A hangout</h4>
+
+<p>This was discussed in a <a href="http://openmirage.org/wiki/weekly-2015-04-09/#MirageOSPublicHangoutFAQsession">previous call</a> and was meant to be brought
+up this time.  Given how busy we’re likely to be this summer, we’ll probably
+put this off until later in the year.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Jitsu/NSDI - We should consider how we can improve our release management
+process. At the moment we have no good way to do this as it requires the
+ability to manage issues across repos.  Most of our releases involve
+cross-cutting changes and we have many libraries. We could possibly put
+something together ourselves using the GitHub API but this would be a project
+in its own right.  Perhaps David Sheets can look at this once he’s back.</p>
+  </li>
+  <li>
+    <p>UROP/Pioneer Projects. We have two summer students taking part, with one
+project on a DHCP server and another on an NTP server. If anyone has written a
+DHCP server before, please let us know.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 20th May</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

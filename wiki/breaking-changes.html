@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Breaking changes</title>
+  <meta name="description" content="This page records API changes that require existing code to be updated.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/breaking-changes">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Breaking changes</h1>
+  </header>
+
+  <div class="article-content">
+    <p>This page records API changes that require existing code to be updated.</p>
+
+<h3 id="functoria-edition">2016-02-17: Functoria edition</h3>
+
+<h4 id="command-line">Command line</h4>
+
+<p>The config file must be passed with the <code class="highlighter-rouge">-f</code> option (instead of being just
+an argument).</p>
+
+<h4 id="deprecation-misc-functions">Deprecation: Misc functions</h4>
+
+<p><code class="highlighter-rouge">get_mode</code> is deprecated. You should use keys instead. And in particular <code class="highlighter-rouge">Key.target</code> and <code class="highlighter-rouge">Key.is_xen</code>.</p>
+
+<p><code class="highlighter-rouge">add_to_ocamlfind_libraries</code> and <code class="highlighter-rouge">add_to_opam_packages</code> are deprecated. Both the <code class="highlighter-rouge">foreign</code> and the <code class="highlighter-rouge">register</code> functions now possess the <code class="highlighter-rouge">~libraries</code> and <code class="highlighter-rouge">~packages</code> arguments to specify libraries dependencies.</p>
+
+<h4 id="entropy">Entropy</h4>
+
+<p>If you were using <code class="highlighter-rouge">tls</code> without the conduit combinator, you will be
+greeted during configuration by a message like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>The "nocrypto" library is loaded but entropy is not enabled!
+Please enable the entropy by adding a dependency to the nocrypto device.
+You can do so by adding ~deps:[abstract nocrypto] to the arguments of Mirage.foreign.
+</code></pre>
+</div>
+
+<p>Data dependencies (such as entropy initialization) are now explicit.
+In order to fix this, you need to declare the dependency like so:
+```
+open Mirage</p>
+
+<p>let my_functor =
+  let deps = [abstract nocrypto] in
+  foreign ~deps “My_Functor” (foo @-&gt; bar)
+```</p>
+
+<p><code class="highlighter-rouge">My_functor.start</code> will now take an extra argument for each
+dependencies. In the case of nocrypto, this is <code class="highlighter-rouge">()</code>.</p>
+
+<h3 id="http-servers-with-mirage--25">2015-06-18: HTTP servers with Mirage &gt; 2.5</h3>
+
+<p>Before, you would specify your server’s address in the <code class="highlighter-rouge">config.ml</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let server =
+  http_server (`TCP (`Port 8080)) (conduit_direct (stack default_console))
+</code></pre>
+</div>
+
+<p>and then use it in your <code class="highlighter-rouge">unikernel.ml</code> as:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let start http =
+  ...
+  http (H.make ~callback ~conn_closed ())
+</code></pre>
+</div>
+
+<p>With mirage &gt; 2.5, the address argument is no longer present and you will get this error:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Error: This function has type
+         Mirage.conduit Mirage.impl -&gt; Mirage.http Mirage.impl
+       It is applied to too many arguments; maybe you forgot a `;'.
+</code></pre>
+</div>
+
+<p>To update, change <code class="highlighter-rouge">config.ml</code> to:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let server =
+  http_server (conduit_direct (stack default_console))
+</code></pre>
+</div>
+
+<p>and move the address to your <code class="highlighter-rouge">unikernel.ml</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let start http =
+  ...
+  http (`TCP 8080) (H.make ~callback ~conn_closed ())
+</code></pre>
+</div>
+
+<p>Note that the <code class="highlighter-rouge">Port</code> tag has also been removed.</p>
+
+<p>This change was needed to support TLS servers, since TLS configuration (keys and certificates) is more complex and cannot be declared in the <code class="highlighter-rouge">config.ml</code>.</p>
+
+<p>Commit: <a href="https://github.com/mirage/mirage/commit/56e500d4210bf7fdcdc296f3c34ce13c9f57cdf5">https://github.com/mirage/mirage/commit/56e500d4210bf7fdcdc296f3c34ce13c9f57cdf5</a></p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

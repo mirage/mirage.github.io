@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-01-14</title>
+  <meta name="description" content="14th Jan 2014: Project name, 4.02.1 support, TLS on Xen and Error handling">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-01-14">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-01-14</h1>
+  </header>
+
+  <div class="article-content">
+    <p>14th Jan 2014: Project name, 4.02.1 support, TLS on Xen and Error handling</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>“Mirage OS” or “MirageOS”?</li>
+  <li>Pull OCaml runtime/bindings into packages / OCaml 4.02.1 support</li>
+  <li>TLS on Xen</li>
+  <li>Error handling in Mirage</li>
+  <li>Planning for 3.0</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, David Kaloper,
+Thomas Leonard, Jon Ludlam, Anil Madhavapeddy, Hannes Mehnert,
+Richard Mortier, Dave Scott and Magnus Skjegstad</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-os-or-mirageos">“Mirage OS” or “MirageOS”?</h4>
+
+<p>We need to settle on how we refer to the project and then be consistent in its
+use. In the early days it was referred to variously as ‘Mirage’, ‘Open
+Mirage’, ‘Mirage OS’ and ‘MirageOS’.  When we became a
+<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2013-01/msg00081.html">Xen Incubated project</a>, we had a brief discussion about the
+‘official’ name (for press releases etc) and we settled on ‘Mirage OS’. 
+However, we haven’t always been consistent with the way we use the term.  So
+far all the official materials such as new releases, have referred to
+“Mirage OS” (with a space), whereas on Twitter and our slides we see ‘MirageOS’
+(without a space) being used. We should stick to only one of these.</p>
+
+<p><strong>Why does this matter?</strong> - As we attract more users and raise more awareness,
+being consistent in how we represent ourselves will begin to matter more. The
+name is just one of these aspects and even though it may seem trivial, it <em>is</em>
+the name of the project we’re discussing here. At this stage, there should be
+no confusion about how it’s written.</p>
+
+<p>After a brief discussion, it’s clear that most of the team are less concerned
+about the exact choice rather than being consistent. Only Amir and Anil had
+opinions to share and they both proposed that we use ‘MirageOS’ from now on.
+The reasons are that users have independently used this form in tweets and
+posts, it is easier to search for, and it’s better to go with the flow as we
+still can.</p>
+
+<p>Overall, we unanimously decided on two things: (1) to move forward with
+‘<strong>MirageOS</strong>’ as the official name of the project and (2) be much more
+consistent in using it on our written material.</p>
+
+<p>In terms of practical steps, Amir will update things as he sees them on the
+website and written materials. Anil suggested that we may start using a
+different domain for the site too (<a href="http://mirage.io">mirage.io</a>).</p>
+
+<h4 id="ocaml-4021-support">OCaml 4.02.1 support</h4>
+
+<p>Anil’s working on this (<a href="https://github.com/mirage/mirage-platform/pull/115">mirage/mirage-platform#115</a>) and thanks ThomasL
+for his patches. Hasn’t had time to merge yet but will do soon. Might not
+rebase it and hopes that won’t be too much of a problem for anyone.  In
+general we shouldn’t do that but this one would take a while to rebase and
+would prefer to merge quickly.  The upcoming functor inline patch will a have
+big performance boost but we should clearly state that we’re not dropping
+support for 4.01 though. The patch applies cleanly on trunk (it’s currently in
+a branch) and the work already done to port Mirage to 4.02.1 should mean that
+any additional changes we need to make are trivial.</p>
+
+<p>In addition, we should be careful to maintain support for OPAM 1.1 or at the
+very least, warn the user if something won’t work with v1.1. Many of the
+upstream distros are still on this version and silent failures result in
+confusion and frustration. There are also an increasing number of libraries
+going for 4.02.1 support only, but it would be better to try and maintain
+support for 4.01 as long as possible (for the same reasons as above).</p>
+
+<h4 id="tls-on-xen">TLS on Xen</h4>
+
+<p>ThomasL started an <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-01/msg00066.html">email thread</a> about getting the TLS stack
+working on Xen.  He’s submitted a number of patches for review to different
+libraries and the changes needed are:</p>
+
+<ol>
+  <li>Add generic error handling for FLOWs, so we can propagate errors reliably.</li>
+  <li>Fix the page alignment requirements for Netif.</li>
+  <li>Add TLS support to conduit.</li>
+</ol>
+
+<p>TLS now works if you apply lots of patches and works pretty well (half the
+speed of not using TLS — which is good!).
+Issue now is how to merge without breaking things as
+certain module signatures change.  There was some discussion of functorising
+and the knock-on effect this would have but overall it seems like we can keep
+this as an interface-level problem.</p>
+
+<p>There’s still the question of getting entropy in Xen. We need several ways to
+do this and <a href="https://github.com/mirage/xentropyd">xentropyd</a> is the one way we currently have if dom0 cooperates.
+This is fine for our infrastructure as we control dom0 (on cubieboards and
+x86).  However, we also need to be able to gather entropy in other ways for
+deployments to third-party infrastructure. The actual code for getting entropy
+is straightforward but how it is then composed needs to be considered.</p>
+
+<p>In general, there’s reluctance to release the TLS stuff until there’s an
+entropy story so DavidK may take a look at the options.  In the meantime,
+we’re happy to have an intermediate patch that <em>only</em> uses xentropyd and we
+can then use it for websites hosted on our own infrastructure.</p>
+
+<h4 id="error-handling-in-mirage">Error handling in Mirage</h4>
+
+<p>ThomasL has been working on this. To make conduit <code class="highlighter-rouge">FLOW</code> wrap the TLS flows we
+need a way to propagate the errors sensibly, so has added a type to <code class="highlighter-rouge">FLOW</code>
+that can do this. It might be nice to have an algebraic data type to describe
+an error type, or if we wait a few months until we switch to 4.02.1, then we
+can just use <a href="https://sites.google.com/site/ocamlopen/">Open Types</a>
+(see additional comment from ThomasL below).
+The nice thing with current patch is
+that you don’t lose the error type. It works well but there’s an issue
+regarding merge order, e.g. TLS and conduit, where they use it but also
+provide it. Easiest way would be to adjust the dependencies and push things to
+<a href="https://github.com/mirage/mirage-dev">mirage dev</a> and then co-ordinate the releases.  It then becomes
+straightforward to get things merged into the main OPAM repository.</p>
+
+<p>Another comment was that it might make sense to have the err handling in
+<code class="highlighter-rouge">DEVICE</code> and have it everywhere but that would touch about 20 repos, so not
+likely to do that just yet.</p>
+
+<p>[Thomas Leonard additionally sent the following comment:]</p>
+
+<p>“We already have algebraic data types for errors, which is good if you want to
+match on a particular error from a particular concrete implementation (e.g.
+<code class="highlighter-rouge">FAT_index_corrupted</code> or something). In theory, this is slightly more correct
+than using exceptions because error returns don’t propagate automatically. e.g.
+if you get <code class="highlighter-rouge">Refused</code> from TCP then you know it was the TCP connection itself
+that was refused, not some other refusal from another function TCP called that
+happened to throw the same exception. In practice, this doesn’t seem to be a
+problem except when using very generic exceptions like <code class="highlighter-rouge">Not_found</code>.</p>
+
+<p>I guess using open types means we can list some common errors in the
+interfaces but have implementations provide more, which may be useful but
+doesn’t solve my problem: when you <em>don’t</em> want to handle specific exceptions
+we need a way to get a human-readable string for display (and this is the
+common case).</p>
+
+<p>So:</p>
+
+<ul>
+  <li>
+    <p>Replacing error codes with exceptions (which I proposed originally) would
+work most of the time and would simplify the code greatly, although it’s
+slightly less strict than the current system. On the other hand, the current
+system encourages people to throw away errors (look at any <code class="highlighter-rouge">main.ml</code> for
+examples!) so I’m sure it would be an overall improvement. It would require
+API changes everywhere, however.</p>
+  </li>
+  <li>
+    <p>Adding an <code class="highlighter-rouge">error_message</code> function (which my current patches do) means that
+people can still handle errors as before when needed, but can also always get
+a human-readable string too, so there’s never any excuse for throwing away
+diagnostic information. You do still need to write error handling code
+everywhere when you just want to propagate exceptions, though, which clutters
+the code, and old code will continue to discard useful information for some
+time to come.”</p>
+  </li>
+</ul>
+
+<h4 id="planning-for-30">Planning for 3.0</h4>
+
+<p>Amir would like to start putting together a plans for a 3.0 release but there
+wasn’t time to begin discussions on this call. Will schedule it for next time
+and keep it as a recurring item once every other call (i.e once a month).</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Need to get <strong><a href="https://github.com/MagnusS/jitsu">Jitsu</a></strong> ready in next couple of weeks. Need libxl patches
+from DavidS/JonL and they’re probably ok (will submit as an RFC). There’s also
+a desire to calculate timings from HTTP req to serving the response so shared
+some ideas about how best to do this. Amir also has a use-case he wants to
+deploy and write about.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 28th January</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

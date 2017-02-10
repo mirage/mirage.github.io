@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Synthesizing virtual disks for Xen</title>
+  <meta name="description" content="[ updated 2014-02-01 for mirage.1.1.0 and xen-disk.1.2.1 ]">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/xen-synthesize-virtual-disk">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Synthesizing virtual disks for Xen</h1>
+  </header>
+
+  <div class="article-content">
+    <p>[ updated 2014-02-01 for mirage.1.1.0 and xen-disk.1.2.1 ]</p>
+
+<p>This page describes how to create a synthetic, high-performance
+virtual disk implementation for Xen based on the MirageOS libraries.</p>
+
+<h2 id="disk-devices-under-xen">Disk devices under Xen</h2>
+
+<p>The protocols used by Xen disk and network devices are designed to
+permit fast and efficient software implementations, avoiding the
+inefficiencies inherent in emulating physical hardware in software.
+The protocols are based on two primitives:</p>
+
+<ul>
+  <li><em>shared memory pages</em>: used for sharing both data and metadata</li>
+  <li><em>event channels</em>: similar to interrupts, these allow one side to signal the other</li>
+</ul>
+
+<p>In the disk block protocol, the protocol starts with the client
+(“frontend” in Xen jargon) sharing a page with the server (“backend”).
+This single page will contain the request/response metadata, arranged
+as a circular buffer or “ring”. The client (“frontend”) can then start
+sharing pages containing disk blocks with the backend and pushing request
+structures to the ring, updating shared pointers as it goes. The client
+will give the server end a kick via an event channel signal and then both
+ends start running simultaneously. There are no locks in the protocol so
+updates to the shared metadata must be handled carefully, using write
+memory barriers to ensure consistency.</p>
+
+<h3 id="xen-disk-devices-in-mirageos">Xen disk devices in MirageOS</h3>
+
+<p>Like everything else in MirageOS, Xen disk devices are implemented as
+libraries. The following libraries are used:
+* <a href="https://github.com/mirage/io-page">io-page</a>:
+  for representing raw memory pages
+* <a href="https://github.com/xapi-project/ocaml-gnt">xen-gnt</a>:
+  APIs for “granting” pages to other domains and “mapping” pages granted to us
+* <a href="https://github.com/xapi-project/ocaml-evtchn">xen-evtchn</a>:
+  APIs for signalling other VMs
+* <a href="https://github.com/mirage/shared-memory-ring">shared-memory-ring</a>:
+  manipulates shared memory request/response queues
+  used for paravirtualised disk and network devices. This library is a mix of
+  99.9% OCaml and 0.1% asm, where the asm is only needed to invoke memory
+  barriers, to ensure that metadata writes issued by one CPU core appear
+  in the same order when viewed by another CPU core.
+* <a href="https://github.com/mirage/mirage-block-xen">mirage-block-xen</a>:
+  frontend (“blkfront”) and backend (“blkback”) implementations</p>
+
+<p>Note that all these libraries work equally well in userspace (for development
+and debug) and kernelspace (for production): the target is chosen at
+link-time.</p>
+
+<h2 id="userspace-disk-implementations">Userspace disk implementations</h2>
+
+<p>Userspace MirageOS apps are ideal for development, since they have access to
+the full suite of Unix debug and profiling tools. Once written, the exact
+same code can be relinked and run directly in kernelspace for maximum
+performance.</p>
+
+<p>The <a href="https://github.com/mirage/xen-disk">xen-disk</a> demonstrates how to
+create a synthetic Xen virtual disk. To compile it, first, install
+<a href="http://www.xen.org/">Xen</a> (including the -dev, or -devel packages),
+<a href="http://www.ocaml.org/">OCaml</a> and <a href="http://opam.ocamlpro.com/">OPAM</a>.</p>
+
+<p>Second initialise your system:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  opam init
+  eval `opam config env`
+</code></pre>
+</div>
+
+<p>Third install the unmodified <code class="highlighter-rouge">xen-disk</code> package, this will ensure all the build
+dependencies are installed:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  opam install xen-disk
+</code></pre>
+</div>
+
+<p>When this completes it will have installed a command-line tool called
+<code class="highlighter-rouge">xen-disk</code>. If you start a VM using your Xen toolstack of choice
+(“xl create …” or “xe vm-install …” or “virsh create …”) then you
+should be able to run:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  xen-disk connect &lt;vmname&gt;
+</code></pre>
+</div>
+
+<p>which will hotplug a fresh block device into the VM “vmname” using the
+“discard” backend, which returns “success” to all read and write requests,
+but actually throws all data away. Obviously this backend should only be
+used for basic testing!</p>
+
+<p>Assuming that worked ok, clone and build the source for <code class="highlighter-rouge">xen-disk</code> yourself:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  git clone git://github.com/mirage/xen-disk
+  cd xen-disk
+  make
+</code></pre>
+</div>
+
+<h2 id="making-a-custom-virtual-disk-implementation">Making a custom virtual disk implementation</h2>
+
+<p>The <code class="highlighter-rouge">xen-disk</code> program can use any MirageOS disk implementation satisfying
+Mirage
+<a href="https://github.com/mirage/mirage/blob/master/types/V1.mli#L134">BLOCK signature</a>.
+The key functions are:</p>
+
+<ul>
+  <li><a href="https://github.com/mirage/mirage/blob/master/types/V1.mli#L40">connect</a>:
+to open a connection to a named device</li>
+  <li><a href="https://github.com/mirage/mirage/blob/master/types/V1.mli#L164">read</a>:
+to fill application buffers with block device data</li>
+  <li><a href="https://github.com/mirage/mirage/blob/master/types/V1.mli#L170">write</a>:
+to write application buffers to the block device</li>
+</ul>
+
+<p>By default <code class="highlighter-rouge">xen-disk</code> uses the following disk implementations:</p>
+
+<ul>
+  <li><a href="https://github.com/mirage/mirage-block-unix">mirage-block-unix</a>: reads and writes
+to/from an existing Unix file or block device</li>
+  <li><a href="https://github.com/djs55/ocaml-vhd">vhd-format</a>: reads and writes data encoded
+in the .vhd file format (as used by XenServer and Hyper-V)</li>
+  <li><a href="https://github.com/mirage/xen-disk/blob/master/src/backend.ml#L45">DISCARD</a>:
+returns <code class="highlighter-rouge">Ok ()</code> to all requests without doing any work (typically used for
+performance testing the ring code)</li>
+</ul>
+
+<p>Let’s make a virtual disk implementation which uses an existing disk
+image file as a “gold image”, but uses copy-on-write so that no writes
+persist.
+This is a common configuration in Virtual Desktop Infrastructure deployments
+and is generally handy when you want to test a change quickly, and
+revert it cleanly afterwards.
+A useful Unix technique for file I/O is to “memory map” an existing file:
+this associates the file contents with a range of virtual memory addresses
+so that reading and writing within this address range will actually
+read or write the file contents.
+The “mmap” C function has a number of flags, which can be used to request
+“copy on write” behaviour. Reading the
+<a href="http://caml.inria.fr/pub/docs/manual-ocaml/libref/Bigarray.Genarray.html">OCaml manual Bigarray.map_file</a>
+it says:</p>
+
+<blockquote>
+  <p>If shared is true, all modifications performed on the array are reflected
+in the file. This requires that fd be opened with write permissions. If
+shared is false, modifications performed on the array are done in memory
+only, using copy-on-write of the modified pages; the underlying file is
+not affected.</p>
+</blockquote>
+
+<p>So we should be able to make a virtual disk implementation which memory
+maps the image file and achieves copy-on-write by setting “shared” to false.
+For extra safety we can also open the file read-only.</p>
+
+<p>Luckily there is already an
+<a href="https://github.com/mirage/xen-disk/blob/master/src/backend.ml#L72">“mmap” implementation</a>
+in <code class="highlighter-rouge">xen-disk</code>; all we need to do is tweak it slightly.
+In the “connect” function we simply need to set “shared” to “false” to
+achieve the behaviour we want i.e.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let connect id =
+  let fd = Unix.openfile (filename_of_id id) [ Unix.O_RDONLY ] 0o0 in
+  let stats = Unix.LargeFile.fstat fd in
+  let mmap = Cstruct.of_bigarray (Lwt_bytes.map_file ~fd ~shared:false ()) in
+  Unix.close fd;
+  let size = stats.Unix.LargeFile.st_size in
+  return (`Ok { id; size; mmap })
+</code></pre>
+</div>
+
+<p>The read and write functions can be left as they are:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let forall offset bufs f =
+  let rec loop offset = function
+  | [] -&gt; ()
+  | b :: bs -&gt;
+    f offset b;
+    loop (offset + (Cstruct.len b)) bs in
+  loop (Int64.to_int offset * 512) bufs;
+  return (`Ok ())
+
+let read t offset bufs =
+  forall offset bufs
+    (fun offset buf -&gt;
+      Cstruct.blit t.mmap offset buf 0 (Cstruct.len buf)
+    )
+
+let write t offset bufs =
+  forall offset bufs
+    (fun offset buf -&gt;
+      Cstruct.blit buf 0 t.mmap offset (Cstruct.len buf)
+    )
+</code></pre>
+</div>
+
+<p>Now if we rebuild and run something like:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  dd if=/dev/zero of=disk.raw bs=1M seek=1024 count=1
+
+  dist/build/xen-disk/xen-disk connect &lt;myvm&gt; --path disk.raw --backend mmap
+</code></pre>
+</div>
+
+<p>Inside the VM we should be able to do some basic speed testing:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  djs@ubuntu1310:~$ sudo dd if=/dev/xvdg of=/dev/null bs=1M
+  16+0 records in
+  16+0 records out
+  16777216 bytes (17 MB) copied, 0.0276625 s, 606 MB/s
+</code></pre>
+</div>
+
+<p>Plus we should be able to mount the filesystem inside the VM, make changes and
+then disconnect (send SIGINT to xen-disk by hitting Control+C on your terminal)
+without disturbing the underlying disk contents.</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

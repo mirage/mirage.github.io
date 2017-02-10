@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MirageOS Spring 2016 Hackathon!</title>
+  <meta name="description" content="We’re looking forward to the next MirageOS hackathon already!  We’ve collected some reports from those who were present at our 2016 Spring hackathon to share...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//2016-spring-hackathon">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">MirageOS Spring 2016 Hackathon!</h1>
+    <p class="article_meta"><time datetime="2016-05-04T00:00:00+00:00" itemprop="datePublished">May 4, 2016</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>We’re looking forward to the next MirageOS hackathon already!  We’ve collected some reports from those who were present at our <a href="http://marrakech2016.mirage.io">2016 Spring hackathon</a> to share our excitement!  Thanks to the folks who put in the time and effort to organize the event and our wonderful hosts, and a huge thanks to everyone who documented their hackathon experience!</p>
+
+<p>More information is also available at <a href="http://canopy.mirage.io">the Canopy site developed and used for information sharing during the hackathon</a>!</p>
+
+<h2 id="trip-report">Trip Report</h2>
+<p><em>by David Kaloper</em></p>
+
+<p><img src="/graphics/2016-hackathon/roof_flash.jpg" alt="roof-flash" /></p>
+
+<p>Last month, the MirageOS community saw its first community-organized, international
+<a href="http://marrakech2016.mirage.io/">hackathon</a>. It took place between 11th and 16th March 2016. The venue?
+<a href="http://queenofthemedina.com/en/index.html">Rihad Priscilla</a>, Marrakech, Morocco.</p>
+
+<p>The place turned out to be ideal for a community building exercise. A city
+bursting with life, scents and colors, a relaxed and friendly hostel with plenty
+of space, warm and sunny weather – all the elements of a good get-together
+were there. This is where some 25 hackers from all over the world convened, with
+various backgrounds and specialties, all sharing an interest in MirageOS.</p>
+
+<p>Not wanting to limit ourselves to breaking only those conventions, we added another layer: the
+hackathon was set up as a classical anti-conference, with a bare minimum of
+structure, no pre-defined program, and a strong focus on one-on-one work,
+teaching, and collaboration.</p>
+
+<p>As this was the first hackathon, this time the focus was on building up the nascent
+community that already exists around MirageOS. Faces were put to online handles, stories were
+exchanged, and connections were forged. Meeting in person helped bring a new
+level of cohesion to the online community around the project, as witnessed by
+the flurry of online conversations between people that were present, and have continued after
+the event ended.</p>
+
+<p>One particularly useful (however inglorious) activity proved to be introducing
+people to the tool chain. Even though the MirageOS website has a
+<a href="https://mirage.io/docs">documentation</a> section with various documents on the architecture
+of the project, technical blog posts and a series of examples to get newcomers
+started, a number of people found it difficult to juggle all the concepts and
+tools involved. Where is the line dividing <code class="highlighter-rouge">ocamlfind</code> from <code class="highlighter-rouge">opam</code> and what
+exactly constitutes an OCaml library? What is the correct way to declare
+dependencies not covered by the declarative configuration language? When should
+one use <code class="highlighter-rouge">add_to_opam_packages</code>, and when <code class="highlighter-rouge">add_to_ocamlfind_libraries</code>? Will the
+<code class="highlighter-rouge">mirage</code> tool take care of installing missing packages so declared?</p>
+
+<p>Although these questions either have answers scattered throughout the docs, or
+are almost obvious to an experienced MirageOS developer, such getting-started
+issues proved to be an early obstacle for a number of hackathon participants.
+While our project documentation certainly could – and will! – be improved with
+the perspective of a new developer in mind, this was an opportunity to help
+participants get a more comprehensive overview of the core tooling in an
+efficient, one-to-one setting. As a result, we saw a number of developers go
+from trying to get the examples to compile to making their own unikernels within
+a day, something pretty awesome to witness!</p>
+
+<p>Another fun thread was dogfooding the network stack. Network itself was provided
+by our venue Priscilla, but we brought our own routers and access points. DHCP on site was
+served by <a href="https://github.com/haesbaert/charrua-core">Charrua</a>, which stood up to the task admirably. We were able
+to access arbitrary domains on the Internet, almost all of the time!</p>
+
+<p>A group of hackers had a strong web background, and decided to focus their
+efforts there. Perhaps the most interesting project to come out of this is
+<a href="https://github.com/Engil/Canopy">Canopy</a>. Canopy is best described as the first dynamic offering in the
+space of static web site generators! It combines <a href="https://github.com/mirage/irmin">Irmin</a> with
+<a href="http://ocsigen.org/tyxml">TyXML</a>, <a href="https://github.com/mirage/ocaml-cow">COW</a>, and <a href="https://github.com/mirage/mirage-http">Mirage HTTP</a>, to create a simple,
+one-stop solution for putting content on the web. A Canopy unikernel boots,
+pulls a series of markdown files from a git repository, renders them, and serves
+them via HTTP. Expect more to come in this space, as Canopy has already proved
+to be a handy tool to simply put something on the web.</p>
+
+<p>At the same time, the atmosphere was conducive for discussing how OCaml
+in general, and MirageOS in particular, fits in the web development ecosystem.
+As a language originally honed in different contexts, it’s the opinion of a number
+of practicing web developers that the current OCaml ecosystem is not as
+conducive to supporting their day-to-day work as it could be. These brainstorming
+sessions led to a <a href="https://github.com/fxfactorial/an-ocaml-adoption-manifesto">writeup</a> which tries to summarize the
+current state and plot the course forward.</p>
+
+<p>Another group of hackers was more focused on security and privacy
+technology. MirageOS boasts its own cryptographic core and a TLS stack,
+providing a solid base for development of cryptographic protocols. We saw
+coordinated work on improving the <a href="https://github.com/mirleft/ocaml-nocrypto/pull/93">cryptographic layer</a>;
+implementations of a few key-derivation functions (<a href="https://github.com/abeaumont/ocaml-scrypt-kdf">Scrypt</a> and
+<a href="https://github.com/abeaumont/ocaml-pbkdf">PBKDF</a>); and even a beginning of an <a href="https://github.com/isakmp/ike">IKEv2</a> implementation.</p>
+
+<p>A further common topic was networking, which is not entirely surprising for a
+network-centric unikernel platform. Amidst the enthusiasm, hackers in attendance
+started several projects related to general networking. These include a
+<a href="https://github.com/andreas/mirage-swim">SWIM</a> membership protocol implementation, the beginnings of
+<a href="https://github.com/hannesm/telnet">telnet</a> for Mirage, <a href="https://github.com/cfcs/ocaml-socks">SOCKS4</a> packet handling,
+<a href="https://github.com/cfcs/ocaml-wildcard">DNS wildcard</a> matching, Charrua updates, and more.</p>
+
+<p>In between these threads of activity, people used the time to get general
+MirageOS work done. This resulted in lots of progress including: making
+<a href="http://lcamtuf.coredump.cx/afl/">AFL</a>, already supported by OCaml, run against MirageOS unikernels; a
+comprehensive update of error reporting across the stack; a concentrated push to
+move away from Camlp4 and adopt PPX; and producing a prototype unikernel
+displaying rich terminal output via telnet.</p>
+
+<p>Partially motivated by the need to improve the experience of building and
+running unikernels, a number of hackers worked on improvements to <a href="https://github.com/verbosemode/syslogd-mirage">error
+reporting</a> and <a href="https://github.com/mirage/mirage-dev/pull/107">logging</a>. Improving the experience when things
+go wrong will be an important part of helping folks make unikernels with
+MirageOS.</p>
+
+<p>For more, and less structured, details of what went on, check out the
+<a href="http://canopy.mirage.io/">blog</a> some of us kept, or the <a href="https://github.com/ocamllabs/activity/wiki/MirageOS-Hackathon">meeting notes</a> from
+the few short morning meetings we had.</p>
+
+<p>It seems that when surrounded by like-minded, skilled people, in a pleasant
+atmosphere, and with absolutely nothing to do, people’s curiosity will reliably
+kick in. In between lieing in the sun (sunscreen was a hot commodity!), sinking
+into the <a href="https://twitter.com/rudenoise/status/709453313553596416">midday heat</a>, and talking to other hackers, not a single
+person failed to learn, practice, or produce something new.</p>
+
+<p>In this way, the first MirageOS hackathon was a resounding success. Friendships
+were forged, skills shared, and courses plotted. And although the same venue has
+already been booked for the next year’s event, there is ongoing chit-chat about
+cutting the downtime in half with a summer edition!</p>
+
+<p><img src="/graphics/2016-hackathon/heat.jpg" alt="heat" /></p>
+
+<hr />
+
+<h2 id="mirageos-hackathon-in-marrakech">MirageOS hackathon in Marrakech</h2>
+<p><em>Text and images by Enguerrand Decorne</em></p>
+
+<h3 id="setting-up-and-settling-in">Setting up and settling in</h3>
+
+<p>The first <a href="https://mirage.io/">MirageOS hackathon</a> was held from March 11th-16th 2016, at <a href="http://queenofthemedina.com/en/index.html">Priscilla, Queen of the Medina</a>, Marrakech. It successfully gathered around 30 Mirage enthusiasts, some already familiar with the MirageOS ecosystem, and others new to the community. People travelled from Europe and further afield for a week of sun, tajine and hacking.</p>
+
+<p><img src="/graphics/2016-hackathon/main_room.jpg" alt="Main room" title="The main room" /></p>
+
+<p>Getting to the guesthouse <a href="https://www.youtube.com/watch?v=zgzwmyxlKBE">was an adventure</a>, and once there we prepared by quickly setting up a nice internet hotspot then organised groups to head to the souk to meet new arrivals. 
+Soon enough the guest house was filled with people, and various new projects and ideas began to emerge. Having a few books and experienced OCaml developers around helped the OCaml newcomers get stuck in, and it didn’t take long to get their first unikernel or OCaml library up and running. Daily meetings were arranged at noon on the rooftop in order to allow the exchange of project ideas and questions, and we used the <a href="http://canopy.mirage.io/Index">hackathon notepad</a> to loosely pair projects and people together. Our <a href="https://mirage.io/blog/introducing-charrua-dhcp">DHCP server</a> enabled extensive dogfooding and successfully fulfilled our project-testing needs.</p>
+
+<p>Participants found a wide range of activities to keep themselves occupied during the event: contributing to the <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">MirageOS Pioneer Projects</a>, starting new projects and libraries, improving the MirageOS ecosystem and core components, discussing new ideas… or simply enjoying the sun, delicious tajine, or walking around Marrakech itself. Some expeditions were also (non)organised during the week, allowing sightseeing of the nicest local spots, or negotiating with local stallholders to get the best prices on souvenirs and fresh fruits to enjoy during hard hacking sessions.</p>
+
+<p><img src="/graphics/2016-hackathon/food.jpg" alt="Food" title="Some more food" /></p>
+
+<h3 id="my-week-inside-the-camels-nest">My week inside the camel’s nest</h3>
+
+<p>A few days before heading up to Marrakech (in a very non-organised fashion, having been offered a hackathon place only two days before!) the idea of writing some kind of notebook using Mirage had been floating around - we wanted to be able to allow people inside the hackathon to exchange ideas, and those not physically present to be kept updated about progress. I decided to write a simple blog unikernel, <a href="https://github.com/Engil/Canopy/">Canopy</a> which relies on <a href="https://github.com/mirage/irmin">Irmin’s</a> capabilities to synchronise remote git repositiories. By describing new pages in a format similar to Jekyll (and using Markdown) on a git repository, new content pushed there would be pulled to the website and displayed there nicely. This allowed every participant to report on their current projects, and see the content displayed on the notepad after a simple <code class="highlighter-rouge">git push</code>.</p>
+
+<p>The project was well received and new ideas started to emerge in order to turn it into a CMS enabling users to easily describe new website with a simple git repository. A huge thank you to <a href="https://github.com/mmaker">Michele</a> for his awesome contributions, as well as everyone involved with answering questions about the Mirage ecosystem along the way. This project also allowed me to dive a little further inside various libraries, report a few issues, discuss features and discover new concepts… A week well spent that I would be glad to repeat at the next MirageOS hackathon :)</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p><img src="/graphics/2016-hackathon/rooftop.jpg" alt="Rooftop" title="Rooftop view" /></p>
+
+<p>This hackathon was a huge success and allowed the MirageOS community to combine sun and high productivity in a crazy yet very relaxing week. We hope (and plan) to see more events like this, so anyone interested in OCaml, Mirage - expert or not - is more than welcome to join us next time!</p>
+
+<p><img src="/graphics/2016-hackathon/cats.jpg" alt="Cats" title="And obviously… Marrakech's cats!" /></p>
+
+<hr />
+
+<h2 id="mirageos--ocaml-newcomers">MirageOS + OCaml Newcomers</h2>
+<p><em>by Alfredo and Sonia</em></p>
+
+<p>Our experience in Marrakesh was great. We really enjoyed the place,
+the weather, the food, the people and the atmosphere! I think the
+setting was a great win, there was lot of open space where you could
+find a quiet spot for yourself to concentrate while programming,
+as well as a place with lots of people coding, or a place where you
+could be talking about anything while enjoying the sun, or just hang
+out and get lost for a while in the nice Marrakesh’s old city.</p>
+
+<p>We had already learnt some OCaml, but we both are quite new to both
+OCaml and MirageOS, so we decided to work on a project with low entry
+barrier so we could get in the loop more easily. Nevertheless we had to
+invest some time getting more familiar with the specifics of the OCaml
+environment (libraries, packaging, testing frameworks, etc.). Hannes
+kindly helped us getting started, showing us a library (<code class="highlighter-rouge">ocaml-hkdf</code>) we
+could use to understand this all better, and from here we could start
+writing some code. Having most of the authors (Thomas, David,
+Hannes…) of the libraries we used (<code class="highlighter-rouge">nocrypto</code>, <code class="highlighter-rouge">cstruct</code>, <code class="highlighter-rouge">alcotest</code>,
+<code class="highlighter-rouge">opam</code>…) there with us was also a win. Finally we managed to release a
+pair of libraries with key derivation functions (<code class="highlighter-rouge">ocaml-pbkdf</code> and
+<code class="highlighter-rouge">ocaml-scrypt-kdf</code>), so we are quite happy with the outcome.</p>
+
+<p>The only downside of the hackathon we can think of, if any, is that we
+didn’t get too deep into the MirageOS specifics (something we are
+surely willing to fix!), but we wanted to stay focused to keep
+productive and had enough new things to learn.</p>
+
+<hr />
+
+<h2 id="hackathon-projects">Hackathon Projects</h2>
+<p><em>by Ximin Luo</em></p>
+
+<p>Here’s a list of things I did during the hackathon:</p>
+
+<ul>
+  <li>Read into ocaml-tls and ocaml-otr implementations, as well as David’s “nqsb” TLS paper</li>
+  <li>Talked with David about developing a general pattern for implementing protocols, that allows one to compose components more easily and consistently. He pointed me to many resources that I could learn from and build on top of.</li>
+  <li>Read documents on “Extensible Effects”, “Freer Monads” and “Iteratee pattern” by Oleg Kiselyov.</li>
+  <li>Read documents and source code of the Haskell Pipes library by Gabriel Gonzalez.</li>
+  <li>Sent some PRs to Hannes’ jackline IM client, for better usability under some graphical environments.</li>
+  <li>Showed some people my ocaml-hello “minimal build scripts” example, and my ocaml emacs scripts.</li>
+  <li>Tested the “solo5” system that runs mirageos on kvm as an alternative to xen.</li>
+</ul>
+
+<p>I’m continuing with the following work in my spare time:</p>
+
+<ul>
+  <li>Read documents and source code of the opam monadlib library with a view to extending this and unifying it with other libraries such as lwt.</li>
+  <li>Using the approach of the Haskel Pipes library to develop a general protocol handler framework. I’m experimenting initially in Haskell but I’d also like to do it in OCaml when the ideas are more solid.</li>
+</ul>
+
+<p>In terms of the event it was great - everything worked out very well, I don’t have any suggestions for improvements :)</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+     <li><a href="/videos-around-world-2015">Videos from around the world!</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

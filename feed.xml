@@ -1,0 +1,1278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mirage</title>
+    <description>Mirage is an OCaml-based programming framework for building specialised unikernels.
+</description>
+    <link>https://mirage.github.io//</link>
+    <atom:link href="https://mirage.github.io//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 10 Feb 2017 02:51:54 +0000</pubDate>
+    <lastBuildDate>Fri, 10 Feb 2017 02:51:54 +0000</lastBuildDate>
+    <generator>Jekyll v3.2.1</generator>
+    
+    
+      <item>
+        <title>Irmin 0.12 with portable filesystem watching released</title>
+        <description>&lt;p&gt;Development of the &lt;a href=&quot;https://github.com/mirage/irmin&quot;&gt;Irmin&lt;/a&gt; Git-like data store continues (see &lt;a href=&quot;/blog/introducing-irmin&quot;&gt;here&lt;/a&gt; for an introduction). We are releasing &lt;a href=&quot;https://github.com/mirage/irmin/releases/tag/0.12.0&quot;&gt;Irmin 0.12.0&lt;/a&gt; which brings support for native file-system watchers to greatly improve the performance of watches on the datastore.&lt;/p&gt;
+
+&lt;p&gt;Previously, an Irmin application that wanted to use watches would setup file-system scanning/polling by doing:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  let () = Irmin_unix.install_dir_polling_listener 1.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;which would scan the &lt;code class=&quot;highlighter-rouge&quot;&gt;.git/refs&lt;/code&gt; directory every second. This worked in practice but was unpredictably latent (if unlucky you might wait for a full second for the watch callbacks to trigger), and disk/CPU intensive as we were scanning the full storage directory every second to detect file changes.  In the cases where the store had 1000s of tags, this could easily saturate the CPU. And in case you were wondering, there are increasing number of applications (such as &lt;a href=&quot;https://github.com/docker/datakit&quot;&gt;DataKit&lt;/a&gt;) that do create thousands of tags regularly, and &lt;a href=&quot;https://github.com/engil/Canopy&quot;&gt;Canopy&lt;/a&gt; that need low latency for interactive development.&lt;/p&gt;
+
+&lt;p&gt;In the new 0.12.0 release, you need to use:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   let () = Irmin_unix.set_listen_dir_hook ()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and the Irmin storage will do “the right thing”. If you are on Linux, and have the &lt;a href=&quot;https://opam.ocaml.org/packages/inotify/&quot;&gt;inotify OPAM package&lt;/a&gt; installed, it will use libinotify to get notified by the kernel on every change and re-scan the whole directory. On OSX, if you have the &lt;a href=&quot;https://opam.ocaml.org/packages/osx-fsevents/&quot;&gt;osx-fsevents OPAM package&lt;/a&gt; installed, it will do the same thing using the OSX &lt;a href=&quot;https://en.wikipedia.org/wiki/FSEvents&quot;&gt;FSEvents.framework&lt;/a&gt;. The portable compatibility layer between inotify and fsevents comes via the new &lt;a href=&quot;https://github.com/samoht/irmin-watcher/releases/tag/0.2.0&quot;&gt;irmin-watcher&lt;/a&gt; package that has been released recently as well.  This may also come in useful for other tools that require portable OCaml access to filesystem hierarchies.&lt;/p&gt;
+
+&lt;p&gt;If you are using Irmin, please do let us know how you are getting on via the
+&lt;a href=&quot;https://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel&quot;&gt;mailing list&lt;/a&gt;
+and report any bugs on the &lt;a href=&quot;https://github.com/mirage/irmin/issues&quot;&gt;issue tracker&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 17 Nov 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//irmin-0.12</link>
+        <guid isPermaLink="true">https://mirage.github.io//irmin-0.12</guid>
+        
+        <category>irmin</category>
+        
+        
+        <category>Releases</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>MirageOS Summer 2016 Hackathon roundup</title>
+        <description>&lt;p&gt;Our first Cambridge-based MirageOS hackathon took place yesterday - and what a fantastic day it was! The torrential rain may have halted our punting plans, but it didn’t stop progress in the Old Library! Darwin College was a fantastic venue, complete with private islands linked by picturesque wooden bridges and an unwavering wifi connection.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.flickr.com/photos/138528518@N02/sets/72157671241464475&quot;&gt;&lt;img src=&quot;/graphics/cambridge2016-hackathon.jpg&quot; align=&quot;right&quot; width=&quot;250px&quot; /&gt;&lt;/a&gt;
+People naturally formed groups to work on similar projects, and we had a handful of brand new users keen to get started with OCaml and Mirage.  The major tasks that emerged were:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;new hypervisor target&lt;/strong&gt;: the integration of the Solo5 KVM-based hypervisor backend, bringing the number of officially supported targets up to 3 (Xen, Unix and KVM)&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;build system template&lt;/strong&gt;: establishing a new &lt;a href=&quot;TODO&quot;&gt;topkg&lt;/a&gt;  template for MirageOS libraries, to prepare us for building a unified API documentation bundle that works across all the entire project.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;CPU portability&lt;/strong&gt;: improving ARM support via a better base OS image.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;libraries breadth&lt;/strong&gt;: hacking on all the things to fill in the blanks, such as btree support for bare-metal &lt;a href=&quot;https://github.com/mirage/irmin&quot;&gt;Irmin&lt;/a&gt;, or a peer-to-peer layer for the &lt;a href=&quot;https://github.com/docker/datakit&quot;&gt;DataKit&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We’ll write about all of this in more detail, but for now here are the hackathon notes hot off the press…&lt;/p&gt;
+
+&lt;h3 id=&quot;solo5mirageos-integration-kvm-based-backend&quot;&gt;Solo5/MirageOS integration (KVM-based backend)&lt;/h3&gt;
+
+&lt;p&gt;Progress on the Solo5 project has been steaming ahead &lt;a href=&quot;https://mirage.io/blog/introducing-solo5&quot;&gt;since January&lt;/a&gt;, and this was the perfect opportunity to get everyone together to plan its integration with MirageOS. &lt;a href=&quot;http://researcher.ibm.com/researcher/view.php?person=us-djwillia&quot;&gt;Dan Williams&lt;/a&gt; from IBM Research flew over to join us for the week, and &lt;a href=&quot;https://github.com/mato&quot;&gt;Martin Lucina&lt;/a&gt; headed to Cambridge to prepare for the upstreaming of the recent Solo5 work. This included deciding on naming and ownership of the repositories, detailing the relationships between repositories and getting ready to publish the mirage-solo5 packages to OPAM. &lt;a href=&quot;http://somerandomidiot.com&quot;&gt;Mindy Preston&lt;/a&gt;, our MirageOS 3.0 release manager, and &lt;a href=&quot;http://anil.recoil.org&quot;&gt;Anil Madhavapeddy&lt;/a&gt; and &lt;a href=&quot;http://gazagnaire.org&quot;&gt;Thomas Gazagnaire&lt;/a&gt; (OPAM minions) were on hand to help plan this smoothly.&lt;/p&gt;
+
+&lt;p&gt;See their updates from the day on &lt;a href=&quot;http://canopy.mirage.io/Posts/Solo5&quot;&gt;Canopy&lt;/a&gt; and related blog posts:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mirage.io/blog/introducing-solo5&quot;&gt;Introducing Solo 5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Unikernel Monitors HotCloud 2016 &lt;a href=&quot;https://www.usenix.org/system/files/conference/hotcloud16/hotcloud16_williams.pdf&quot;&gt;paper&lt;/a&gt; and &lt;a href=&quot;https://www.usenix.org/sites/default/files/conference/protected-files/hotcloud16_slides_williams.pdf&quot;&gt;slides&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Solo5/solo5/issues/36&quot;&gt;upstreaming GitHub issue&lt;/a&gt; and &lt;a href=&quot;https://github.com/Solo5/solo5/issues/61&quot;&gt;FreeBSD support tracking issue&lt;/a&gt; from Hannes Mehnert.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;onboarding-new-mirageosocaml-users&quot;&gt;Onboarding new MirageOS/OCaml users&lt;/h3&gt;
+
+&lt;p&gt;Our tutorials and onboarding guides &lt;em&gt;really&lt;/em&gt; needed a facelift and an update, so &lt;a href=&quot;https://ocaml.io/w/User:GemmaG&quot;&gt;Gemma Gordon&lt;/a&gt; spent the morning with some of our new users to observe their installation process and tried to pinpoint blockers and areas of misunderstanding. Providing the simple, concise instructions needed in a guide together with alternatives for every possible system and version requirement is a tricky combination to get right, but we made some &lt;a href=&quot;https://github.com/mirage/mirage-www/pull/468&quot;&gt;changes&lt;/a&gt; to the &lt;a href=&quot;https://mirage.io/wiki/install&quot;&gt;installation guide&lt;/a&gt; that we hope will help. The next task is to do the same for our other popular tutorials, reconfigure the layout for easy reading and centralise the information as much as possible between the OPAM, MirageOS and OCaml guides. Thank you to Marwan Aljubeh for his insight into this process.&lt;/p&gt;
+
+&lt;p&gt;Other industrial users are also steaming ahead with their own MirageOS deployments. &lt;a href=&quot;http://amirchaudhry.com&quot;&gt;Amir Chaudhry&lt;/a&gt; spent the hackathon blogging about &lt;a href=&quot;http://unikernel.org/blog/2016/unikernel-nfv-platform&quot;&gt;NFV Platforms with MirageOS unikernels&lt;/a&gt;, which details how Ericsson Silicon Valley has been using MirageOS to build lightweight routing kernels.&lt;/p&gt;
+
+&lt;h3 id=&quot;packaging&quot;&gt;Packaging&lt;/h3&gt;
+
+&lt;p&gt;Thomas Gazagnaire was frenetically converting &lt;code class=&quot;highlighter-rouge&quot;&gt;functoria&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage-types&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage-console&lt;/code&gt; to use &lt;a href=&quot;https://github.com/dbuenzli/topkg&quot;&gt;topkg&lt;/a&gt;, and the feedback prompted fixes and a new release from Daniel Buenzli.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mirage/functoria/pull/64&quot;&gt;Functoria #64&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mirage/mirage/pull/558&quot;&gt;Mirage #558&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mirage/mirage-console/pull/41&quot;&gt;Mirage-console #41&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;arm-and-cubieboards&quot;&gt;ARM and Cubieboards&lt;/h3&gt;
+
+&lt;p&gt;Ian Campbell implemented a (slightly hacky) way to get Alpine Linux onto some Cubieboard2 boxes and &lt;a href=&quot;https://gist.github.com/ijc25/612b8b7975e9461c3584b1402df2cb34&quot;&gt;provided notes&lt;/a&gt; on his process, including how to tailor the base for KVM and Xen respectively.&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, Qi Li worked on testing and adapting &lt;a href=&quot;https://github.com/yomimono/simple-nat&quot;&gt;simple-nat&lt;/a&gt; and &lt;a href=&quot;https://github.com/yomimono/mirage-nat&quot;&gt;mirage-nat&lt;/a&gt; to provide connectivity control for unikernels on ARM Cubieboards to act as network gateways.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/yomimono/simple-nat/tree/ethernet-level-no-irmin&quot;&gt;Simple-NAT ethernet branch&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/yomimono/mirage-nat/tree/depopt_irmin&quot;&gt;Mirage NAT with optional Irmin branch&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.cl.cam.ac.uk/~hm519/&quot;&gt;Hannes Mehnert&lt;/a&gt; recently published a purely functional &lt;a href=&quot;https://github.com/hannesm/arp&quot;&gt;ARP package&lt;/a&gt; and continued refining it (with code coverage via &lt;a href=&quot;https://github.com/aantron/bisect_ppx&quot;&gt;bisect-ppx&lt;/a&gt;) during the hackathon.&lt;/p&gt;
+
+&lt;h3 id=&quot;mirageos-30-api-changes&quot;&gt;MirageOS 3.0 API changes&lt;/h3&gt;
+
+&lt;p&gt;Our MirageOS release manager, Mindy Preston, was on hand to talk with everyone about their PRs in preparation for the 3.0 release along with some patches for deprecating out of date code.  There has been a lot of discussion on the &lt;a href=&quot;https://lists.xenproject.org/archives/html/mirageos-devel/2016-07/msg00000.html&quot;&gt;development list&lt;/a&gt;.  One focus was to address time handling properly in the interfaces: Matthew Gray came up from London to finish up his extensive revision of the &lt;a href=&quot;https://github.com/mirage/mirage/issues/442&quot;&gt;CLOCK&lt;/a&gt; interface, and Hannes developed a new &lt;a href=&quot;https://github.com/hannesm/duration&quot;&gt;duration&lt;/a&gt; library to handle time unit conversions safely and get rid of the need for floating point handling.  We are aiming to minimise the dependency on floating point handling in external interfaces to simplify compilation to very embedded hardware that only has soft floats (particularly for something as ubiquitous as time handling).&lt;/p&gt;
+
+&lt;h3 id=&quot;error-logging&quot;&gt;Error logging&lt;/h3&gt;
+
+&lt;p&gt;Thomas Leonard continued with the work he started in Marrakech by &lt;a href=&quot;https://github.com/mirage/functoria/pull/55&quot;&gt;updating the error reporting patches&lt;/a&gt; (also &lt;a href=&quot;https://github.com/mirage/mirage-dev/pull/107&quot;&gt;here&lt;/a&gt;) to work with the latest version of MirageOS (which has a different logging system based on Daniel Buenzlis &lt;a href=&quot;http://erratique.ch/software/logs&quot;&gt;Logs&lt;/a&gt;). See the &lt;a href=&quot;http://canopy.mirage.io/Posts/Errors&quot;&gt;original post&lt;/a&gt; for more details.&lt;/p&gt;
+
+&lt;h3 id=&quot;ctypes-070-release&quot;&gt;Ctypes 0.7.0 release&lt;/h3&gt;
+
+&lt;p&gt;Jeremy released the foreign function interface library &lt;a href=&quot;https://github.com/ocamllabs/ocaml-ctypes/releases/tag/0.7.0&quot;&gt;Ctypes 0.7.0&lt;/a&gt; which, along with bug fixes, adds the following features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Support for bytecode-only architectures (&lt;a href=&quot;https://github.com/ocamllabs/ocaml-ctypes/issues/410&quot;&gt;#410&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;A new &lt;code class=&quot;highlighter-rouge&quot;&gt;sint&lt;/code&gt; type corresponding to a full-range C integer and updated errno support for its use (&lt;a href=&quot;https://github.com/ocamllabs/ocaml-ctypes/issues/411&quot;&gt;#411&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;See the full changelog &lt;a href=&quot;https://github.com/ocamllabs/ocaml-ctypes/blob/master/CHANGES.md&quot;&gt;online&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;p2p-key-value-store-over-datakit&quot;&gt;P2P key-value store over DataKit&lt;/h3&gt;
+
+&lt;p&gt;KC Sivaramakrishnan and Philip Dexter took on the challenge of grabbing the Docker &lt;a href=&quot;https://github.com/docker/datakit&quot;&gt;DataKit&lt;/a&gt; release and started building a distributed key-value store that features flexible JSON synching and merging.  Their raw notes are in a &lt;a href=&quot;https://gist.github.com/kayceesrk/d3edb2da0aa9a3d40e9e3f838b67bd1a&quot;&gt;Gist&lt;/a&gt; – get in touch with them if you want to help hack on the sync system backed by Git.&lt;/p&gt;
+
+&lt;h3 id=&quot;developer-experience-improvements&quot;&gt;Developer experience improvements&lt;/h3&gt;
+
+&lt;p&gt;The OCaml Labs undergraduate interns are spending their summers working on user improvements and CI logs with MirageOS, and used the time at the hackathon to focus on these issues.&lt;/p&gt;
+
+&lt;p&gt;Ciaran Lawlor is working on an editor implementation, specifically getting the &lt;a href=&quot;https://github.com/andrewray/iocaml&quot;&gt;IOcaml kernel&lt;/a&gt; working with the &lt;a href=&quot;https://github.com/nteract/hydrogen&quot;&gt;Hydrogen&lt;/a&gt; plugin for the Atom editor. This will allow developers to run OCaml code directly in Atom, and eventually interactively build unikernels!&lt;/p&gt;
+
+&lt;p&gt;Joel Jakubovic used &lt;a href=&quot;https://github.com/inhabitedtype/angstrom&quot;&gt;Angstrom&lt;/a&gt; (a fast parser combinator library developed by Spiros Eliopoulos) to ANSI escape codes, usually displayed as colours and styles into HTML for use in viewing CI logs.&lt;/p&gt;
+
+&lt;h3 id=&quot;windows-support&quot;&gt;Windows Support&lt;/h3&gt;
+
+&lt;p&gt;Most of the Mirage libraries already work on Windows thanks to lots of work in the wider OCaml community, but other features don’t have full support yet.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://dave.recoil.org&quot;&gt;Dave Scott&lt;/a&gt; from Docker worked on &lt;a href=&quot;https://github.com/djs55/ocaml-wpcap&quot;&gt;ocaml-wpcap&lt;/a&gt;: a &lt;a href=&quot;https://github.com/ocamllabs/ocaml-ctypes&quot;&gt;ctypes&lt;/a&gt; binding to the Windows &lt;a href=&quot;http://www.winpcap.org&quot;&gt;winpcap.dll&lt;/a&gt; which lets OCaml programs send and receive ethernet frames on Windows. The ocaml-wpcap library will hopefully let us run the Mirage TCP/IP stack and all the networking applications too.&lt;/p&gt;
+
+&lt;p&gt;David Allsopp continued his OPAM-Windows support by fine-tuning the 80 native Windows OCaml versions - these will hopefully form part of OPAM 2.0. As it turns out, he’s not the only person still interested in being able to run OCaml 3.07…if you are, get in touch!&lt;/p&gt;
+
+&lt;h3 id=&quot;general-libraries-and-utilities&quot;&gt;General Libraries and utilities&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/OlivierNicole&quot;&gt;Olivier Nicole&lt;/a&gt; is working on an implementation of macros in OCaml and started working on the
+HTML and XML templates using this system. The objective is to have the same
+behaviour as the &lt;code class=&quot;highlighter-rouge&quot;&gt;Pa_tyxml&lt;/code&gt; syntax extension, but in a type-safe and more
+maintainable way without requiring PPX extensions. This project could be
+contributed to the development of &lt;a href=&quot;http://ocsigen.org&quot;&gt;Ocsigen&lt;/a&gt; once implemented.&lt;/p&gt;
+
+&lt;p&gt;Nick Betteridge teamed up with Dave Scott to look at using
+&lt;a href=&quot;https://github.com/djs55/ocaml-btree&quot;&gt;ocaml-btree&lt;/a&gt; as a backend for Irmin/xen
+and spent the day looking at different approaches.&lt;/p&gt;
+
+&lt;p&gt;Anil Madhavapeddy built a Docker wrapper for the CI system and spun up a big cluster
+to run OPAM bulk builds.  Several small utilities like &lt;a href=&quot;https://github.com/avsm/jsontee&quot;&gt;jsontee&lt;/a&gt; and
+an immutable &lt;a href=&quot;https://github.com/avsm/opam-log-server&quot;&gt;log collection server&lt;/a&gt; and
+&lt;a href=&quot;https://github.com/avsm/opam-bulk-builder&quot;&gt;bulk build scripts&lt;/a&gt; will be released in the
+next few weeks once the builds are running stably, and be re-usable by other OPAM-based
+projects to use for their own tests.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/Chris00&quot;&gt;Christophe Troestler&lt;/a&gt; is spending a month at
+&lt;a href=&quot;https://ocaml.io&quot;&gt;OCaml Labs&lt;/a&gt; in Cambridge this summer, and spent the hack day
+working on implementing a library to allow seamless application switching from
+HTTP to FastCGI. Christophe has initiated work on a client and server for this
+protocol using &lt;a href=&quot;https://github.com/mirage/ocaml-cohttp&quot;&gt;CoHTTP&lt;/a&gt; so that it is
+unikernel-friendly.&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 18 Jul 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//2016-summer-hackathon-roundup</link>
+        <guid isPermaLink="true">https://mirage.github.io//2016-summer-hackathon-roundup</guid>
+        
+        
+        <category>Events</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>MirageOS Summer 2016 Hackathon announcement, and talk roundup</title>
+        <description>&lt;p&gt;As summer starts to shine over an obstinately rainy England, we are organising
+the second MirageOS hackathon in Cambridge!  It will be held on &lt;strong&gt;Weds 13th
+July&lt;/strong&gt; at the lovely &lt;a href=&quot;https://www.darwin.cam.ac.uk&quot;&gt;Darwin College&lt;/a&gt; from
+9am-11pm, with snacks, teas, coffees and a servery lunch provided (thanks to
+sponsorship from &lt;a href=&quot;http://docker.com&quot;&gt;Docker&lt;/a&gt; and &lt;a href=&quot;https://ocaml.io&quot;&gt;OCaml Labs&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Anyone is welcome at all skill levels&lt;/strong&gt;, but we’d appreciate you filling out the
+&lt;a href=&quot;http://doodle.com/poll/ngbbviwyb9e65uiw&quot;&gt;Doodle&lt;/a&gt; so that we can plan
+refreshments.  We will be working on a variety of projects from improving ARM
+support, to continuous integration tests, the new Solo5 backend and improving
+the suite of protocol libraries.  If you have something in particular that
+interests you, please drop a note to the &lt;a href=&quot;/community&quot;&gt;mailing list&lt;/a&gt; or check
+out the full list of &lt;a href=&quot;https://github.com/mirage/mirage-www/wiki/Pioneer-Projects&quot;&gt;Pioneer Projects&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Some other events of note recently:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;After several years of scribing awesome notes about our development, Amir has handed over the reigns to &lt;a href=&quot;https://github.com/engil&quot;&gt;Enguerrand&lt;/a&gt;.
+Enguerrand joined OCaml Labs as an intern, and has built an IRC-to-Git logging bot which records our meetings over IRC and commits them
+directly to a &lt;a href=&quot;https://github.com/hannesm/canopy-data&quot;&gt;repository&lt;/a&gt; which is &lt;a href=&quot;http://canopy.mirage.io/irclogs&quot;&gt;available online&lt;/a&gt;.  Thanks Amir
+and Enguerrand for all their hard work on recording the growing amount of development in MirageOS.  &lt;a href=&quot;https://ocaml.io/w/User:GemmaG&quot;&gt;Gemma Gordon&lt;/a&gt;
+has also joined the project and been coordinating the &lt;a href=&quot;https://github.com/mirage/mirage-www/wiki/Call-Agenda&quot;&gt;meetings&lt;/a&gt;.  The next one is in a
+few hours, so please join us on &lt;code class=&quot;highlighter-rouge&quot;&gt;#mirage&lt;/code&gt; on Freenode IRC at 4pm British time if you would like to participate or are just curious!&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Our participation in the &lt;a href=&quot;https://wiki.gnome.org/Outreachy/2016/MayAugust&quot;&gt;Outreachy&lt;/a&gt; program for 2016 has begun, and the irrepressible
+&lt;a href=&quot;http://www.gina.codes&quot;&gt;Gina Marie Maini&lt;/a&gt; (aka &lt;a href=&quot;http://twitter.com/wiredsis&quot;&gt;wiredsister&lt;/a&gt;) has been hacking on syslogd, mentored by &lt;a href=&quot;http://somerandomidiot.com&quot;&gt;Mindy Preston&lt;/a&gt;.
+She has already started blogging (&lt;a href=&quot;http://www.gina.codes/ocaml/2016/06/06/syslog-a-tale-of-specifications.html&quot;&gt;about syslog&lt;/a&gt; and &lt;a href=&quot;http://www.gina.codes/ocaml/2016/02/14/dear-ocaml-i-love-you.html&quot;&gt;OCaml love&lt;/a&gt;), as well as &lt;a href=&quot;http://hanselminutes.com/531/living-functional-programming-with-ocaml-and-gina-marie-maini&quot;&gt;podcasting with the stars&lt;/a&gt;.  Welcome to the crew, Gina!&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The new &lt;a href=&quot;https://docs.docker.com/engine/installation/mac/&quot;&gt;Docker for Mac&lt;/a&gt; and &lt;a href=&quot;https://docs.docker.com/engine/installation/windows/&quot;&gt;Docker for Windows&lt;/a&gt; products have entered open beta! They use a number of libraries from MirageOS (including most of the network stack) and provide a fast way of getting started with containers and unikernel builds on Mac and Windows.  You can find talks about it at the recent &lt;a href=&quot;https://ocaml.io/w/Blog:News/FP_Meetup:_OCaml,_Facebook_and_Docker_at_Jane_Street&quot;&gt;JS London meetup&lt;/a&gt; and my &lt;a href=&quot;http://www.slideshare.net/AnilMadhavapeddy/advanced-docker-developer-workflows-on-macos-x-and-windows&quot;&gt;slides&lt;/a&gt;  I also spoke at OSCON 2016 about it, but those videos aren’t online yet.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There have also been a number of talks in the past couple of months about MirageOS and its libraries:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://researcher.watson.ibm.com/researcher/view.php?person=us-djwillia&quot;&gt;Dan Williams&lt;/a&gt; from IBM Research delivered a paper at &lt;a href=&quot;https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/williams&quot;&gt;USENIX HotCloud 2016&lt;/a&gt; about &lt;a href=&quot;https://www.usenix.org/system/files/conference/hotcloud16/hotcloud16_williams.pdf&quot;&gt;Unikernel Monitors&lt;/a&gt;. This explains the basis of his work on &lt;a href=&quot;https://mirage.io/blog/introducing-solo5&quot;&gt;Solo5&lt;/a&gt;, which we are currently integrating into MirageOS as a KVM-based boot backend to complement the Xen port.  You can also find his &lt;a href=&quot;https://www.usenix.org/sites/default/files/conference/protected-files/hotcloud16_slides_williams.pdf&quot;&gt;talk slides&lt;/a&gt; online.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/amirmc&quot;&gt;Amir Chaudhry&lt;/a&gt; has given several talks and demos recently: check out his slides and detailed
+writeups about &lt;a href=&quot;http://amirchaudhry.com/gluecon2016&quot;&gt;GlueCon 2016&lt;/a&gt; and &lt;a href=&quot;http://amirchaudhry.com/craftconf2016&quot;&gt;CraftConf 2016&lt;/a&gt; in particular,
+as they come with instructions on how to reproduce his Mirage/ARM on-stage demonstrations of unikernels.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/sgrove&quot;&gt;Sean Grove&lt;/a&gt; is speaking at &lt;a href=&quot;http://polyconf.com&quot;&gt;Polyconf 2016&lt;/a&gt; next week in Poland.  If you are in the region, he would love to meet up with you as well – his talk abstract is below
+&amp;gt; With libraries like Mirage, &lt;code class=&quot;highlighter-rouge&quot;&gt;js_of_ocaml&lt;/code&gt;, &amp;amp; ARM compiler output OCaml apps can operate at such a low level
+&amp;gt; we don’t even need operating systems on the backend anymore (removing 15 &lt;em&gt;million&lt;/em&gt; lines of memory-unsafe code)
+&amp;gt; - while at the same time, writing UI’s is easier &amp;amp; more reliable than ever before, with lightweight type-checked
+&amp;gt; code sharing between server, browser clients, &amp;amp; native mobile apps. We’ll look at what’s enabled by new tech
+&amp;gt; like Unikernels, efficient JS/ARM output, &amp;amp; easy host interop.&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Wed, 29 Jun 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//2016-summer-hackathon</link>
+        <guid isPermaLink="true">https://mirage.github.io//2016-summer-hackathon</guid>
+        
+        
+        <category>Events</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>MirageOS Spring 2016 Hackathon!</title>
+        <description>&lt;p&gt;We’re looking forward to the next MirageOS hackathon already!  We’ve collected some reports from those who were present at our &lt;a href=&quot;http://marrakech2016.mirage.io&quot;&gt;2016 Spring hackathon&lt;/a&gt; to share our excitement!  Thanks to the folks who put in the time and effort to organize the event and our wonderful hosts, and a huge thanks to everyone who documented their hackathon experience!&lt;/p&gt;
+
+&lt;p&gt;More information is also available at &lt;a href=&quot;http://canopy.mirage.io&quot;&gt;the Canopy site developed and used for information sharing during the hackathon&lt;/a&gt;!&lt;/p&gt;
+
+&lt;h2 id=&quot;trip-report&quot;&gt;Trip Report&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;by David Kaloper&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/roof_flash.jpg&quot; alt=&quot;roof-flash&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Last month, the MirageOS community saw its first community-organized, international
+&lt;a href=&quot;http://marrakech2016.mirage.io/&quot;&gt;hackathon&lt;/a&gt;. It took place between 11th and 16th March 2016. The venue?
+&lt;a href=&quot;http://queenofthemedina.com/en/index.html&quot;&gt;Rihad Priscilla&lt;/a&gt;, Marrakech, Morocco.&lt;/p&gt;
+
+&lt;p&gt;The place turned out to be ideal for a community building exercise. A city
+bursting with life, scents and colors, a relaxed and friendly hostel with plenty
+of space, warm and sunny weather – all the elements of a good get-together
+were there. This is where some 25 hackers from all over the world convened, with
+various backgrounds and specialties, all sharing an interest in MirageOS.&lt;/p&gt;
+
+&lt;p&gt;Not wanting to limit ourselves to breaking only those conventions, we added another layer: the
+hackathon was set up as a classical anti-conference, with a bare minimum of
+structure, no pre-defined program, and a strong focus on one-on-one work,
+teaching, and collaboration.&lt;/p&gt;
+
+&lt;p&gt;As this was the first hackathon, this time the focus was on building up the nascent
+community that already exists around MirageOS. Faces were put to online handles, stories were
+exchanged, and connections were forged. Meeting in person helped bring a new
+level of cohesion to the online community around the project, as witnessed by
+the flurry of online conversations between people that were present, and have continued after
+the event ended.&lt;/p&gt;
+
+&lt;p&gt;One particularly useful (however inglorious) activity proved to be introducing
+people to the tool chain. Even though the MirageOS website has a
+&lt;a href=&quot;https://mirage.io/docs&quot;&gt;documentation&lt;/a&gt; section with various documents on the architecture
+of the project, technical blog posts and a series of examples to get newcomers
+started, a number of people found it difficult to juggle all the concepts and
+tools involved. Where is the line dividing &lt;code class=&quot;highlighter-rouge&quot;&gt;ocamlfind&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;opam&lt;/code&gt; and what
+exactly constitutes an OCaml library? What is the correct way to declare
+dependencies not covered by the declarative configuration language? When should
+one use &lt;code class=&quot;highlighter-rouge&quot;&gt;add_to_opam_packages&lt;/code&gt;, and when &lt;code class=&quot;highlighter-rouge&quot;&gt;add_to_ocamlfind_libraries&lt;/code&gt;? Will the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; tool take care of installing missing packages so declared?&lt;/p&gt;
+
+&lt;p&gt;Although these questions either have answers scattered throughout the docs, or
+are almost obvious to an experienced MirageOS developer, such getting-started
+issues proved to be an early obstacle for a number of hackathon participants.
+While our project documentation certainly could – and will! – be improved with
+the perspective of a new developer in mind, this was an opportunity to help
+participants get a more comprehensive overview of the core tooling in an
+efficient, one-to-one setting. As a result, we saw a number of developers go
+from trying to get the examples to compile to making their own unikernels within
+a day, something pretty awesome to witness!&lt;/p&gt;
+
+&lt;p&gt;Another fun thread was dogfooding the network stack. Network itself was provided
+by our venue Priscilla, but we brought our own routers and access points. DHCP on site was
+served by &lt;a href=&quot;https://github.com/haesbaert/charrua-core&quot;&gt;Charrua&lt;/a&gt;, which stood up to the task admirably. We were able
+to access arbitrary domains on the Internet, almost all of the time!&lt;/p&gt;
+
+&lt;p&gt;A group of hackers had a strong web background, and decided to focus their
+efforts there. Perhaps the most interesting project to come out of this is
+&lt;a href=&quot;https://github.com/Engil/Canopy&quot;&gt;Canopy&lt;/a&gt;. Canopy is best described as the first dynamic offering in the
+space of static web site generators! It combines &lt;a href=&quot;https://github.com/mirage/irmin&quot;&gt;Irmin&lt;/a&gt; with
+&lt;a href=&quot;http://ocsigen.org/tyxml&quot;&gt;TyXML&lt;/a&gt;, &lt;a href=&quot;https://github.com/mirage/ocaml-cow&quot;&gt;COW&lt;/a&gt;, and &lt;a href=&quot;https://github.com/mirage/mirage-http&quot;&gt;Mirage HTTP&lt;/a&gt;, to create a simple,
+one-stop solution for putting content on the web. A Canopy unikernel boots,
+pulls a series of markdown files from a git repository, renders them, and serves
+them via HTTP. Expect more to come in this space, as Canopy has already proved
+to be a handy tool to simply put something on the web.&lt;/p&gt;
+
+&lt;p&gt;At the same time, the atmosphere was conducive for discussing how OCaml
+in general, and MirageOS in particular, fits in the web development ecosystem.
+As a language originally honed in different contexts, it’s the opinion of a number
+of practicing web developers that the current OCaml ecosystem is not as
+conducive to supporting their day-to-day work as it could be. These brainstorming
+sessions led to a &lt;a href=&quot;https://github.com/fxfactorial/an-ocaml-adoption-manifesto&quot;&gt;writeup&lt;/a&gt; which tries to summarize the
+current state and plot the course forward.&lt;/p&gt;
+
+&lt;p&gt;Another group of hackers was more focused on security and privacy
+technology. MirageOS boasts its own cryptographic core and a TLS stack,
+providing a solid base for development of cryptographic protocols. We saw
+coordinated work on improving the &lt;a href=&quot;https://github.com/mirleft/ocaml-nocrypto/pull/93&quot;&gt;cryptographic layer&lt;/a&gt;;
+implementations of a few key-derivation functions (&lt;a href=&quot;https://github.com/abeaumont/ocaml-scrypt-kdf&quot;&gt;Scrypt&lt;/a&gt; and
+&lt;a href=&quot;https://github.com/abeaumont/ocaml-pbkdf&quot;&gt;PBKDF&lt;/a&gt;); and even a beginning of an &lt;a href=&quot;https://github.com/isakmp/ike&quot;&gt;IKEv2&lt;/a&gt; implementation.&lt;/p&gt;
+
+&lt;p&gt;A further common topic was networking, which is not entirely surprising for a
+network-centric unikernel platform. Amidst the enthusiasm, hackers in attendance
+started several projects related to general networking. These include a
+&lt;a href=&quot;https://github.com/andreas/mirage-swim&quot;&gt;SWIM&lt;/a&gt; membership protocol implementation, the beginnings of
+&lt;a href=&quot;https://github.com/hannesm/telnet&quot;&gt;telnet&lt;/a&gt; for Mirage, &lt;a href=&quot;https://github.com/cfcs/ocaml-socks&quot;&gt;SOCKS4&lt;/a&gt; packet handling,
+&lt;a href=&quot;https://github.com/cfcs/ocaml-wildcard&quot;&gt;DNS wildcard&lt;/a&gt; matching, Charrua updates, and more.&lt;/p&gt;
+
+&lt;p&gt;In between these threads of activity, people used the time to get general
+MirageOS work done. This resulted in lots of progress including: making
+&lt;a href=&quot;http://lcamtuf.coredump.cx/afl/&quot;&gt;AFL&lt;/a&gt;, already supported by OCaml, run against MirageOS unikernels; a
+comprehensive update of error reporting across the stack; a concentrated push to
+move away from Camlp4 and adopt PPX; and producing a prototype unikernel
+displaying rich terminal output via telnet.&lt;/p&gt;
+
+&lt;p&gt;Partially motivated by the need to improve the experience of building and
+running unikernels, a number of hackers worked on improvements to &lt;a href=&quot;https://github.com/verbosemode/syslogd-mirage&quot;&gt;error
+reporting&lt;/a&gt; and &lt;a href=&quot;https://github.com/mirage/mirage-dev/pull/107&quot;&gt;logging&lt;/a&gt;. Improving the experience when things
+go wrong will be an important part of helping folks make unikernels with
+MirageOS.&lt;/p&gt;
+
+&lt;p&gt;For more, and less structured, details of what went on, check out the
+&lt;a href=&quot;http://canopy.mirage.io/&quot;&gt;blog&lt;/a&gt; some of us kept, or the &lt;a href=&quot;https://github.com/ocamllabs/activity/wiki/MirageOS-Hackathon&quot;&gt;meeting notes&lt;/a&gt; from
+the few short morning meetings we had.&lt;/p&gt;
+
+&lt;p&gt;It seems that when surrounded by like-minded, skilled people, in a pleasant
+atmosphere, and with absolutely nothing to do, people’s curiosity will reliably
+kick in. In between lieing in the sun (sunscreen was a hot commodity!), sinking
+into the &lt;a href=&quot;https://twitter.com/rudenoise/status/709453313553596416&quot;&gt;midday heat&lt;/a&gt;, and talking to other hackers, not a single
+person failed to learn, practice, or produce something new.&lt;/p&gt;
+
+&lt;p&gt;In this way, the first MirageOS hackathon was a resounding success. Friendships
+were forged, skills shared, and courses plotted. And although the same venue has
+already been booked for the next year’s event, there is ongoing chit-chat about
+cutting the downtime in half with a summer edition!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/heat.jpg&quot; alt=&quot;heat&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;mirageos-hackathon-in-marrakech&quot;&gt;MirageOS hackathon in Marrakech&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Text and images by Enguerrand Decorne&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;setting-up-and-settling-in&quot;&gt;Setting up and settling in&lt;/h3&gt;
+
+&lt;p&gt;The first &lt;a href=&quot;https://mirage.io/&quot;&gt;MirageOS hackathon&lt;/a&gt; was held from March 11th-16th 2016, at &lt;a href=&quot;http://queenofthemedina.com/en/index.html&quot;&gt;Priscilla, Queen of the Medina&lt;/a&gt;, Marrakech. It successfully gathered around 30 Mirage enthusiasts, some already familiar with the MirageOS ecosystem, and others new to the community. People travelled from Europe and further afield for a week of sun, tajine and hacking.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/main_room.jpg&quot; alt=&quot;Main room&quot; title=&quot;The main room&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Getting to the guesthouse &lt;a href=&quot;https://www.youtube.com/watch?v=zgzwmyxlKBE&quot;&gt;was an adventure&lt;/a&gt;, and once there we prepared by quickly setting up a nice internet hotspot then organised groups to head to the souk to meet new arrivals. 
+Soon enough the guest house was filled with people, and various new projects and ideas began to emerge. Having a few books and experienced OCaml developers around helped the OCaml newcomers get stuck in, and it didn’t take long to get their first unikernel or OCaml library up and running. Daily meetings were arranged at noon on the rooftop in order to allow the exchange of project ideas and questions, and we used the &lt;a href=&quot;http://canopy.mirage.io/Index&quot;&gt;hackathon notepad&lt;/a&gt; to loosely pair projects and people together. Our &lt;a href=&quot;https://mirage.io/blog/introducing-charrua-dhcp&quot;&gt;DHCP server&lt;/a&gt; enabled extensive dogfooding and successfully fulfilled our project-testing needs.&lt;/p&gt;
+
+&lt;p&gt;Participants found a wide range of activities to keep themselves occupied during the event: contributing to the &lt;a href=&quot;https://github.com/mirage/mirage-www/wiki/Pioneer-Projects&quot;&gt;MirageOS Pioneer Projects&lt;/a&gt;, starting new projects and libraries, improving the MirageOS ecosystem and core components, discussing new ideas… or simply enjoying the sun, delicious tajine, or walking around Marrakech itself. Some expeditions were also (non)organised during the week, allowing sightseeing of the nicest local spots, or negotiating with local stallholders to get the best prices on souvenirs and fresh fruits to enjoy during hard hacking sessions.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/food.jpg&quot; alt=&quot;Food&quot; title=&quot;Some more food&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;my-week-inside-the-camels-nest&quot;&gt;My week inside the camel’s nest&lt;/h3&gt;
+
+&lt;p&gt;A few days before heading up to Marrakech (in a very non-organised fashion, having been offered a hackathon place only two days before!) the idea of writing some kind of notebook using Mirage had been floating around - we wanted to be able to allow people inside the hackathon to exchange ideas, and those not physically present to be kept updated about progress. I decided to write a simple blog unikernel, &lt;a href=&quot;https://github.com/Engil/Canopy/&quot;&gt;Canopy&lt;/a&gt; which relies on &lt;a href=&quot;https://github.com/mirage/irmin&quot;&gt;Irmin’s&lt;/a&gt; capabilities to synchronise remote git repositiories. By describing new pages in a format similar to Jekyll (and using Markdown) on a git repository, new content pushed there would be pulled to the website and displayed there nicely. This allowed every participant to report on their current projects, and see the content displayed on the notepad after a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;git push&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The project was well received and new ideas started to emerge in order to turn it into a CMS enabling users to easily describe new website with a simple git repository. A huge thank you to &lt;a href=&quot;https://github.com/mmaker&quot;&gt;Michele&lt;/a&gt; for his awesome contributions, as well as everyone involved with answering questions about the Mirage ecosystem along the way. This project also allowed me to dive a little further inside various libraries, report a few issues, discuss features and discover new concepts… A week well spent that I would be glad to repeat at the next MirageOS hackathon :)&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/rooftop.jpg&quot; alt=&quot;Rooftop&quot; title=&quot;Rooftop view&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This hackathon was a huge success and allowed the MirageOS community to combine sun and high productivity in a crazy yet very relaxing week. We hope (and plan) to see more events like this, so anyone interested in OCaml, Mirage - expert or not - is more than welcome to join us next time!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/graphics/2016-hackathon/cats.jpg&quot; alt=&quot;Cats&quot; title=&quot;And obviously… Marrakech's cats!&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;mirageos--ocaml-newcomers&quot;&gt;MirageOS + OCaml Newcomers&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;by Alfredo and Sonia&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Our experience in Marrakesh was great. We really enjoyed the place,
+the weather, the food, the people and the atmosphere! I think the
+setting was a great win, there was lot of open space where you could
+find a quiet spot for yourself to concentrate while programming,
+as well as a place with lots of people coding, or a place where you
+could be talking about anything while enjoying the sun, or just hang
+out and get lost for a while in the nice Marrakesh’s old city.&lt;/p&gt;
+
+&lt;p&gt;We had already learnt some OCaml, but we both are quite new to both
+OCaml and MirageOS, so we decided to work on a project with low entry
+barrier so we could get in the loop more easily. Nevertheless we had to
+invest some time getting more familiar with the specifics of the OCaml
+environment (libraries, packaging, testing frameworks, etc.). Hannes
+kindly helped us getting started, showing us a library (&lt;code class=&quot;highlighter-rouge&quot;&gt;ocaml-hkdf&lt;/code&gt;) we
+could use to understand this all better, and from here we could start
+writing some code. Having most of the authors (Thomas, David,
+Hannes…) of the libraries we used (&lt;code class=&quot;highlighter-rouge&quot;&gt;nocrypto&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;cstruct&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;alcotest&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;opam&lt;/code&gt;…) there with us was also a win. Finally we managed to release a
+pair of libraries with key derivation functions (&lt;code class=&quot;highlighter-rouge&quot;&gt;ocaml-pbkdf&lt;/code&gt; and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ocaml-scrypt-kdf&lt;/code&gt;), so we are quite happy with the outcome.&lt;/p&gt;
+
+&lt;p&gt;The only downside of the hackathon we can think of, if any, is that we
+didn’t get too deep into the MirageOS specifics (something we are
+surely willing to fix!), but we wanted to stay focused to keep
+productive and had enough new things to learn.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;hackathon-projects&quot;&gt;Hackathon Projects&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;by Ximin Luo&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Here’s a list of things I did during the hackathon:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Read into ocaml-tls and ocaml-otr implementations, as well as David’s “nqsb” TLS paper&lt;/li&gt;
+  &lt;li&gt;Talked with David about developing a general pattern for implementing protocols, that allows one to compose components more easily and consistently. He pointed me to many resources that I could learn from and build on top of.&lt;/li&gt;
+  &lt;li&gt;Read documents on “Extensible Effects”, “Freer Monads” and “Iteratee pattern” by Oleg Kiselyov.&lt;/li&gt;
+  &lt;li&gt;Read documents and source code of the Haskell Pipes library by Gabriel Gonzalez.&lt;/li&gt;
+  &lt;li&gt;Sent some PRs to Hannes’ jackline IM client, for better usability under some graphical environments.&lt;/li&gt;
+  &lt;li&gt;Showed some people my ocaml-hello “minimal build scripts” example, and my ocaml emacs scripts.&lt;/li&gt;
+  &lt;li&gt;Tested the “solo5” system that runs mirageos on kvm as an alternative to xen.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’m continuing with the following work in my spare time:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Read documents and source code of the opam monadlib library with a view to extending this and unifying it with other libraries such as lwt.&lt;/li&gt;
+  &lt;li&gt;Using the approach of the Haskel Pipes library to develop a general protocol handler framework. I’m experimenting initially in Haskell but I’d also like to do it in OCaml when the ideas are more solid.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In terms of the event it was great - everything worked out very well, I don’t have any suggestions for improvements :)&lt;/p&gt;
+</description>
+        <pubDate>Wed, 04 May 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//2016-spring-hackathon</link>
+        <guid isPermaLink="true">https://mirage.github.io//2016-spring-hackathon</guid>
+        
+        
+        <category>Events</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>MirageOS security advisory 00: mirage-net-xen</title>
+        <description>&lt;p&gt;MirageOS Security Advisory 00 - memory disclosure in mirage-net-xen&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Module:       mirage-net-xen&lt;/li&gt;
+  &lt;li&gt;Announced:    2016-05-03&lt;/li&gt;
+  &lt;li&gt;Credits:      Enguerrand Decorne, Thomas Leonard, Hannes Mehnert, Mindy Preston&lt;/li&gt;
+  &lt;li&gt;Affects:      mirage-net-xen &amp;lt;1.4.2&lt;/li&gt;
+  &lt;li&gt;Corrected:    2016-01-08 1.5.0 release, 2016-05-03 1.4.2 release&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For general information regarding MirageOS Security Advisories,
+please visit &lt;a href=&quot;https://mirage.io/security&quot;&gt;https://mirage.io/security&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Hannes published a &lt;a href=&quot;https://hannes.nqsb.io/Posts/BadRecordMac&quot;&gt;blog article&lt;/a&gt; about
+the analysis of this issue.&lt;/p&gt;
+
+&lt;h3 id=&quot;background&quot;&gt;Background&lt;/h3&gt;
+
+&lt;p&gt;MirageOS is a library operating system using cooperative multitasking, which can
+be executed as a guest of the Xen hypervisor.  Virtual devices, such as a
+network device, share memory between MirageOS and the hypervisor.  MirageOS
+allocates and grants the hypervisor access to a ringbuffer containing pages to
+be sent on the network device, and another ringbuffer with pages to be filled
+with received data.  A write on the MirageOS side consists of filling the page
+with the packet data, submitting a write request to the hypervisor, and awaiting
+a response from the hypervisor.  To correlate the request with the response, a
+16bit identifier is used.&lt;/p&gt;
+
+&lt;h3 id=&quot;problem-description&quot;&gt;Problem Description&lt;/h3&gt;
+
+&lt;p&gt;Generating this 16bit identifier was not done in a unique manner.  When multiple
+pages share an identifier, and are requested to be transmitted via the wire, the
+first successful response will mark all pages with this identifier free, even
+those still waiting to be transmitted.  Once marked free, the MirageOS
+application fills the page for another chunk of data.  This leads to corrupted
+packets being sent, and can lead to disclosure of memory intended for another
+recipient.&lt;/p&gt;
+
+&lt;h3 id=&quot;impact&quot;&gt;Impact&lt;/h3&gt;
+
+&lt;p&gt;This issue discloses memory intended for another recipient.  All versions before
+mirage-net-xen 1.4.2 are affected.  The receiving side uses a similar mechanism,
+which may lead to corrupted incoming data (eventually even mutated while being
+processed).&lt;/p&gt;
+
+&lt;p&gt;Version 1.5.0, released on 8th January, already assigns unique identifiers for
+transmission.  Received pages are copied into freshly allocated buffers before
+passed to the next layer.  When 1.5.0 was released, the impact was not clear to
+us.  Version 1.6.1 now additionally ensures that received pages have a unique
+identifier.&lt;/p&gt;
+
+&lt;h3 id=&quot;workaround&quot;&gt;Workaround&lt;/h3&gt;
+
+&lt;p&gt;No workaround is available.&lt;/p&gt;
+
+&lt;h3 id=&quot;solution&quot;&gt;Solution&lt;/h3&gt;
+
+&lt;p&gt;The unique identifier is now generated in a unique manner using a monotonic
+counter.&lt;/p&gt;
+
+&lt;p&gt;Transmitting corrupt data and disclosing memory is fixed in versions 1.4.2 and
+above.&lt;/p&gt;
+
+&lt;p&gt;The recommended way to upgrade is:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;bash
+opam update
+opam upgrade mirage-net-xen
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Or, explicitly:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;bash
+opam upgrade
+opam reinstall mirage-net-xen=1.4.2
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Affected releases have been marked uninstallable in the opam repository.&lt;/p&gt;
+
+&lt;h3 id=&quot;correction-details&quot;&gt;Correction details&lt;/h3&gt;
+
+&lt;p&gt;The following list contains the correction revision numbers for each
+affected branch.&lt;/p&gt;
+
+&lt;p&gt;Memory disclosure on transmit:&lt;/p&gt;
+
+&lt;p&gt;master: &lt;a href=&quot;https://github.com/mirage/mirage-net-xen/commit/47de2edfad9c56110d98d0312c1a7e0b9dcc8fbf&quot;&gt;47de2edfad9c56110d98d0312c1a7e0b9dcc8fbf&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;1.4: &lt;a href=&quot;https://github.com/mirage/mirage-net-xen/commit/ec9b1046b75cba5ae3473b2d3b223c3d1284489d&quot;&gt;ec9b1046b75cba5ae3473b2d3b223c3d1284489d&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Corrupt data while receiving:&lt;/p&gt;
+
+&lt;p&gt;master: &lt;a href=&quot;https://github.com/mirage/mirage-net-xen/commit/0b1e53c0875062a50e2d5823b7da0d8e0a64dc37&quot;&gt;0b1e53c0875062a50e2d5823b7da0d8e0a64dc37&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;1.4: &lt;a href=&quot;https://github.com/mirage/mirage-net-xen/commit/6daad38af2f0b5c58d6c1fb24252c3eed737ede4&quot;&gt;6daad38af2f0b5c58d6c1fb24252c3eed737ede4&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/mirage/mirage-net-xen&quot;&gt;mirage-net-xen&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can find the latest version of this advisory online at
+&lt;a href=&quot;https://mirage.io/blog/MSA00&quot;&gt;https://mirage.io/blog/MSA00&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This advisory is signed using OpenPGP, you can verify the signature
+by downloading our public key from a keyserver (&lt;code class=&quot;highlighter-rouge&quot;&gt;gpg --recv-key 4A732D757C0EDA74&lt;/code&gt;),
+downloading the raw markdown source of this advisory from &lt;a href=&quot;https://raw.githubusercontent.com/mirage/mirage-www/master/tmpl/advisories/00.txt.asc&quot;&gt;GitHub&lt;/a&gt;
+and executing &lt;code class=&quot;highlighter-rouge&quot;&gt;gpg --verify 00.md.asc&lt;/code&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 03 May 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//MSA00</link>
+        <guid isPermaLink="true">https://mirage.github.io//MSA00</guid>
+        
+        <category>advisory</category>
+        
+        
+        <category>Advisories</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>Introducing Functoria</title>
+        <description>&lt;p&gt;For the last few months, I’ve been working with &lt;a href=&quot;http://www.gazagnaire.org&quot;&gt;Thomas&lt;/a&gt; on improving the &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; tool and
+I’m happy to present &lt;a href=&quot;https://github.com/mirage/functoria&quot;&gt;Functoria&lt;/a&gt;, a library to create arbitrary MirageOS-like DSLs. Functoria is independent from &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; and will replace the core engine, which was somewhat bolted on to the tool until now.&lt;/p&gt;
+
+&lt;p&gt;This introduces a few breaking changes so please consult
+&lt;a href=&quot;../docs/breaking-changes&quot;&gt;the breaking changes page&lt;/a&gt; to see what is different and how to fix things if needed.
+The good news is that it will be much more simple to use, much more flexible,
+and will even produce pretty pictures!&lt;/p&gt;
+
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;For people unfamiliar with MirageOS, the &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; tool handles configuration of mirage unikernels by reading an OCaml file describing the various pieces and dependencies of the project.
+Based on this configuration it will use &lt;a href=&quot;http://opam.ocaml.org/&quot;&gt;opam&lt;/a&gt; to install the dependencies, handle various configuration tasks and emit a build script.&lt;/p&gt;
+
+&lt;p&gt;A very simple configuration file looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;open Mirage
+let main = foreign &quot;Unikernel.Main&quot; (console @-&amp;gt; job)
+let () = register &quot;console&quot; [main $ default_console]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It declares a new functor, &lt;code class=&quot;highlighter-rouge&quot;&gt;Unikernel.Main&lt;/code&gt;, which take a console as an argument and instantiates it on the &lt;code class=&quot;highlighter-rouge&quot;&gt;default_console&lt;/code&gt;. For more details about unikernel configuration, please read the &lt;a href=&quot;../wiki/hello-world&quot;&gt;hello-world&lt;/a&gt; tutorial.&lt;/p&gt;
+
+&lt;h2 id=&quot;keys&quot;&gt;Keys&lt;/h2&gt;
+
+&lt;p&gt;A &lt;a href=&quot;https://github.com/mirage/mirage/issues/229&quot;&gt;much&lt;/a&gt; &lt;a href=&quot;https://github.com/mirage/mirage/issues/228&quot;&gt;demanded&lt;/a&gt; &lt;a href=&quot;https://github.com/mirage/mirage/issues/231&quot;&gt;feature&lt;/a&gt; has been the ability to define so-called bootvars.
+Bootvars are variables whose value is set either at configure time or at
+startup time.&lt;/p&gt;
+
+&lt;p&gt;A good example of a bootvar would be the IP address of the HTTP stack. For example, you may wish to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Set a good default directly in the &lt;code class=&quot;highlighter-rouge&quot;&gt;config.ml&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Provide a value at configure time, if you are already aware of deployment conditions.&lt;/li&gt;
+  &lt;li&gt;Provide a value at startup time, for last minute changes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All of this is now possible using &lt;strong&gt;keys&lt;/strong&gt;. A key is composed of:
+- &lt;em&gt;name&lt;/em&gt; — The name of the value in the program.
+- &lt;em&gt;description&lt;/em&gt; — How it should be displayed/serialized.
+- &lt;em&gt;stage&lt;/em&gt; — Is the key available only at runtime, at configure time, or both?
+- &lt;em&gt;documentation&lt;/em&gt; — This is not optional, so you have to write it.&lt;/p&gt;
+
+&lt;p&gt;Imagine we are building a multilingual unikernel and we want to pass the
+default language as a parameter. The language parameter is an optional string, so we use the &lt;a href=&quot;http://mirage.github.io/functoria/Functoria_key.Arg.html#VALopt&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;opt&lt;/code&gt;&lt;/a&gt; and &lt;a href=&quot;http://mirage.github.io/functoria/Functoria_key.Arg.html#VALstring&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;string&lt;/code&gt;&lt;/a&gt; combinators. We want to be able to define it both
+at configure and run time, so we use the stage &lt;code class=&quot;highlighter-rouge&quot;&gt;`Both&lt;/code&gt;. This gives us the following code:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;let lang_key =
+  let doc = Key.Arg.info
+      ~doc:&quot;The default language for the unikernel.&quot; [ &quot;l&quot; ; &quot;lang&quot; ]
+  in
+  Key.(create &quot;language&quot; Arg.(opt ~stage:`Both string &quot;en&quot; doc))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Here, we defined both a long option &lt;code class=&quot;highlighter-rouge&quot;&gt;--lang&lt;/code&gt;, and a short one &lt;code class=&quot;highlighter-rouge&quot;&gt;-l&lt;/code&gt;, (the format is similar to the one used by &lt;a href=&quot;http://erratique.ch/software/cmdliner&quot;&gt;Cmdliner&lt;/a&gt;).
+In the unikernel, the value is retrieved with &lt;code class=&quot;highlighter-rouge&quot;&gt;Key_gen.language ()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The option is also documented in the &lt;code class=&quot;highlighter-rouge&quot;&gt;--help&lt;/code&gt; option for both &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage configure&lt;/code&gt; (at configure time) and &lt;code class=&quot;highlighter-rouge&quot;&gt;./my_unikernel&lt;/code&gt; (at startup time).&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;       -l VAL, --lang=VAL (absent=en)
+           The default language for the unikernel.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A simple example of a unikernel with a key is available in &lt;a href=&quot;https://github.com/mirage/mirage-skeleton&quot;&gt;mirage-skeleton&lt;/a&gt; in the &lt;a href=&quot;https://github.com/mirage/mirage-skeleton/tree/master/hello&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; directory&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;switching-implementation&quot;&gt;Switching implementation&lt;/h3&gt;
+
+&lt;p&gt;We can do much more with keys, for example we can use them to switch devices at configure time.
+To illustrate, let us take the example of dynamic storage, where we want to choose between a block device and a crunch device with a command line option.
+In order to do that, we must first define a boolean key:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;let fat_key =
+  let doc = Key.Arg.info
+      ~doc:&quot;Use a fat device if true, crunch otherwise.&quot; [ &quot;fat&quot; ]
+  in
+  Key.(create &quot;fat&quot; Arg.(opt ~stage:`Configure bool false doc))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can use the &lt;a href=&quot;http://mirage.github.io/functoria/Functoria.html#VALif_impl&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;if_impl&lt;/code&gt;&lt;/a&gt; combinator to choose between two devices depending on the value of the key.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;let dynamic_storage =
+  if_impl (Key.value fat_key)
+    (kv_ro_of_fs my_fat_device)
+    (my_crunch_device)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can now use this device as a normal storage device of type &lt;code class=&quot;highlighter-rouge&quot;&gt;kv_ro impl&lt;/code&gt;! The key is also documented in &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage configure --help&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;       --fat=VAL (absent=false)
+           Use a fat device if true, crunch otherwise.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It is also possible to compute on keys before giving them to &lt;code class=&quot;highlighter-rouge&quot;&gt;if_impl&lt;/code&gt;, combining multiple keys in order to compute a value, and so on. For more details, see the &lt;a href=&quot;http://mirage.github.io/functoria/&quot;&gt;API&lt;/a&gt; and the various examples available in &lt;a href=&quot;https://github.com/mirage/mirage&quot;&gt;mirage&lt;/a&gt; and &lt;a href=&quot;https://github.com/mirage/mirage-skeleton&quot;&gt;mirage-skeleton&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Switching keys opens various possibilities, for example a &lt;code class=&quot;highlighter-rouge&quot;&gt;generic_stack&lt;/code&gt; combinator is now implemented in &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; that will switch between socket stack, direct stack with DHCP, and direct stack with static IP, depending on command line arguments.&lt;/p&gt;
+
+&lt;h2 id=&quot;drawing-unikernels&quot;&gt;Drawing unikernels&lt;/h2&gt;
+
+&lt;p&gt;All these keys and dynamic implementations make for complicated unikernels. In order to clarify what is going on and help to configure our unikernels, we have a new command: &lt;code class=&quot;highlighter-rouge&quot;&gt;describe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let us consider the &lt;code class=&quot;highlighter-rouge&quot;&gt;console&lt;/code&gt; example in &lt;a href=&quot;https://github.com/mirage/mirage-skeleton&quot;&gt;mirage-skeleton&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;open Mirage
+
+let main = foreign &quot;Unikernel.Main&quot; (console @-&amp;gt; job)
+let () = register &quot;console&quot; [main $ default_console]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is fairly straightforward: we define a &lt;code class=&quot;highlighter-rouge&quot;&gt;Unikernel.Main&lt;/code&gt; functor using a console and we
+instantiate it with the default console. If we execute &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage describe --dot&lt;/code&gt; in this directory, we will get the following output.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/img/dot/console.svg&quot;&gt;&lt;img src=&quot;/assets/img/dot/console.svg&quot; alt=&quot;A console unikernel&quot; title=&quot;My little unikernel&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see, there are already quite a few things going on!
+Rectangles are the various devices and you’ll notice that
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;default_console&lt;/code&gt; is actually two consoles: the one on Unix and the one on Xen. We use the &lt;code class=&quot;highlighter-rouge&quot;&gt;if_impl&lt;/code&gt; construction — represented as a circular node — to choose between the two during configuration.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; device handles the runtime key handling. It relies on an &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; device, which is similar to &lt;code class=&quot;highlighter-rouge&quot;&gt;console&lt;/code&gt;. Those devices are present in all unikernels.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; device is the device that brings all the jobs together (and on the hypervisor binds them).&lt;/p&gt;
+
+&lt;h2 id=&quot;data-dependencies&quot;&gt;Data dependencies&lt;/h2&gt;
+
+&lt;p&gt;You may have noticed dashed lines in the previous diagram, in particular from &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;Unikernel.Main&lt;/code&gt;. Those lines are data dependencies. For example, the &lt;code class=&quot;highlighter-rouge&quot;&gt;bootvar&lt;/code&gt; device has a dependency on the &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; device. It means that &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; is configured and run first, returns some data — an array of string — then &lt;code class=&quot;highlighter-rouge&quot;&gt;bootvar&lt;/code&gt; is configured and run.&lt;/p&gt;
+
+&lt;p&gt;If your unikernel has a data dependency — say, initializing the entropy — you can use the &lt;code class=&quot;highlighter-rouge&quot;&gt;~deps&lt;/code&gt; argument on &lt;code class=&quot;highlighter-rouge&quot;&gt;Mirage.foreign&lt;/code&gt;. The &lt;code class=&quot;highlighter-rouge&quot;&gt;start&lt;/code&gt; function of the unikernel will receive one extra argument for each dependency.&lt;/p&gt;
+
+&lt;p&gt;As an example, let us look at the &lt;a href=&quot;http://mirage.github.io/functoria/Functoria_app.html#VALapp_info&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;app_info&lt;/code&gt;&lt;/a&gt; device. This device makes the configuration information available at runtime. We can declare a dependency on it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;let main =
+  foreign &quot;Unikernel.Main&quot; ~deps:[abstract app_info] (console @-&amp;gt; job)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/img/dot/info.svg&quot;&gt;&lt;img src=&quot;/assets/img/dot/info.svg&quot; alt=&quot;A unikernel with info&quot; title=&quot;My informed unikernel&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The only difference with the previous unikernel is the data dependency — represented by a dashed arrow — going from &lt;code class=&quot;highlighter-rouge&quot;&gt;Unikernel.Main&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;Info_gen&lt;/code&gt;. This means that &lt;code class=&quot;highlighter-rouge&quot;&gt;Unikernel.Main.start&lt;/code&gt; will take an extra argument of type &lt;code class=&quot;highlighter-rouge&quot;&gt;Mirage_info.t&lt;/code&gt; which we can, for example, print:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;name: console
+libraries: [functoria.runtime; lwt.syntax; mirage-console.unix;
+            mirage-types.lwt; mirage.runtime; sexplib]
+packages: [functoria.0.1; lwt.2.5.0; mirage-console.2.1.3; mirage-unix.2.3.1;
+           sexplib.113.00.00]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The complete example is available in &lt;a href=&quot;https://github.com/mirage/mirage-skeleton&quot;&gt;mirage-skeleton&lt;/a&gt; in the &lt;a href=&quot;https://github.com/mirage/mirage-skeleton/tree/master/app_info&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;app_info&lt;/code&gt; directory&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;sharing&quot;&gt;Sharing&lt;/h2&gt;
+
+&lt;p&gt;Since we have a way to draw unikernels, we can now observe the sharing between various pieces. For example, the direct stack with static IP yields this diagram:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/img/dot/stack.svg&quot;&gt;&lt;img src=&quot;/assets/img/dot/stack.svg&quot; alt=&quot;A stack unikernel&quot; title=&quot;My stack unikernel&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can see that all the sub-parts of the stack have been properly shared. To be merged, two devices must have the same name, keys, dependencies and functor arguments.
+To force non-sharing of two devices, it is enough to give them different names.&lt;/p&gt;
+
+&lt;p&gt;This sharing also works up to switching keys. The generic stack gives us this diagram:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/img/dot/dynamic.svg&quot;&gt;&lt;img src=&quot;/assets/img/dot/dynamic.svg&quot; alt=&quot;A dynamic stack unikernel&quot; title=&quot;My generic unikernel&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If you look closely, you’ll notice that there are actually &lt;em&gt;three&lt;/em&gt; stacks in the last example: the &lt;em&gt;socket&lt;/em&gt; stack, the &lt;em&gt;direct stack with DHCP&lt;/em&gt;, and the &lt;em&gt;direct stack with IP&lt;/em&gt;. All controlled by switching keys.&lt;/p&gt;
+
+&lt;h2 id=&quot;all-your-functors-are-belong-to-us&quot;&gt;All your functors are belong to us&lt;/h2&gt;
+
+&lt;p&gt;There is more to be said about the new capabilities offered by functoria, in particular on how to define new devices. You can discover them by looking at the &lt;a href=&quot;https://github.com/mirage/mirage&quot;&gt;mirage&lt;/a&gt; implementation.&lt;/p&gt;
+
+&lt;p&gt;However, to wrap up this blog post, I offer you a visualization of the MirageOS website itself (brace yourself). &lt;a href=&quot;/assets/img/dot/www.svg&quot;&gt;Enjoy!&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thanks to &lt;a href=&quot;http://mort.io&quot;&gt;Mort&lt;/a&gt;, &lt;a href=&quot;http://somerandomidiot.com&quot;&gt;Mindy&lt;/a&gt;, &lt;a href=&quot;http://amirchaudhry.com&quot;&gt;Amir&lt;/a&gt; and &lt;a href=&quot;https://github.com/yallop&quot;&gt;Jeremy&lt;/a&gt;
+for their comments on earlier drafts.&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 29 Feb 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//releases/2016/02/29/introducing-functoria.html</link>
+        <guid isPermaLink="true">https://mirage.github.io//releases/2016/02/29/introducing-functoria.html</guid>
+        
+        <category>functoria</category>
+        
+        <category>cli</category>
+        
+        
+        <category>Releases</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>Run Mirage Unikernels on KVM/QEMU with Solo5</title>
+        <description>&lt;p&gt;I’m excited to announce the release of
+&lt;a href=&quot;https://github.com/solo5/solo5&quot;&gt;Solo5&lt;/a&gt;!
+Solo5 is essentially a kernel library that bootstraps the hardware and
+forms a base (similar to Mini-OS) from which unikernels can be built.
+It runs on fully virtualized x86 hardware (e.g., KVM/QEMU), using
+&lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; device interfaces.&lt;/p&gt;
+
+&lt;p&gt;Importantly, Solo5 is integrated (to some extent) with the MirageOS
+toolstack, so the Solo5 version of the Mirage toolstack can build
+Mirage unikernels that run directly on KVM/QEMU instead of Xen.  As
+such, Solo5 can be considered an alternative to Mini-OS in the Mirage
+stack.  &lt;a href=&quot;https://github.com/solo5/solo5&quot;&gt;Try it out
+today!&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;In the rest of this post, I’ll give a bit of motivation about why I
+think the lowest layer of the unikernel is interesting and important,
+as well as a rough overview of the steps I took to create Solo5.&lt;/p&gt;
+
+&lt;h3 id=&quot;why-focus-so-far-down-the-software-stack&quot;&gt;Why focus so far down the software stack?&lt;/h3&gt;
+
+&lt;p&gt;When people think about Mirage unikernels, one of the first things
+that comes to mind is the use of a high-level language (OCaml).
+Indeed, the Mirage community has invested lots of time and effort
+producing implementations of traditional system components (e.g., an
+entire &lt;a href=&quot;https://github.com/mirage/mirage-tcpip&quot;&gt;TCP stack&lt;/a&gt;) in OCaml.  The pervasive use of OCaml contributes to
+security arguments for Mirage unikernels (strong type systems are
+good) and is an interesting design choice well worth exploring.&lt;/p&gt;
+
+&lt;p&gt;But underneath all of that OCaml goodness is a little kernel layer
+written in C.  This layer has a direct impact on:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;What environments the unikernel can run on.&lt;/strong&gt; Mini-OS, for
+example, assumes a paravirtualized (Xen) machine, whereas Solo5
+targets full x86 hardware virtualization with &lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; devices.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Boot time.&lt;/strong&gt; “Hardware” initialization (or lack of it in a
+paravirtualized case) is a major factor in achieving the 20 ms
+unikernel boot times that are changing the way people think about
+elasticity in the cloud.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Memory layout and protection.&lt;/strong&gt; Hardware “features” like
+page-level write protection must be exposed by the lowest layer for
+techniques like memory tracing to be performed.  Also,
+software-level strategies like address space layout randomization
+require cooperation of this lowest layer.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Low-level device interfacing.&lt;/strong&gt; As individual devices (e.g., NICs)
+gain virtualization capabilities, the lowest software layer is an
+obvious place to interface directly with hardware.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Threads/events.&lt;/strong&gt; The low-level code must ensure that device I/O
+is asynchronous and/or fits with the higher-level synchronization
+primitives.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The most popular existing code providing this low-level kernel layer
+is called Mini-OS.  Mini-OS was (I believe) originally written as
+a vehicle to demonstrate the paravirtualized interface offered by Xen
+for people to have a reference to port their kernels to and as a base
+for new kernel builders to build specialized Xen domains.  Mini-OS is
+a popular base for &lt;a href=&quot;https://mirage.io&quot;&gt;MirageOS&lt;/a&gt;,
+&lt;a href=&quot;http://cnp.neclab.eu/clickos&quot;&gt;ClickOS&lt;/a&gt;,
+and &lt;a href=&quot;http://unikernel.org/projects/&quot;&gt;other unikernels&lt;/a&gt;.  Other
+software that implements a unikernel base include
+&lt;a href=&quot;http://rumpkernel.org/&quot;&gt;Rumprun&lt;/a&gt; and &lt;a href=&quot;http://osv.io/&quot;&gt;OSv&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I built Solo5 from scratch (rather than adapting Mini-OS, for example)
+primarily as an educational (and fun!) exercise to explore and really
+understand the role of the low-level kernel layer in a unikernel.  To
+provide applications, Solo5 supports the Mirage stack.  It is my hope
+that Solo5 can be a useful base for others; even if only at this point
+to run some Mirage applications on KVM/QEMU!&lt;/p&gt;
+
+&lt;h3 id=&quot;solo5-building-a-unikernel-base-from-scratch&quot;&gt;Solo5: Building a Unikernel Base from Scratch&lt;/h3&gt;
+
+&lt;p&gt;At a high level, there are roughly 3 parts to building a unikernel
+base that runs on KVM/QEMU and supports Mirage:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Typical kernel hardware initialization.&lt;/strong&gt; The kernel must know how
+to load things into memory at the desired locations and prepare
+the processor to operate in the correct mode (e.g., 64-bit).  Unlike
+typical kernels, most setup is one-time and simplified.  The kernel
+must set up a memory map, stack, interrupt vectors, and provide
+primitives for basic memory allocation.  At its simplest, a
+unikernel base kernel does not need to worry about user address
+spaces, threads, or many other things typical kernels need.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Interact with &lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; devices.&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; is a paravirtualized
+device standard supported by some hypervisors, including KVM/QEMU
+and Virtualbox.  As far as devices go, &lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; devices are simple:
+I was able to write (very simple/unoptimized) &lt;code class=&quot;highlighter-rouge&quot;&gt;virtio&lt;/code&gt; drivers for
+Solo5 drivers from scratch in C.  At some point it may be
+interesting to write them in OCaml like the Xen device drivers in
+Mirage, but for someone who doesn’t know OCaml (like me) a simple C
+implementation seemed like a good first step.  I should note that
+even though the drivers themselves are written in C, Solo5 does
+include some OCaml code to call out to the drivers so it can connect with
+Mirage.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Appropriately link Mirage binaries/build system.&lt;/strong&gt; A piece of
+software called &lt;a href=&quot;https://github.com/mirage/mirage-platform&quot;&gt;mirage-platform&lt;/a&gt;
+performs the binding between Mini-OS
+and the rest of the Mirage stack.  Building a new unikernel base
+means that this “cut point” will have lots of undefined dependencies
+which can either be implemented in the new unikernel base, stubbed
+out, or reused.  Other “cut points” involve device drivers: the
+console, network and block devices.  Finally, the &lt;code class=&quot;highlighter-rouge&quot;&gt;mirage&lt;/code&gt; tool
+needs to output appropriate Makefiles for the new target and an
+overall Makefile needs to put everything together.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each one of these steps carries complexity and gotchas and I have
+certainly made many mistakes when performing all of them.  The
+hardware initialization process is needlessly complex, and the overall
+Makefile reflects my ignorance of OCaml and its building and packaging
+systems.  It’s a work in progress!&lt;/p&gt;
+
+&lt;h3 id=&quot;next-steps-and-getting-involved&quot;&gt;Next Steps and Getting Involved&lt;/h3&gt;
+
+&lt;p&gt;In addition to the aforementioned clean up, I’m currently exploring
+the boot time in this environment.  So far I’ve found that generating
+a bootable iso with GRUB as a bootloader and relying on QEMU to
+emulate BIOS calls to load the kernel is, by the nature of emulation,
+inefficient and something that should be avoided.&lt;/p&gt;
+
+&lt;p&gt;If you find the lowest layer of the unikernel interesting, please
+don’t hesitate to contact me or get involved.  I’ve packaged the build
+and test environment for Solo5 into a Docker container to reduce the
+dependency burden in playing around with it.  Check out &lt;a href=&quot;https://github.com/solo5/solo5&quot;&gt;the
+repo&lt;/a&gt; for the full
+instructions!&lt;/p&gt;
+
+&lt;p&gt;I’ll be talking about Solo5 at the upcoming &lt;a href=&quot;http://wiki.xenproject.org/wiki/2016_Unikernels_and_More:_Cloud_Innovators_Forum_Schedule&quot;&gt;2016 Unikernels and More:
+Cloud Innovators
+Forum&lt;/a&gt;
+event to be held on January 22, 2016 at &lt;a href=&quot;https://www.socallinuxexpo.org/scale/14x&quot;&gt;SCALE
+14X&lt;/a&gt; in Pasadena, CA USA.  I
+look forward to meeting some of you there!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Discuss this post on &lt;a href=&quot;https://devel.unikernel.org/t/run-mirage-unikernels-on-kvm-qemu-with-solo5/59&quot;&gt;devel.unikernel.org&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thanks to &lt;a href=&quot;https://twitter.com/amirmc&quot;&gt;Amir&lt;/a&gt;,
+&lt;a href=&quot;http://mort.io&quot;&gt;Mort&lt;/a&gt;,
+and &lt;a href=&quot;https://github.com/yallop&quot;&gt;Jeremy&lt;/a&gt;,
+for taking the time to read and comment on earlier drafts.&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//introducing-solo5</link>
+        <guid isPermaLink="true">https://mirage.github.io//introducing-solo5</guid>
+        
+        <category>solo5</category>
+        
+        <category>kvm</category>
+        
+        
+        <category>Features</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>MirageOS hackathon</title>
+        <description>&lt;p&gt;The first MirageOS hackathon will take place in Marrakech, Morocco, from 11th till 16th March 2016.  It is open for everybody.  The main goal is to get together people motivated to contribute to MirageOS.&lt;/p&gt;
+
+&lt;p&gt;Find more details on &lt;a href=&quot;http://marrakech2016.mirage.io&quot;&gt;the hackathon website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Edit: discuss this post on &lt;a href=&quot;https://devel.unikernel.org/t/1st-mirageos-hackathon/24/1&quot;&gt;devel.unikernel.org&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 01 Jan 2016 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//hackathon-marrakech2016</link>
+        <guid isPermaLink="true">https://mirage.github.io//hackathon-marrakech2016</guid>
+        
+        <category>hackathon</category>
+        
+        
+        <category>Events</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>Introducing Charrua — a DHCP implementation</title>
+        <description>&lt;p&gt;Almost every network needs to support
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol&quot;&gt;DHCP&lt;/a&gt;
+(Dynamic
+Host Configuration Protocol), that is, a way for clients to request network
+parameters from the environment. Common parameters are an IP address, a network
+mask, a default gateway and so on.&lt;/p&gt;
+
+&lt;p&gt;DHCP can be seen as a critical security component, since it deals usually with
+unauthenticated/unknown peers, therefore it is of special interest to run a
+server as a self-contained MirageOS unikernel.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.github.com/haesbaert/charrua-core&quot;&gt;Charrua&lt;/a&gt; is a DHCP implementation
+written in OCaml and it started off as an excuse to learn more about the language.
+While in development it got picked up on the MirageOS mailing lists and became one
+of the &lt;a href=&quot;https://github.com/mirage/mirage-www/wiki/Pioneer-Projects&quot;&gt;Pioneer
+Projects&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The name &lt;code class=&quot;highlighter-rouge&quot;&gt;Charrua&lt;/code&gt; is a reference to the, now extinct, semi-nomadic people of
+southern South America — nowadays it is also used to refer to Uruguayan
+nationals. The logic is that DHCP handles dynamic (hence nomadic) clients.&lt;/p&gt;
+
+&lt;p&gt;The library is platform agnostic and works outside of MirageOS as well. It
+provides two main modules:
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html&quot;&gt;Dhcp_wire&lt;/a&gt; and
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.html&quot;&gt;Dhcp_server&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;dhcpwire&quot;&gt;Dhcp_wire&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html&quot;&gt;Dhcp_wire&lt;/a&gt; provides
+basic functions for dealing with the protocol, essentially
+marshalling/unmarshalling and helpers for dealing with the various DHCP options.&lt;/p&gt;
+
+&lt;p&gt;The central record type of
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html&quot;&gt;Dhcp_wire&lt;/a&gt; is a
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEpkt&quot;&gt;pkt&lt;/a&gt;, which
+represents a full DHCP packet, including layer 2 and layer 3 data as well as the
+many possible DHCP options. The most important functions are:&lt;/p&gt;
+
+&lt;div class=&quot;language-ocaml highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt_of_buf&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Cstruct&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&amp;gt;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Error&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Ok&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf_of_pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Cstruct&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALpkt_of_buf&quot;&gt;pkt_of_buf&lt;/a&gt; takes
+a &lt;a href=&quot;https://github.com/mirage/ocaml-cstruct&quot;&gt;Cstruct.t&lt;/a&gt; buffer and a length and it
+then attempts to build a DHCP packet. Unknown DHCP options are ignored, invalid
+options or malformed data are not accepted and you get an &lt;code class=&quot;highlighter-rouge&quot;&gt;`Error of string&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALbuf_of_pkt&quot;&gt;buf_of_pkt&lt;/a&gt; is
+the mirror function, but it never fails.  It could for instance fail in case of
+two duplicate DHCP options, but that would imply too much policy in a
+marshalling function.&lt;/p&gt;
+
+&lt;p&gt;The DHCP options from RFC2132 are implemented in
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEdhcp_option&quot;&gt;dhcp_option&lt;/a&gt;.
+There are more, but the most common ones look like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-ocaml highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dhcp_option&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Subnet_mask&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Time_offset&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int32&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Routers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Time_servers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Name_servers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Dns_servers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Log_servers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;dhcpserver&quot;&gt;Dhcp_server&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.html&quot;&gt;Dhcp_server&lt;/a&gt;
+Provides a library for building a DHCP server and is divided into two sub-modules:
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html&quot;&gt;Config&lt;/a&gt;,
+which handles the building of a suitable DHCP server configuration record and
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html&quot;&gt;Input&lt;/a&gt;,
+which handles the input of DHCP packets.&lt;/p&gt;
+
+&lt;p&gt;The logic is modelled in a pure functional style and
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.html&quot;&gt;Dhcp_server&lt;/a&gt; does
+not perform any IO of its own. It works by taking an input
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#TYPEpkt&quot;&gt;packet&lt;/a&gt;,
+ a
+ &lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Config.html#TYPEt&quot;&gt;configuration&lt;/a&gt;
+ and returns a possible reply to be sent by the caller, or an error/warning:&lt;/p&gt;
+
+&lt;h4 id=&quot;input&quot;&gt;Input&lt;/h4&gt;
+
+&lt;div class=&quot;language-ocaml highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Silence&lt;/span&gt;                 &lt;span class=&quot;c&quot;&gt;(* Input packet didn't belong to us, normal nop event. *)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Reply&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;(* A reply packet to be sent on the same subnet. *)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Warning&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;       &lt;span class=&quot;c&quot;&gt;(* An odd event, could be logged. *)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Error&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;(* Input packet is invalid, or some other error ocurred. *)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input_pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Dhcp_server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Dhcp_server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subnet&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;(** input_pkt config subnet pkt time Inputs packet pkt, the resulting action
+    should be performed by the caller, normally a Reply packet is returned and
+    must be sent on the same subnet. time is a float representing time as in
+    Unix.time or MirageOS's Clock.time. **)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A typical main server loop would work by:
+ 1. Reading a packet from the network.
+ 2. Unmarshalling with &lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html#VALpkt_of_buf&quot;&gt;Dhcp_wire.pkt_of_buf&lt;/a&gt;.
+ 3. Inputting the result with &lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt&quot;&gt;Dhcp_server.Input.input_pkt&lt;/a&gt;.
+ 4. Sending the reply, or logging the event from the &lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt&quot;&gt;Dhcp_server.Input.input_pkt&lt;/a&gt; call.&lt;/p&gt;
+
+&lt;p&gt;A mainloop example can be found in
+&lt;a href=&quot;https://github.com/mirage/mirage-skeleton/blob/master/dhcp/unikernel.ml#L28&quot;&gt;mirage-skeleton&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-ocaml highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input_dhcp&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subnet&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Dhcp_server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Input&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt_of_buf&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Cstruct&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;len&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Error&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Lwt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Can't parse packet: %s&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Ok&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input_pkt&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subnet&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Clock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Silence&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Lwt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;return_unit&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Warning&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Lwt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;yellow&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;%s&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Error&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Lwt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;%s&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Reply&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Received packet %s&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt_to_string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;nn&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf_of_pkt&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;fun&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Sent reply packet %s&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt_to_string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;nn&quot;&gt;Lwt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;return_unit&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As stated,
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt&quot;&gt;Dhcp_server.Input.input_pkt&lt;/a&gt;
+does not perform any IO of its own, it only deals with the logic of analyzing a
+DHCP packet and building a possible answer, which should then be sent by the
+caller. This allows a design where all the side effects are controlled in one
+small chunk, which makes it easier to understand the state transitions since they
+are made explicit.&lt;/p&gt;
+
+&lt;p&gt;At the time of this writing,
+&lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_server.Input.html#VALinput_pkt&quot;&gt;Dhcp_server.Input.input_pkt&lt;/a&gt;
+is not side effect free, as it manipulates a database of leases, this will be
+changed in the next version to be pure as well.&lt;/p&gt;
+
+&lt;p&gt;Storing leases in permanent storage is also unsupported at this time and
+should be available soon, with Irmin and other backends. The main idea is to
+always return a new lease database for each input, or maybe just the updates to
+be applied, and in this scenario, the caller would be able to store the database in
+permanent storage as he sees fit.&lt;/p&gt;
+
+&lt;h4 id=&quot;configuration&quot;&gt;Configuration&lt;/h4&gt;
+
+&lt;p&gt;This project started independently of MirageOS and at that time, the best
+configuration I could think of was the well known &lt;code class=&quot;highlighter-rouge&quot;&gt;ISC&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;dhcpd.conf&lt;/code&gt;. Therefore,
+the configuration uses the same format but it does not support the myriad of
+options of the original one.&lt;/p&gt;
+
+&lt;div class=&quot;language-ocaml highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;addresses&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Macaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;subnets&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subnet&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Dhcp_wire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dhcp_option&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;hostname&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;default_lease_time&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;max_lease_time&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Ipaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;V4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Prefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;addr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Macaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;(** [parse cf l] Creates a server configuration by parsing [cf] as an ISC
+      dhcpd.conf file, currently only the options at [sample/dhcpd.conf] are
+      supported. [l] is a list of network addresses, each pair is the output
+      address to be used for building replies and each must match a [network
+      section] of [cf]. A normal usage would be a list of all interfaces
+      configured in the system *)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Although it is a great format, it doesn’t exactly play nice with MirageOS and
+OCaml, since the unikernel needs to parse a string at runtime to build the
+configuration, this requires a file IO backend and other complications. The
+next version should provide OCaml helpers for building the configuration, which
+would drop the requirements of a file IO backend and facilitate writing tests.&lt;/p&gt;
+
+&lt;h3 id=&quot;building-a-simple-server&quot;&gt;Building a simple server&lt;/h3&gt;
+
+&lt;p&gt;The easiest way is to follow the &lt;a href=&quot;https://github.com/mirage/mirage-skeleton/blob/master/dhcp/README.md&quot;&gt;mirage-skeleton DHCP
+README&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;future&quot;&gt;Future&lt;/h3&gt;
+
+&lt;p&gt;The next steps would be:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Provide helpers for building the configuration.&lt;/li&gt;
+  &lt;li&gt;Expose the lease database in an immutable structure, possibly a &lt;code class=&quot;highlighter-rouge&quot;&gt;Map&lt;/code&gt;, adding
+also support/examples for &lt;a href=&quot;https://github.com/mirage/irmin&quot;&gt;Irmin&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;Use &lt;a href=&quot;https://github.com/mirage/functoria&quot;&gt;Functoria&lt;/a&gt; to pass down the
+configuration in &lt;a href=&quot;https://github.com/mirage/mirage-skeleton/blob/master/dhcp/README.md&quot;&gt;mirage-skeleton&lt;/a&gt;. Currently
+it is awkward since the user has to edit &lt;code class=&quot;highlighter-rouge&quot;&gt;unikernel.ml&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;config.ml&lt;/code&gt;, with
+&lt;a href=&quot;https://github.com/mirage/functoria&quot;&gt;Functoria&lt;/a&gt; we would be able to have it
+much nicer and only touch &lt;code class=&quot;highlighter-rouge&quot;&gt;config.ml&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Convert MirageOS DHCP client code to use &lt;a href=&quot;http://haesbaert.github.io/charrua-core/api/Dhcp_wire.html&quot;&gt;Dhcp_wire&lt;/a&gt;, or perhaps add a
+client logic functionality to &lt;a href=&quot;http://www.github.com/haesbaert/charrua-core&quot;&gt;Charrua&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;finishing-words&quot;&gt;Finishing words&lt;/h3&gt;
+
+&lt;p&gt;This is my first real project in OCaml and I’m more or less a newcomer to
+functional programming as well, my background is mostly kernel hacking as an
+ex-OpenBSD developer.
+I’d love to hear how people are actually using it and any problems they’re
+finding, so please do let me know via the
+&lt;a href=&quot;https://github.com/haesbaert/charrua-core/issues&quot;&gt;issue tracker&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;Prior to this project I had no contact with any of the MirageOS folks, but I’m
+amazed about how easy the interaction and communication with the community has been,
+everyone has been incredibly friendly and supportive. I’d say MirageOS is a gold
+project for anyone wanting to work with smart people and hack OCaml.&lt;/p&gt;
+
+&lt;p&gt;My many thanks to &lt;a href=&quot;http://anil.recoil.org&quot;&gt;Anil&lt;/a&gt;, &lt;a href=&quot;http://mort.io&quot;&gt;Richard&lt;/a&gt;, &lt;a href=&quot;https://github.com/hannesm&quot;&gt;Hannes&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/amirmc&quot;&gt;Amir&lt;/a&gt;, Scott, Gabriel and others.
+Thanks also to &lt;a href=&quot;http://roscidus.com/blog/&quot;&gt;Thomas&lt;/a&gt; and &lt;a href=&quot;https://github.com/Chris00/&quot;&gt;Christophe&lt;/a&gt; for comments on this post.
+I also
+would like to thank my &lt;a href=&quot;https://www.genua.de&quot;&gt;employer&lt;/a&gt; for letting me work on this
+project in our hackathons.&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 29 Dec 2015 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//introducing-charrua-dhcp</link>
+        <guid isPermaLink="true">https://mirage.github.io//introducing-charrua-dhcp</guid>
+        
+        <category>dhcp</category>
+        
+        
+        <category>Releases</category>
+        
+      </item>
+    
+    
+    
+      <item>
+        <title>Unikernel.org</title>
+        <description>&lt;p&gt;Unikernels are specialised single address space machine images that are
+constructed by using library operating systems. With MirageOS, we’ve taken a
+clean-slate approach to unikernels with a focus on safety. This involved
+writing protocol libraries from the ground up and it also afforded the ability
+to use clean, modern APIs.&lt;/p&gt;
+
+&lt;p&gt;Other unikernel implementations have made trade-offs different to those made
+by MirageOS. Some excel at handling legacy applications by making the most of
+existing OS codebases rather than building clean-slate implementations. Some
+target a wide array of possible environments, or environments complementary to
+those supported by MirageOS currently.
+All of these implementations ultimately help developers construct unikernels
+that match their specific needs and constraints.&lt;/p&gt;
+
+&lt;p&gt;As word about unikernels in general is spreading, more people are trying to
+learn about this new approach to programming the cloud and embedded devices.
+Since information is spread across multiple sites, it can be tricky to know
+where to get an overview and how to get started quickly. So to help people get
+on board, there’s a new community website at &lt;strong&gt;&lt;a href=&quot;http://unikernel.org&quot;&gt;unikernel.org&lt;/a&gt;&lt;/strong&gt;!&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;http://unikernel.org&quot;&gt;unikernel.org&lt;/a&gt; community site aims to collate information about the
+various projects and provide a focal point for early adopters to understand
+more about the technology and become involved in the projects themselves.&lt;/p&gt;
+
+&lt;p&gt;Over time, it will also become a gathering place for common infrastructure to
+form and be shared across projects.  Early examples of this include the
+scripts for booting on Amazon EC2, which began with MirageOS contributors but
+were used and improved by &lt;a href=&quot;http://rumpkernel.org&quot;&gt;Rump Kernel&lt;/a&gt; contributors.  You can follow the
+email threads where the script was &lt;a href=&quot;https://www.freelists.org/post/rumpkernel-users/EC2-launch-script-feedback-valued&quot;&gt;first proposed&lt;/a&gt; and ultimately
+provided &lt;a href=&quot;https://www.freelists.org/post/rumpkernel-users/Amazon-EC2-support-now-in-Rumprun&quot;&gt;EC2 support for Rumprun&lt;/a&gt;. Continuing to work together
+to make such advances will ease the process of bringing in new users and
+contributors across all the projects.&lt;/p&gt;
+
+&lt;p&gt;Please do visit the site and contribute stories about how you’re using and
+improving unikernels!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Edit: discuss this post on &lt;a href=&quot;https://devel.unikernel.org/t/why-we-need-unikernel-org/18/1&quot;&gt;devel.unikernel.org&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thanks to &lt;a href=&quot;http://anil.recoil.org&quot;&gt;Anil&lt;/a&gt;, &lt;a href=&quot;https://github.com/yallop&quot;&gt;Jeremy&lt;/a&gt; and &lt;a href=&quot;http://somerandomidiot.com&quot;&gt;Mindy&lt;/a&gt; for
+comments on an earlier draft.&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 17 Dec 2015 00:00:00 +0000</pubDate>
+        <link>https://mirage.github.io//unikernel-org</link>
+        <guid isPermaLink="true">https://mirage.github.io//unikernel-org</guid>
+        
+        
+        <category>General</category>
+        
+      </item>
+    
+    
+  </channel>
+</rss>

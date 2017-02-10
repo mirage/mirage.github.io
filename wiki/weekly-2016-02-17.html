@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2016-02-17</title>
+  <meta name="description" content="17th Feb 2016: Containers, 2.7 prep, Hackathon and Netmap.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2016-02-17">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2016-02-17</h1>
+  </header>
+
+  <div class="article-content">
+    <p>17th Feb 2016: Containers, 2.7 prep, Hackathon and Netmap.</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>Functoria status</li>
+  <li>GSoC</li>
+  <li>MirageOS Hackathon status</li>
+  <li>Persistent storage on Xen (FAT/btree/…)</li>
+  <li>Netmap</li>
+</ul>
+
+<p>Attendees:
+Amir, ThomasL, Mindy, Gemma, Hannes, tchell, Mort, Dave Scott, DanielB,
+Anil, Jeremy, ThomasG.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<ul>
+  <li>Anil has all containers pushed now and you can see them at
+https://hub.docker.com/r/ocaml/opam/</li>
+  <li>The <a href="https://hub.docker.com/r/ocaml/opam/">description</a> there contains all
+the info you need</li>
+  <li>We’ll try and use Alpine as the ‘base’ as it’s small.</li>
+  <li>Anil planning to write this up when he gets a chance.</li>
+  <li>These images should make it easier to run tests across many platforms etc</li>
+  <li>Still needs support for Arch Linux etc.</li>
+  <li>There are things to check but we’re doing well. 150 containers now.</li>
+  <li>DanielB tried it and liked it as he used to test his things with Virtual Box.
+Now just has to log in with command line and test things.</li>
+</ul>
+
+<h4 id="functoria-status">Functoria status</h4>
+
+<ul>
+  <li>Jeremy is happy and has merged a few things into Functoria. No objections
+from ThomasG.</li>
+  <li>This will be a 2.7 release (not a 3.0).</li>
+  <li>Functoria Blog post has a couple of TODO’s — one of which was a come up with
+a reasonable example. There’s a PR in the mirage-www repo. Mindy will consider
+that.</li>
+</ul>
+
+<h4 id="gsoc">GSoC</h4>
+
+<ul>
+  <li>Mort will be one of the GSoC admins along with Lars. This is lightweight and
+is mostly cover in case he’s away.</li>
+  <li>Application going in soon.</li>
+  <li>Lars also wanted to check that our projects are up to date.</li>
+</ul>
+
+<h4 id="mirageos-hackathon">MirageOS hackathon</h4>
+
+<ul>
+  <li>Hannes has put up wiki pages. Not many people have added things to them.</li>
+  <li>Support/sponsorship for students in place too.</li>
+</ul>
+
+<h3 id="persistent-storage-on-xen-fatbtree">Persistent storage on Xen (FAT/btree/…)</h3>
+
+<ul>
+  <li>Have a lot of people asking about storage.</li>
+  <li>Dave working on block backend for Irmin and will take a while to get this
+done. Anyone else available to work on filesystems?</li>
+  <li>Mort has a UG student working on a filesystem thing. It’s working well
+enough that there’s a performance evaluation underway.</li>
+  <li>Not written up yet but will encourage a release.</li>
+  <li>Question on the mailing list where folks are using the FAT filesystem to
+store things. It’s a shame that Irmin doesn’t work on Xen.</li>
+</ul>
+
+<h4 id="netmap">Netmap</h4>
+
+<ul>
+  <li>We had a chat with Wassim from Erriscon for netmap backend instead of Xen
+backend. We think this is something for xen-devel. Xen folks may have started
+one but not sure where things stand. Maybe Wassim should use MiniOS for now.</li>
+  <li>No-one’s used netmap. Maybe Wassim et al can use it and get back to us with
+comments.</li>
+  <li>There are pieces in several places. Anil will reply to the email.</li>
+</ul>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Quite a few people posting questions on stack overflow. The tag is <code class="highlighter-rouge">mirage</code>.
+DanielB saw them but was waiting for others to respond. We may want to
+consider a link on the mirage.io site to point people at stack overflow. That
+means spending more time there ourselves, though.</p>
+  </li>
+  <li>
+    <p>Late notes: Notes are still delayed — Amir has less time to write things up
+properly. Dave recommends declaring a ‘notes amnesty’. Focus on future notes
+instead? Gemma offered to help. Amir will discuss with Gemma.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>2nd March</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

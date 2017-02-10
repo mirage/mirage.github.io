@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MirageOS Summer 2016 Hackathon announcement, and talk roundup</title>
+  <meta name="description" content="As summer starts to shine over an obstinately rainy England, we are organisingthe second MirageOS hackathon in Cambridge!  It will be held on Weds 13thJuly a...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//2016-summer-hackathon">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">MirageOS Summer 2016 Hackathon announcement, and talk roundup</h1>
+    <p class="article_meta"><time datetime="2016-06-29T00:00:00+00:00" itemprop="datePublished">Jun 29, 2016</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>As summer starts to shine over an obstinately rainy England, we are organising
+the second MirageOS hackathon in Cambridge!  It will be held on <strong>Weds 13th
+July</strong> at the lovely <a href="https://www.darwin.cam.ac.uk">Darwin College</a> from
+9am-11pm, with snacks, teas, coffees and a servery lunch provided (thanks to
+sponsorship from <a href="http://docker.com">Docker</a> and <a href="https://ocaml.io">OCaml Labs</a>).</p>
+
+<p><strong>Anyone is welcome at all skill levels</strong>, but we’d appreciate you filling out the
+<a href="http://doodle.com/poll/ngbbviwyb9e65uiw">Doodle</a> so that we can plan
+refreshments.  We will be working on a variety of projects from improving ARM
+support, to continuous integration tests, the new Solo5 backend and improving
+the suite of protocol libraries.  If you have something in particular that
+interests you, please drop a note to the <a href="/community">mailing list</a> or check
+out the full list of <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">Pioneer Projects</a>.</p>
+
+<p>Some other events of note recently:</p>
+
+<ul>
+  <li>
+    <p>After several years of scribing awesome notes about our development, Amir has handed over the reigns to <a href="https://github.com/engil">Enguerrand</a>.
+Enguerrand joined OCaml Labs as an intern, and has built an IRC-to-Git logging bot which records our meetings over IRC and commits them
+directly to a <a href="https://github.com/hannesm/canopy-data">repository</a> which is <a href="http://canopy.mirage.io/irclogs">available online</a>.  Thanks Amir
+and Enguerrand for all their hard work on recording the growing amount of development in MirageOS.  <a href="https://ocaml.io/w/User:GemmaG">Gemma Gordon</a>
+has also joined the project and been coordinating the <a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">meetings</a>.  The next one is in a
+few hours, so please join us on <code class="highlighter-rouge">#mirage</code> on Freenode IRC at 4pm British time if you would like to participate or are just curious!</p>
+  </li>
+  <li>
+    <p>Our participation in the <a href="https://wiki.gnome.org/Outreachy/2016/MayAugust">Outreachy</a> program for 2016 has begun, and the irrepressible
+<a href="http://www.gina.codes">Gina Marie Maini</a> (aka <a href="http://twitter.com/wiredsis">wiredsister</a>) has been hacking on syslogd, mentored by <a href="http://somerandomidiot.com">Mindy Preston</a>.
+She has already started blogging (<a href="http://www.gina.codes/ocaml/2016/06/06/syslog-a-tale-of-specifications.html">about syslog</a> and <a href="http://www.gina.codes/ocaml/2016/02/14/dear-ocaml-i-love-you.html">OCaml love</a>), as well as <a href="http://hanselminutes.com/531/living-functional-programming-with-ocaml-and-gina-marie-maini">podcasting with the stars</a>.  Welcome to the crew, Gina!</p>
+  </li>
+  <li>
+    <p>The new <a href="https://docs.docker.com/engine/installation/mac/">Docker for Mac</a> and <a href="https://docs.docker.com/engine/installation/windows/">Docker for Windows</a> products have entered open beta! They use a number of libraries from MirageOS (including most of the network stack) and provide a fast way of getting started with containers and unikernel builds on Mac and Windows.  You can find talks about it at the recent <a href="https://ocaml.io/w/Blog:News/FP_Meetup:_OCaml,_Facebook_and_Docker_at_Jane_Street">JS London meetup</a> and my <a href="http://www.slideshare.net/AnilMadhavapeddy/advanced-docker-developer-workflows-on-macos-x-and-windows">slides</a>  I also spoke at OSCON 2016 about it, but those videos aren’t online yet.</p>
+  </li>
+</ul>
+
+<p>There have also been a number of talks in the past couple of months about MirageOS and its libraries:</p>
+
+<ul>
+  <li><a href="http://researcher.watson.ibm.com/researcher/view.php?person=us-djwillia">Dan Williams</a> from IBM Research delivered a paper at <a href="https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/williams">USENIX HotCloud 2016</a> about <a href="https://www.usenix.org/system/files/conference/hotcloud16/hotcloud16_williams.pdf">Unikernel Monitors</a>. This explains the basis of his work on <a href="https://mirage.io/blog/introducing-solo5">Solo5</a>, which we are currently integrating into MirageOS as a KVM-based boot backend to complement the Xen port.  You can also find his <a href="https://www.usenix.org/sites/default/files/conference/protected-files/hotcloud16_slides_williams.pdf">talk slides</a> online.</li>
+  <li><a href="https://twitter.com/amirmc">Amir Chaudhry</a> has given several talks and demos recently: check out his slides and detailed
+writeups about <a href="http://amirchaudhry.com/gluecon2016">GlueCon 2016</a> and <a href="http://amirchaudhry.com/craftconf2016">CraftConf 2016</a> in particular,
+as they come with instructions on how to reproduce his Mirage/ARM on-stage demonstrations of unikernels.</li>
+  <li><a href="https://twitter.com/sgrove">Sean Grove</a> is speaking at <a href="http://polyconf.com">Polyconf 2016</a> next week in Poland.  If you are in the region, he would love to meet up with you as well – his talk abstract is below
+&gt; With libraries like Mirage, <code class="highlighter-rouge">js_of_ocaml</code>, &amp; ARM compiler output OCaml apps can operate at such a low level
+&gt; we don’t even need operating systems on the backend anymore (removing 15 <em>million</em> lines of memory-unsafe code)
+&gt; - while at the same time, writing UI’s is easier &amp; more reliable than ever before, with lightweight type-checked
+&gt; code sharing between server, browser clients, &amp; native mobile apps. We’ll look at what’s enabled by new tech
+&gt; like Unikernels, efficient JS/ARM output, &amp; easy host interop.</li>
+</ul>
+
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+     <li><a href="/videos-around-world-2015">Videos from around the world!</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

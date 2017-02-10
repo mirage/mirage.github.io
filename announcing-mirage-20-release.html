@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MirageOS v2.0: a recap of the new features</title>
+  <meta name="description" content="  This work funded in part by the EU FP7 User-Centric Networking project, Grant  No. 611001.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//announcing-mirage-20-release">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">MirageOS v2.0: a recap of the new features</h1>
+    <p class="article_meta"><time datetime="2014-07-22T00:00:00+00:00" itemprop="datePublished">Jul 22, 2014</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p><small>
+  This work funded in part by the EU FP7 User-Centric Networking project, Grant
+  No. 611001.
+</small></p>
+
+<p>The <a href="http://openmirage.org/blog/announcing-mirage10">first release</a> of MirageOS back in December 2013 introduced the prototype
+of the <a href="http://queue.acm.org/detail.cfm?id=2566628">unikernel concept</a>, which realised the promise of a safe,
+flexible mechanism to build highly optimized software stacks purpose-built for deployment in the public cloud (more <a href="http://openmirage.org/wiki/overview-of-mirage">background</a> on this).
+Since then, we’ve been hard at work using and extending MirageOS for real projects and the community has been
+<a href="http://openmirage.org/blog/welcome-to-our-summer-hackers">steadily growing</a>.</p>
+
+<p>We’re thrilled to announce the release of MirageOS v2.0 today!  Over the past
+few weeks the <a href="http://openmirage.org/community">team</a> has been <a href="https://github.com/mirage/mirage/issues/257">hard at work</a> blogging about all
+the new features in this latest release, coordinated by the tireless <a href="http://amirchaudhry.com">Amir Chaudhry</a>:</p>
+
+<p><img src="/graphics/cubieboard2.jpg" style="float:right; padding: 5px" width="250px" /></p>
+
+<ul>
+  <li><strong>ARM device support</strong>: While the first version of MirageOS was specialised towards conventional x86 clouds, the code generation and boot libraries have now been made portable enough to operate on low-power embedded ARM devices such as the <a href="http://cubieboard.org/">Cubieboard 2</a>.  This is a key part of our efforts to build a safe, unified <a href="http://anil.recoil.org/papers/2010-bcs-visions.pdf">mutiscale programming model</a> for both cloud and mobile workloads as part of the <a href="http://nymote.org">Nymote</a> project.  We also upstreamed the changes required to the Xen Project so that other unikernel efforts such as <a href="https://github.com/GaloisInc/HaLVM">HalVM</a> or <a href="https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-martins.pdf">ClickOS</a> can benefit.
+    <ul>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-xen-minios-arm">Introducing an ARMy of unikernels</a>”</em> by <a href="http://roscidus.com/blog/">Thomas Leonard</a> talks about the changes required and <a href="http://openmirage.org/wiki/xen-on-cubieboard2">instructions</a> for trying this out for yourself on your own cheap Cubieboard.</li>
+    </ul>
+  </li>
+  <li><strong>Irmin distributed, branchable storage</strong>: Unikernels usually execute in a distributed, disconnection-prone environment (particularly with the new mobile ARM support).  We therefore built the <a href="https://github.com/mirage/irmin">Irmin</a> library to explicitly make synchronization easier via a Git-like persistence model that can be used to build and easily trace the operation of distributed applications across all of these diverse environments.
+    <ul>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-irmin">Introducing Irmin: Git-like distributed, branchable storage</a>”</em> by <a href="http://gazagnaire.org">Thomas Gazagnaire</a> describes the concepts and high-level architecture of the system.</li>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-irmin-in-xenstore">Using Irmin to add fault-tolerance to the Xenstore database</a>”</em> by <a href="http://dave.recoil.org">Dave Scott</a> shows how Irmin is used in a real-world application: the security-critical Xen toolstack that manages hosts full of virtual machines (<a href="https://www.youtube.com/watch?v=DSzvFwIVm5s">video</a>).</li>
+    </ul>
+  </li>
+  <li><strong>OCaml TLS</strong>: The philosophy of MirageOS is to construct the entire operating system in a safe programming style, from the device drivers up.  This continues in this release with a comprehensive OCaml implementation of <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">Transport Level Security</a>, the most widely deployed end-to-end encryption protocol on the Internet (and one that is very prone to <a href="https://en.wikipedia.org/wiki/Heartbleed">bad security holes</a>).  The blog series is written by <a href="https://github.com/hannesm">Hannes Mehnert</a> and <a href="https://github.com/pqwy">David Kaloper</a>.
+    <ul>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-ocaml-tls">OCaml-TLS: Introducing transport layer security (TLS) in pure OCaml</a>”</em> presents the motivation and architecture behind our clean-slate implementation of the protocol.</li>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-nocrypto">OCaml-TLS: building the nocrypto library core</a>”</em> talks about the cryptographic primitives that form the heart of TLS confidentiality guarantees, and how they expose safe interfaces to the rest of the stack.</li>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-x509">OCaml-TLS: adventures in X.509 certificate parsing and validation</a>”</em> explains how authentication and chain-of-trust verification is implemented in our stack.</li>
+      <li><em>“<a href="http://openmirage.org/blog/introducing-asn1">OCaml-TLS: ASN.1 and notation embedding</a>”</em> introduces the libraries needed for handling ASN.1 grammars, the wire representation of messages in TLS.</li>
+      <li><em>“<a href="http://openmirage.org/blog/ocaml-tls-api-internals-attacks-mitigation">OCaml-TLS: the protocol implementation and mitigations to known attacks</a>”</em> concludes with the implementation of the core TLS protocol logic itself.</li>
+    </ul>
+  </li>
+  <li><strong>Modularity and communication</strong>: MirageOS is built on the concept of a <a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf">library operating system</a>, and this release provides many new libraries to flexibly extend applications with new functionality.
+    <ul>
+      <li><em>“<a href="http://openmirage.org/blog/intro-tcpip">Fitting the modular MirageOS TCP/IP stack together</a>”</em> by <a href="http://somerandomidiot.com">Mindy Preston</a> explains the rather unique modular architecture of our TCP/IP stack that lets you swap between the conventional Unix sockets API, or a complete implementation of TCP/IP in pure OCaml.</li>
+      <li><em>“<a href="http://openmirage.org/blog/update-on-vchan">Vchan: low-latency inter-VM communication channels</a>”</em> by <a href="http://jon.recoil.org">Jon Ludlam</a> shows how unikernels can communicate efficiently with each other to form distributed clusters on a multicore Xen host, by establishing shared memory rings with each other.</li>
+      <li><em>“<a href="http://openmirage.org/blog/modular-foreign-function-bindings">Modular foreign function bindings</a>”</em> by <a href="https://github.com/yallop">Jeremy Yallop</a> continues the march towards abstraction by expaining how to interface safely with code written in C, without having to write any unsafe C bindings!  This forms the basis for allowing Xen unikernels to communicate with existing libraries that they may want to keep at arm’s length for security reasons.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>All the libraries required for these new features are <a href="/releases">regularly
+released</a> into the <a href="http://opam.ocaml.org">OPAM</a> package manager, so
+just follow the <a href="/wiki/install">installation instructions</a> to give them a spin.
+A release this size probably introduces minor hiccups that may cause build
+failures, so we very much encourage <a href="https://github.com/mirage/mirage/issues">bug
+reports</a> on our issue tracker or
+<a href="/community">questions</a> to our mailing lists.  Don’t be shy: no question is too
+basic, and we’d love to hear of any weird and wacky uses you put this new
+release to!  And finally, the lifeblood of MirageOS is about sharing and
+<a href="http://opam.ocaml.org/doc/Packaging.html">publishing libraries</a> that add new functionality to the framework, so do get
+involved and open-source your own efforts.</p>
+
+<p><em>Breaking news</em>: <a href="http://mort.io">Richard Mortier</a> and I will be speaking at <a href="http://www.oscon.com">OSCON</a> this week on Thursday morning about the new features <a href="http://www.oscon.com/oscon2014/public/schedule/detail/35024">in F150 in the Cloud Track</a>. Come along if you are in rainy Portland at the moment!</p>
+
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

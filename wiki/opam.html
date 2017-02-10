@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>OPAM Libraries</title>
+  <meta name="description" content="Maintenance">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/opam">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">OPAM Libraries</h1>
+  </header>
+
+  <div class="article-content">
+    <h3 id="maintenance">Maintenance</h3>
+
+<p>The <code class="highlighter-rouge">opam update</code> command refreshes all your package repositories. The <code class="highlighter-rouge">opam upgrade</code> command recompiles any outdated libraries. You need to run this once per compiler installed, so <code class="highlighter-rouge">opam switch</code> between them.</p>
+
+<p>If you run into any problems with OPAM, then first ask on the MirageOS <a href="/about">mailing list</a>, or report a <a href="http://github.com/OCamlPro/opam/issues">bug</a>. It is safe to delete <code class="highlighter-rouge">~/.opam</code> and just start the installation again if you run into an unrecoverable situation, as OPAM doesn’t use any files outside of that space.</p>
+
+<h3 id="development">Development</h3>
+
+<p>There are two kinds of OPAM repositories: <code class="highlighter-rouge">stable</code> released versions of packages that have version numbers, and <code class="highlighter-rouge">dev</code> packages that are retrieved via git or darcs (and eventually, other version control systems too).</p>
+
+<p>To develop a new package, create a new <code class="highlighter-rouge">opam-repository</code> Git repo.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mkdir opam-repository
+$ cd opam-repository
+$ git init
+$ mkdir packages
+$ opam repository add mypkg .
+</code></pre>
+</div>
+
+<p>This will configure your local checkout as a package repository, and OPAM will pull from it on every update. Each package lives in a directory named with the version, such as <code class="highlighter-rouge">packages/foo.0.1</code>, and requires three files inside it:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">foo.0.1/url</code> : the URL to the distribution file or git directory</li>
+  <li><code class="highlighter-rouge">foo.0.1/opam</code> : the package commands to install and uninstall it</li>
+  <li><code class="highlighter-rouge">foo.0.1/descr</code> : a description of the library or application</li>
+</ul>
+
+<p>It’s easiest to copy the files from an existing package and modify them to your needs (and read the <a href="http://opam.ocaml.org">doc</a> for more information). Once you’re done, add and commit the files, issue an <code class="highlighter-rouge">opam update</code>, and the new package should be available for installation (<code class="highlighter-rouge">opam install</code>) or upgrade (<code class="highlighter-rouge">opam upgrade</code>).</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

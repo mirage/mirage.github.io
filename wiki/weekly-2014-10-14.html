@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-10-14</title>
+  <meta name="description" content="14th Oct 2014: Vchan, Conduit, library release plans and funky graphs.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-10-14">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-10-14</h1>
+  </header>
+
+  <div class="article-content">
+    <p>14th Oct 2014: Vchan, Conduit, library release plans and funky graphs.</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Vchan/Conduit code review</li>
+  <li><code class="highlighter-rouge">mirage-dev</code> releases</li>
+  <li>SSL/XMPP</li>
+  <li>TLS on Xen <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-10/msg00001.html">post on mailing list</a></li>
+  <li>Irmin Update</li>
+  <li>Tracing</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, David Kaloper,
+Thomas Leonard, Anil Madhavapeddy, Hannes Mehnert, Richard Mortier, Dave Scott
+and Gregory Tsipenyuk</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="vchanconduit-code-review">Vchan/Conduit code review</h4>
+
+<p>Conduit stuff is fairly complex but works in all combinations, (OSX, Linux
+Unix and on Xen). Some of the code is a bit awkward but the messiness is
+contained (i.e. it doesn’t extend outside conduit). Can establish conduits
+across domains (some things are untested).</p>
+
+<p>There happens to be an annoying dependency problem. ThomasG notices that you
+need a tcp stack with vchan but there’s a dummy stack in place for this (dummy
+functors). For now it’s easier to functorise over the stack but maybe we don’t
+need a dummy stack, just a dummy ethernet device.</p>
+
+<p>Both ThomasG and Anil aren’t happy with current design but it’s good to have
+something (as opposed to nothing)!</p>
+
+<h4 id="mirage-dev-releases">mirage-dev releases</h4>
+
+<p>The v2 release will freeze v1 (so it will not change) and v2 is the (stable)
+development release.  All the vchan things are in now and stable. Overall, we
+still need to clean up odds and ends and start cutting releases.</p>
+
+<p>Need someone to set up a cubieboard that will do builds of everything (via
+cron jobs). Suggestions that we can publish the output to doesmiragework.com
+so that it’s obvious when things are not working properly.</p>
+
+<p>Anil can only test once back but in the meantime Dave can cut releases — but
+would like to have a list somewhere to see what should be worked on. Anil
+mentioned that <code class="highlighter-rouge">opam list --depends-on --rec</code> will show what’s broken.</p>
+
+<p>Dave will do versioning and checksums on the mirage-dev repo — i.e cut
+releases on our opam remote to begin with, but not push to the upstream opam
+remote just yet.</p>
+
+<h4 id="sslxmpp">SSL/XMPP</h4>
+
+<p>Hannes did the port for <code class="highlighter-rouge">no-crypto</code> and TLS and it works on Unix. There are
+things in XMPP that can be pulled out into separate library and Conduit should
+be able to help with this.</p>
+
+<p>Also implemented client authentication in TLS which will be useful for
+startTLS for IMAP (if server supports it). Now have IMAP for Android and maybe
+on iOS (but that one still has some bugs). Anil has some outstanding
+change sets to remove certain dependencies (e.g batteries).</p>
+
+<p>repo: <a href="https://github.com/hannesm/xmpp">https://github.com/hannesm/xmpp</a></p>
+
+<h4 id="tls-on-xen">TLS on Xen</h4>
+
+<p>Hannes recently <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-10/msg00001.html">wrote to Mirage list</a> on where to put the C code 
+(libgp etc) and other small symbols we need. Suggestion from others is perhaps
+get it working end-to-end without stack protection first. What we don’t have
+is a sense of where to package things up and it’s a good idea to have one
+switch for everything.  Concurrent installation keep us honest and reduces the
+likelihood of errors. This does raises an issue as we share the object files
+so if we drop stack protection on xen we have to drop it on unix.</p>
+
+<p>Maybe make <code class="highlighter-rouge">no-crypto-unix</code> and <code class="highlighter-rouge">no-crypto-xen</code>? This was suggested on the
+list but leads to question of packaging. There will need to be packages for
+<code class="highlighter-rouge">xen</code> and <code class="highlighter-rouge">-unix</code> for the whole dependency chain (cross-compilation would be
+better solution). This might have effects on ctypes.</p>
+
+<!--
+Hannes, wants to take a shot at ocamlfind [and I missed the rest of this]
+-->
+
+<h4 id="irmin-update">Irmin Update</h4>
+
+<p>ThomasG still removing the dependency on <code class="highlighter-rouge">core_kernel</code>. Currently looking at
+<code class="highlighter-rouge">ogit</code> to simply dependencies and then in Irmin. This is fairly
+straightforward but rather dull and it should be done by the next call
+(two weeks).</p>
+
+<h4 id="tracing">Tracing</h4>
+
+<p>There’s been some <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-10/msg00023.html">extensive discussion on the list</a> about tracing
+(see the <a href="https://github.com/talex5/mirage-tracing">repo</a>). Can trace interaction between Lwt threads. Can race
+unikernels and create graphs. There’s a link in the thread and where
+exceptions have been thrown. At the moment it just numbers threads 1, 2, 3.
+ThomasG has played with it and it seems very useful.</p>
+
+<p><img src="http://test.roscidus.com/static/block-read-mirage-x86.png" alt="block read tracing" /></p>
+
+<p>Mort mentioned that it might be useful to relate mapping between IO and
+threads as that would help us understand things across unikernels. This is one
+of the things that Magpis did and he’ll will <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-10/msg00045.html">email the list</a> with
+links to relevant work.</p>
+
+<p>Some questions were raised about the visualisation itself (e.g the white line!)
+Green line is when one thread resolves and raises another, blue line is when
+one thread reads value from another. Almost want to see this by module.</p>
+
+<p>ThomasL will write a blog post to help people interpret these diagrams and the
+next step is to make the whole thing easier to use and make it a separate
+library. Also pointed out that it was surprisingly difficult to get it to go
+fast in HTML canvas as changing colours is slow.  Ended up having to render
+this colour by colour.</p>
+
+<p>Links:</p>
+
+<ul>
+  <li>trace: <a href="http://test.roscidus.com/static/html_viewer.html?t_min=8249.530963&amp;t_max=8249.534574">http://test.roscidus.com/static/html_viewer.html?t_min=8249.530963&amp;t_max=8249.534574</a></li>
+  <li>trace file: <a href="http://test.roscidus.com/static/log-x86.sexp">http://test.roscidus.com/static/log-x86.sexp</a></li>
+</ul>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>TLS and conduit discussion - Worth looking at TLS/Conduit stuff and Hannes can take a look once Anil has pushed his code.</p>
+  </li>
+  <li>
+    <p>Amir will add a regular agenda item to review the previous call’s notes.
+Depending on the content of each call, he may also keep a list of actions for
+reviewing next time.</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>28th October</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

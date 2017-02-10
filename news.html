@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Posts</title>
+  <meta name="description" content="Mirage is an OCaml-based programming framework for building specialised unikernels.
+">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//news.html">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <div>
+
+  <!-- <header class="category_list">
+    
+      <a href="#General">General</a>
+       ● 
+    
+      <a href="#Features">Features</a>
+       ● 
+    
+      <a href="#Events">Events</a>
+       ● 
+    
+      <a href="#Releases">Releases</a>
+       ● 
+    
+      <a href="#Libraries">Libraries</a>
+       ● 
+    
+      <a href="#Advisories">Advisories</a>
+      
+    
+  </header>
+
+  <br />
+  <br /> -->
+
+  <div class="archive_intro">
+  
+  <p>This page lists the latest news on the various Mirage community activities. Please feel free to <a href="/about">contact us</a> with any queries.</p>
+
+  </div>
+
+  <section class="archive_list">
+    
+    
+    
+      <div class="archive_date_header"><span class="text">November 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a>
+      <span class="post_date">17 Nov, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">July 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a>
+      <span class="post_date">18 Jul, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">June 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a>
+      <span class="post_date">29 Jun, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">May 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a>
+      <span class="post_date">4 May, 2016</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-lock"></i> &nbsp;
+      <a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a>
+      <span class="post_date">3 May, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">February 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a>
+      <span class="post_date">29 Feb, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">January 2016</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a>
+      <span class="post_date">7 Jan, 2016</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/hackathon-marrakech2016">MirageOS hackathon</a>
+      <span class="post_date">1 Jan, 2016</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">December 2015</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a>
+      <span class="post_date">29 Dec, 2015</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/unikernel-org">Unikernel.org</a>
+      <span class="post_date">17 Dec, 2015</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">October 2015</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/videos-around-world-2015">Videos from around the world!</a>
+      <span class="post_date">23 Oct, 2015</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/getting-started-screencasts">Getting Started Screencasts</a>
+      <span class="post_date">15 Oct, 2015</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">July 2015</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/mirage-entropy">Organized chaos: managing randomness</a>
+      <span class="post_date">22 Jul, 2015</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/mirage-seal">Easy HTTPS Unikernels with mirage-seal</a>
+      <span class="post_date">7 Jul, 2015</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">June 2015</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/bitcoin-pinata-results">Reviewing the Bitcoin Pinata</a>
+      <span class="post_date">29 Jun, 2015</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/why-ocaml-tls">Why OCaml-TLS?</a>
+      <span class="post_date">26 Jun, 2015</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/announcing-mirage-25-release">MirageOS v2.5 with full TLS support</a>
+      <span class="post_date">26 Jun, 2015</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">February 2015</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/announcing-bitcoin-pinata">Smash the Bitcoin Pinata for fun and profit!</a>
+      <span class="post_date">10 Feb, 2015</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">December 2014</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/2014-in-review">MirageOS 2014 review: IPv6, TLS, Irmin, Jitsu and community growth</a>
+      <span class="post_date">31 Dec, 2014</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">July 2014</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/introducing-xen-minios-arm">Building an ARMy of Xen unikernels</a>
+      <span class="post_date">22 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/announcing-mirage-20-release">MirageOS v2.0: a recap of the new features</a>
+      <span class="post_date">22 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/introducing-irmin-in-xenstore">Using Irmin to add fault-tolerance to the Xenstore database</a>
+      <span class="post_date">21 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/introducing-irmin">Introducing Irmin: Git-like distributed, branchable storage</a>
+      <span class="post_date">18 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/intro-tcpip">Fitting the modular MirageOS TCP/IP stack together</a>
+      <span class="post_date">17 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/update-on-vchan">Vchan: Low-latency inter-VM communication channels</a>
+      <span class="post_date">16 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/modular-foreign-function-bindings">Modular foreign function bindings</a>
+      <span class="post_date">15 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/ocaml-tls-api-internals-attacks-mitigation">OCaml-TLS: the protocol implementation and mitigations to known attacks</a>
+      <span class="post_date">14 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/introducing-asn1">OCaml-TLS: ASN.1 and notation embedding</a>
+      <span class="post_date">11 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/introducing-x509">OCaml-TLS: Adventures in X.509 certificate parsing and validation</a>
+      <span class="post_date">10 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/introducing-nocrypto">OCaml-TLS: building the nocrypto library core</a>
+      <span class="post_date">9 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/mirage-1.2-released">MirageOS 1.2 released and the 2.0 runup begins</a>
+      <span class="post_date">8 Jul, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/introducing-ocaml-tls">Introducing transport layer security (TLS) in pure OCaml</a>
+      <span class="post_date">8 Jul, 2014</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">May 2014</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/welcome-to-our-summer-hackers">Welcome to the summer MirageOS hackers</a>
+      <span class="post_date">8 May, 2014</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">February 2014</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/applying-for-gsoc2014">MirageOS is in Google Summer of Code 2014</a>
+      <span class="post_date">25 Feb, 2014</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/mirage-1.1-released">MirageOS 1.1.0: the eat-your-own-dogfood release</a>
+      <span class="post_date">11 Feb, 2014</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">January 2014</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/decks-n-drums">Presenting Decks</a>
+      <span class="post_date">3 Jan, 2014</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">December 2013</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/mirage-1.0.3-released">MirageOS 1.0.3 released; tutorial on building this website available</a>
+      <span class="post_date">19 Dec, 2013</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/announcing-mirage10">MirageOS 1.0: not just a hallucination!</a>
+      <span class="post_date">9 Dec, 2013</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">August 2013</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-code-fork"></i> &nbsp;
+      <a href="/introducing-vchan">Introducing vchan</a>
+      <span class="post_date">23 Aug, 2013</span>
+    </div>
+    
+    
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/oscon13-trip-report">MirageOS travels to OSCON'13: a trip report</a>
+      <span class="post_date">8 Aug, 2013</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">July 2013</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/xen-block-devices-with-mirage">Creating Xen block devices with MirageOS</a>
+      <span class="post_date">18 Jul, 2013</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">May 2013</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/the-road-to-a-dev-release">The road to a developer preview at OSCON 2013</a>
+      <span class="post_date">20 May, 2013</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">October 2012</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/breaking-up-is-easy-with-opam">Breaking up is easy to do (with OPAM)</a>
+      <span class="post_date">17 Oct, 2012</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">September 2012</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/xenstore-stub-domain">Building a Xenstore stub domain with MirageOS</a>
+      <span class="post_date">12 Sep, 2012</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">February 2012</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-cloud-upload"></i> &nbsp;
+      <a href="/announcing-mirage-openflow">Connected Cloud Control: OpenFlow in MirageOS</a>
+      <span class="post_date">29 Feb, 2012</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">September 2011</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-meetup"></i> &nbsp;
+      <a href="/an-outing-to-cufp">An Outing to CUFP 2011</a>
+      <span class="post_date">29 Sep, 2011</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">August 2011</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/ocaml-regexp">Portable Regular Expressions</a>
+      <span class="post_date">12 Aug, 2011</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">June 2011</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-gears"></i> &nbsp;
+      <a href="/delimcc-vs-lwt">Delimited Continuations vs Lwt for Threads</a>
+      <span class="post_date">18 Jun, 2011</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">April 2011</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/spring-cleaning">A Spring Wiki Cleaning</a>
+      <span class="post_date">11 Apr, 2011</span>
+    </div>
+    
+    
+    
+      <div class="archive_date_header"><span class="text">October 2010</span></div>
+      
+    
+
+      
+      
+    <div class="post_title_light">
+      <i class="fa fa-newspaper-o"></i> &nbsp;
+      <a href="/self-hosting-mirage-website">Self-hosting MirageOS website</a>
+      <span class="post_date">11 Oct, 2010</span>
+    </div>
+    
+  </section>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

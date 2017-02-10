@@ -1,0 +1,4508 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>code</title>
+  <meta name="description" content="Mirage is an OCaml-based programming framework for building specialised unikernels.
+">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//code.html">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <div class="repo_list">
+
+  
+  
+   <div class="repo_header">
+     <span class="repo_header_type">core</span>:
+     <span class="repo_header_descr"><p>The core libraries that form Mirage. These are primarily module type definitions for functionality such as networking and storage, as well as the frontend configuration and CLI tooling.</p>
+</span>
+   <ul>
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage">mirage/mirage</a></span>: 
+          <div class="repo_descr"><p>This is the main repository that contains the Mirage type definitions and the CLI tool.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage">mirage</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-types">mirage-types</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-types-lwt">mirage-types-lwt</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-runtime">mirage-runtime</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage/index.html">mirage</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-types/index.html">mirage-types</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-types-lwt/index.html">mirage-types-lwt</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-runtime/index.html">mirage-runtime</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/functoria">mirage/functoria</a></span>: 
+          <div class="repo_descr"><p>a DSL to describe a set of modules and functors, their types and how to apply them in order to produce a complete application.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/functoria">functoria</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/functoria-runtime">functoria-runtime</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/functoria/index.html">functoria</a>, 
+             
+             <a href="http://docs.mirage.io/functoria-runtime/index.html">functoria-runtime</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-block">mirage/mirage-block</a></span>: 
+          <div class="repo_descr"><p>generic operations over Mirage block devices.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block">mirage-block</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block-lwt">mirage-block-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-block/index.html">mirage-block</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-block-lwt/index.html">mirage-block-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-protocols">mirage/mirage-protocols</a></span>: 
+          <div class="repo_descr"><p>a set of module types that libraries intended to be used as Mirage network implementations should implement.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-protocols">mirage-protocols</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-protocols-lwt">mirage-protocols-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-protocols/index.html">mirage-protocols</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-protocols-lwt/index.html">mirage-protocols-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-entropy">mirage/mirage-entropy</a></span>: 
+          <div class="repo_descr"><p>Reliable entropy sources for Mirage unikernels.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-entropy">mirage-entropy</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-entropy/index.html">mirage-entropy</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-time">mirage/mirage-time</a></span>: 
+          <div class="repo_descr"><p>Module types for time-related operations in Mirage.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-time">mirage-time</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-time-lwt">mirage-time-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-time/index.html">mirage-time</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-time-lwt/index.html">mirage-time-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-random">mirage/mirage-random</a></span>: 
+          <div class="repo_descr"><p>Randomness signatures for Mirage, and an implementation using the OCaml stdlib.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-random">mirage-random</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-random/index.html">mirage-random</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-net">mirage/mirage-net</a></span>: 
+          <div class="repo_descr"><p>Network (Ethernet) signatures for Mirage.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net">mirage-net</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net-lwt">mirage-net-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-net/index.html">mirage-net</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-net-lwt/index.html">mirage-net-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-logs">mirage/mirage-logs</a></span>: 
+          <div class="repo_descr"><p>a reporter for the <a href="http://erratique.ch/software/logs">Logs</a> library that writes log messages to stderr, using a Mirage <code class="highlighter-rouge">CLOCK</code> to add timestamps.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-logs">mirage-logs</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-logs/index.html">mirage-logs</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-kv">mirage/mirage-kv</a></span>: 
+          <div class="repo_descr"><p>provides key/value store signatures that Mirage storage libraries can implement.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-kv">mirage-kv</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-kv-lwt">mirage-kv-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-kv/index.html">mirage-kv</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-kv-lwt/index.html">mirage-kv-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-fs">mirage/mirage-fs</a></span>: 
+          <div class="repo_descr"><p>provides filesystem module signatures that Mirage storage libraries can implement.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-fs">mirage-fs</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-fs-lwt">mirage-fs-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-fs/index.html">mirage-fs</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-fs-lwt/index.html">mirage-fs-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-flow">mirage/mirage-flow</a></span>: 
+          <div class="repo_descr"><p>Network flow implementations and combinators to manipulate and compose them.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-flow">mirage-flow</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-flow-lwt">mirage-flow-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-flow/index.html">mirage-flow</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-flow-lwt/index.html">mirage-flow-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-console">mirage/mirage-console</a></span>: 
+          <div class="repo_descr"><p>Pure OCaml module types and implementations of Mirage consoles, for Unix and Xen.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-lwt">mirage-console-lwt</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console">mirage-console</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-unix">mirage-console-unix</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-xen-backend">mirage-console-xen-backend</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-xen-cli">mirage-console-xen-cli</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-xen-proto">mirage-console-xen-proto</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-xen">mirage-console-xen</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-console-lwt/index.html">mirage-console-lwt</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console/index.html">mirage-console</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console-unix/index.html">mirage-console-unix</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console-xen-backend/index.html">mirage-console-xen-backend</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console-xen-cli/index.html">mirage-console-xen-cli</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console-xen-proto/index.html">mirage-console-xen-proto</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-console-xen/index.html">mirage-console-xen</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-clock">mirage/mirage-clock</a></span>: 
+          <div class="repo_descr"><p>portable support for an operating system timesources.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-clock">mirage-clock</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-clock-freestanding">mirage-clock-freestanding</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-clock-lwt">mirage-clock-lwt</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-clock-unix">mirage-clock-unix</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-clock/index.html">mirage-clock</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-clock-freestanding/index.html">mirage-clock-freestanding</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-clock-lwt/index.html">mirage-clock-lwt</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-clock-unix/index.html">mirage-clock-unix</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-channel">mirage/mirage-channel</a></span>: 
+          <div class="repo_descr"><p>Channels are buffered reader/writers built on top of an unbuffered mirage-flow implementation.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-channel">mirage-channel</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-channel-lwt">mirage-channel-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-channel/index.html">mirage-channel</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-channel-lwt/index.html">mirage-channel-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-stack">mirage/mirage-stack</a></span>: 
+          <div class="repo_descr"><p>provides a set of module types which libraries intended to be used as Mirage network stacks should implement.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-stack">mirage-stack</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-stack-lwt">mirage-stack-lwt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-stack/index.html">mirage-stack</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-stack-lwt/index.html">mirage-stack-lwt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-device">mirage/mirage-device</a></span>: 
+          <div class="repo_descr"><p>the signature for basic abstract devices for Mirage and a pretty-printing function for device errors</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-device">mirage-device</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-device/index.html">mirage-device</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-tc">mirage/mirage-tc</a></span>: 
+          <div class="repo_descr"><p>a set of functors and combinators to convert to and from and JSON values and Cstruct buffers.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-tc">mirage-tc</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-tc/index.html">mirage-tc</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/samoht/depyt">samoht/depyt</a></span>: 
+          <div class="repo_descr"><p>type combinators to define runtime representation for OCaml types and generic operations to manipulate values with a runtime type representation.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/depyt">depyt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/depyt/index.html">depyt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver</span>:
+     <span class="repo_header_descr"><p>Library implementations for boot-related functionality not specific to a particular target.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-platform">mirage/mirage-platform</a></span>: 
+          <div class="repo_descr"><p>Platform libraries for Mirage for Unix and Xen that handle timers, device setup and the main loop, as well as the runtime for the Xen unikernel.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-unix">mirage-unix</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-xen-ocaml">mirage-xen-ocaml</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-xen">mirage-xen</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-unix/index.html">mirage-unix</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-xen-ocaml/index.html">mirage-xen-ocaml</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-xen/index.html">mirage-xen</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-freestanding">mirage/ocaml-freestanding</a></span>: 
+          <div class="repo_descr"><p>a freestanding OCaml runtime suitable for linking with a unikernel base layer such as Solo5.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/ocaml-freestanding">ocaml-freestanding</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/ocaml-freestanding/index.html">ocaml-freestanding</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/io-page">mirage/io-page</a></span>: 
+          <div class="repo_descr"><p>support for efficient handling of I/O memory pages on Unix and Xen.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/io-page">io-page</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/io-page/index.html">io-page</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/parse-argv">mirage/parse-argv</a></span>: 
+          <div class="repo_descr"><p>Common code for parsing argv strings that is used by the various bootvar libraries to pass configuration information to a unikernel.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/parse-argv">parse-argv</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/parse-argv/index.html">parse-argv</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-qubes">mirage/mirage-qubes</a></span>: 
+          <div class="repo_descr"><p>implementations of various <a href="https://www.qubes-os.org">QubesOS</a> protocols.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-qubes">mirage-qubes</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-qubes/index.html">mirage-qubes</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver/solo5</span>:
+     <span class="repo_header_descr"><p>Drivers for booting on the <a href="https://github.com/Solo5/solo5">Solo5</a> target, which uses a slimmed down KVM hypervisor to run.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-solo5">mirage/mirage-solo5</a></span>: 
+          <div class="repo_descr"><p>the Mirage <code class="highlighter-rouge">OS</code> library for Solo5 targets, which handles the main loop and timers.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-solo5">mirage-solo5</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-solo5/index.html">mirage-solo5</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-block-solo5">mirage/mirage-block-solo5</a></span>: 
+          <div class="repo_descr"><p>Solo5 implementation of the Mirage block interface.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block-solo5">mirage-block-solo5</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-block-solo5/index.html">mirage-block-solo5</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-net-solo5">mirage/mirage-net-solo5</a></span>: 
+          <div class="repo_descr"><p>Solo5 implementation of the Mirage network interface.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net-solo5">mirage-net-solo5</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-net-solo5/index.html">mirage-net-solo5</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-bootvar-solo5">mirage/mirage-bootvar-solo5</a></span>: 
+          <div class="repo_descr"><p>library for passing boot-time variables to Solo5 targets.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-bootvar-solo5">mirage-bootvar-solo5</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-bootvar-solo5/index.html">mirage-bootvar-solo5</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-console-solo5">mirage/mirage-console-solo5</a></span>: 
+          <div class="repo_descr"><p>implementation of the Mirage Console interface for Solo5 targets.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-console-solo5">mirage-console-solo5</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-console-solo5/index.html">mirage-console-solo5</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver/xen</span>:
+     <span class="repo_header_descr"><p>Drivers for booting directly on the <a href="http://xen.org">Xen</a> hypervisor.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-block-xen">mirage/mirage-block-xen</a></span>: 
+          <div class="repo_descr"><p>Client and server implementations of the Xen paravirtualised block driver protocol</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block-xen">mirage-block-xen</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-block-xen/index.html">mirage-block-xen</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-net-xen">mirage/mirage-net-xen</a></span>: 
+          <div class="repo_descr"><p>Client and server implementations of the Xen paravirtualised network driver protocol</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net-xen">mirage-net-xen</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-net-xen/index.html">mirage-net-xen</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-vchan">mirage/ocaml-vchan</a></span>: 
+          <div class="repo_descr"><p>implementation of the “vchan” shared-memory communication protocol.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/vchan">vchan</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/vchan/index.html">vchan</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-bootvar-xen">mirage/mirage-bootvar-xen</a></span>: 
+          <div class="repo_descr"><p>library for reading Mirage unikernel boot parameters from Xen.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-bootvar-xen">mirage-bootvar-xen</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-bootvar-xen/index.html">mirage-bootvar-xen</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/shared-memory-ring">mirage/shared-memory-ring</a></span>: 
+          <div class="repo_descr"><p>a set of libraries for creating shared memory producer/consumer rings that follow the Xen hypervisor ABI for virtual devices.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/shared-memory-ring">shared-memory-ring</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/shared-memory-ring/index.html">shared-memory-ring</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-evtchn">mirage/ocaml-evtchn</a></span>: 
+          <div class="repo_descr"><p>Xen event channel interface for Mirage. Event channels are the Xen equivalent of interrupts, used to signal when data is available for processing.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/evtchn">evtchn</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/evtchn/index.html">evtchn</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-gnt">mirage/ocaml-gnt</a></span>: 
+          <div class="repo_descr"><p>Xen grant table bindings for OCaml that are used to create Xen device driver “backends” (servers) and “frontends” (clients).</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/gnt">gnt</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/gnt/index.html">gnt</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-xen-minios">mirage/mirage-xen-minios</a></span>: 
+          <div class="repo_descr"><p>installs the C libraries for the Xen MiniOS and OpenLibM.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-xen-minios">mirage-xen-minios</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-xen-minios/index.html">mirage-xen-minios</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-xenstore">mirage/ocaml-xenstore</a></span>: 
+          <div class="repo_descr"><p>implementation of the Xenstore communication protocol, including client and server libraries.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/xenstore">xenstore</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/xenstore/index.html">xenstore</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver/unix</span>:
+     <span class="repo_header_descr"><p>Drivers for running as a normal Unix process on Linux, Free/Net/OpenBSD or macos.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-tuntap">mirage/ocaml-tuntap</a></span>: 
+          <div class="repo_descr"><p>Bindings to the <a href="https://en.wikipedia.org/wiki/TUN/TAP">tuntap</a> virtual network kernel devices, for userspace networking on Linux and macos.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/tuntap">tuntap</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/tuntap/index.html">tuntap</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-block-unix">mirage/mirage-block-unix</a></span>: 
+          <div class="repo_descr"><p>Unix implementation of the Mirage block interface.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block-unix">mirage-block-unix</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-block-unix/index.html">mirage-block-unix</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-fs-unix">mirage/mirage-fs-unix</a></span>: 
+          <div class="repo_descr"><p>a pass-through Mirage filesystem to an underlying Unix directory.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-fs-unix">mirage-fs-unix</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-fs-unix/index.html">mirage-fs-unix</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-net-unix">mirage/mirage-net-unix</a></span>: 
+          <div class="repo_descr"><p>Unix implementation of the Mirage NETWORK interface that exposes Ethernet frames via tuntap.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net-unix">mirage-net-unix</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-net-unix/index.html">mirage-net-unix</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver/win</span>:
+     <span class="repo_header_descr"><p>Drivers for bindings to Windows-specific APIs and services.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-hvsock">mirage/ocaml-hvsock</a></span>: 
+          <div class="repo_descr"><p>These bindings allow Host to VM communication on Hyper-V systems on both Linux and Windows.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/hvsock">hvsock</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/hvsock/index.html">hvsock</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-named-pipe">mirage/ocaml-named-pipe</a></span>: 
+          <div class="repo_descr"><p>OCaml bindings for named pipes, which are used on Windows for local (and remote) IPC.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/named-pipe">named-pipe</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/named-pipe/index.html">named-pipe</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">driver/osx</span>:
+     <span class="repo_header_descr"><p>Drivers for bindings to macos specific APIs and services.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-net-macosx">mirage/mirage-net-macosx</a></span>: 
+          <div class="repo_descr"><p>MacOSX implementation of the Mirage NETWORK interface that exposes raw Ethernet frames using the Vmnet framework available in MacOS X Yosemite onwards.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-net-macosx">mirage-net-macosx</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-net-macosx/index.html">mirage-net-macosx</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-vmnet">mirage/ocaml-vmnet</a></span>: 
+          <div class="repo_descr"><p>MacOS X bridged networking via the vmnet.framework.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/vmnet">vmnet</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/vmnet/index.html">vmnet</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-launchd">mirage/ocaml-launchd</a></span>: 
+          <div class="repo_descr"><p>make services that are automatically started by the macosx launchd service.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/launchd">launchd</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/launchd/index.html">launchd</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">parsing</span>:
+     <span class="repo_header_descr"><p>Libraries to help parsing and pickling into various formats.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-cstruct">mirage/ocaml-cstruct</a></span>: 
+          <div class="repo_descr"><p>Map OCaml arrays onto C-like structs, suitable for parsing wire protocols.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/cstruct">cstruct</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/cstruct/index.html">cstruct</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-base64">mirage/ocaml-base64</a></span>: 
+          <div class="repo_descr"><p>Base64 is a group of similar binary-to-text encoding schemes that represent binary data in an ASCII string format by translating it into a radix-64 representation.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/base64">base64</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/base64/index.html">base64</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-mstruct">mirage/ocaml-mstruct</a></span>: 
+          <div class="repo_descr"><p>a mutability layer for Cstruct buffers.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mstruct">mstruct</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mstruct/index.html">mstruct</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-hex">mirage/ocaml-hex</a></span>: 
+          <div class="repo_descr"><p>library providing hexadecimal converters for OCaml values.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/hex">hex</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/hex/index.html">hex</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">logging</span>:
+     <span class="repo_header_descr"><p>Logging and profiling libraries for recording and analysing unikernel activities.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/prometheus">mirage/prometheus</a></span>: 
+          <div class="repo_descr"><p>Report metrics to a Prometheus server.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/prometheus">prometheus</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/prometheus-app">prometheus-app</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/prometheus/index.html">prometheus</a>, 
+             
+             <a href="http://docs.mirage.io/prometheus-app/index.html">prometheus-app</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-profile">mirage/mirage-profile</a></span>: 
+          <div class="repo_descr"><p>library to trace execution of OCaml/Lwt programs at the level of Lwt threads, and associated viewers to process the trace results.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-profile">mirage-profile</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-profile/index.html">mirage-profile</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-asl">mirage/ocaml-asl</a></span>: 
+          <div class="repo_descr"><p>library to log via the Apple System Log on macosx.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/asl">asl</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/asl/index.html">asl</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">storage</span>:
+     <span class="repo_header_descr"><p>Libraries to encode into persistent on-disk formats, often with interoperability with other systems.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/shared-block-ring">mirage/shared-block-ring</a></span>: 
+          <div class="repo_descr"><p>A simple persistent on-disk fixed length queue.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/shared-block-ring">shared-block-ring</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/shared-block-ring/index.html">shared-block-ring</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-qcow">mirage/ocaml-qcow</a></span>: 
+          <div class="repo_descr"><p>pure OCaml code for parsing, printing, modifying <code class="highlighter-rouge">.qcow</code> format data</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/qcow">qcow</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/qcow/index.html">qcow</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-tar">mirage/ocaml-tar</a></span>: 
+          <div class="repo_descr"><p>read and write tar files, with an emphasis on streaming.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/tar">tar</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/tar/index.html">tar</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-block-ramdisk">mirage/mirage-block-ramdisk</a></span>: 
+          <div class="repo_descr"><p>a simple in-memory block device.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-block-ramdisk">mirage-block-ramdisk</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-block-ramdisk/index.html">mirage-block-ramdisk</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-crunch">mirage/ocaml-crunch</a></span>: 
+          <div class="repo_descr"><p>take a directory of files and compile them into a standalone OCaml module that serves the contents directly from memory.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/crunch">crunch</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/crunch/index.html">crunch</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-fat">mirage/ocaml-fat</a></span>: 
+          <div class="repo_descr"><p>implementation of the FAT filesystem to allow the easy preparation of bootable disk images containing kernels, and to provide a simple filesystem layer for Mirage applications.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/fat-filesystem">fat-filesystem</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/fat-filesystem/index.html">fat-filesystem</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-vhd">mirage/ocaml-vhd</a></span>: 
+          <div class="repo_descr"><p>a pure OCaml library to read and write vhd format data, plus a simple command-line tool which allows vhd files to be interrogated, manipulated, format-converted and streamed to and from files and remote servers.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/vhd-format">vhd-format</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/vhd-format/index.html">vhd-format</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-9p">mirage/ocaml-9p</a></span>: 
+          <div class="repo_descr"><p>an implementation of the 9P protocol from outer space.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/9p-format">9p-format</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/9p-format/index.html">9p-format</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-mbr">mirage/ocaml-mbr</a></span>: 
+          <div class="repo_descr"><p>library for manipulating Master Boot Records, to create bootable disk images and for Mirage kernels to read the partition tables on attached disks.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mbr">mbr</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mbr/index.html">mbr</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">network</span>:
+     <span class="repo_header_descr"><p>Libraries that implement remote network protocols, often specified in IETF RFCs.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-dns">mirage/ocaml-dns</a></span>: 
+          <div class="repo_descr"><p>a pure OCaml implementation of the DNS protocol, intended to be a reasonably high-performance implementation.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/dns">dns</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-dns">mirage-dns</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/dns/index.html">dns</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-dns/index.html">mirage-dns</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-conduit">mirage/ocaml-conduit</a></span>: 
+          <div class="repo_descr"><p>a library to establish and listen for TCP and SSL/TLS connections.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/conduit">conduit</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-conduit">mirage-conduit</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/conduit/index.html">conduit</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-conduit/index.html">mirage-conduit</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-pcap">mirage/ocaml-pcap</a></span>: 
+          <div class="repo_descr"><p>an interface to encode and decode pcap files, dealing with both endianess, including endianess detection.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/pcap-format">pcap-format</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/pcap-format/index.html">pcap-format</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-tcpip">mirage/mirage-tcpip</a></span>: 
+          <div class="repo_descr"><p>a pure OCaml implementation of the TCP/IP protocol suite.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/tcpip">tcpip</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/tcpip/index.html">tcpip</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/charrua-core">mirage/charrua-core</a></span>: 
+          <div class="repo_descr"><p>a DHCPv4 server and wire frame encoder and decoder.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/charrua-core">charrua-core</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/charrua-core/index.html">charrua-core</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-ipaddr">mirage/ocaml-ipaddr</a></span>: 
+          <div class="repo_descr"><p>a library for manipulation of IP (and MAC) address representations.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/ipaddr">ipaddr</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/ipaddr/index.html">ipaddr</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-rpc">mirage/ocaml-rpc</a></span>: 
+          <div class="repo_descr"><p>library and syntax extension to generate functions to convert values of a given type to and from theirs RPC representations.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/rpc">rpc</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/rpc/index.html">rpc</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">web</span>:
+     <span class="repo_header_descr"><p>Libraries that implement web-related technologies, including the HTTP protocol.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-uri">mirage/ocaml-uri</a></span>: 
+          <div class="repo_descr"><p>RFC3986 URI parsing library</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/uri">uri</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/uri/index.html">uri</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-cohttp">mirage/ocaml-cohttp</a></span>: 
+          <div class="repo_descr"><p>a library for creating HTTP daemons, with a portable HTTP parser and implementations using various asynchronous programming libraries.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/cohttp">cohttp</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/cohttp/index.html">cohttp</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/mirage-http">mirage/mirage-http</a></span>: 
+          <div class="repo_descr"><p>a Cohttp-based webserver implementation of the Mirage HTTP interfaces.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/mirage-http">mirage-http</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/mirage-http/index.html">mirage-http</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/cowabloga">mirage/cowabloga</a></span>: 
+          <div class="repo_descr"><p>a deprecated library to setup a simple blog and wiki using the Zurb Foundation CSS/HTML templates.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/cowabloga">cowabloga</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/cowabloga/index.html">cowabloga</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-cow">mirage/ocaml-cow</a></span>: 
+          <div class="repo_descr"><p>OCaml combinators for HTML, XML, JSON and Markdown format handling.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/cow">cow</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/cow/index.html">cow</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ezjsonm">mirage/ezjsonm</a></span>: 
+          <div class="repo_descr"><p>a simple but slower parsing library for JSON values, based on jsonm.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/ezjsonm">ezjsonm</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/ezjsonm/index.html">ezjsonm</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-magic-mime">mirage/ocaml-magic-mime</a></span>: 
+          <div class="repo_descr"><p>a database of MIME types that maps filename extensions into MIME types suitable for use in many Internet protocols such as HTTP or e-mail.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/magic-mime">magic-mime</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/magic-mime/index.html">magic-mime</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">vcs</span>:
+     <span class="repo_header_descr"><p>Version-controlled storage technologies, including the Irmin datastructure layer.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/irmin">mirage/irmin</a></span>: 
+          <div class="repo_descr"><p>a library for persistent stores with built-in snapshot, branching and reverting mechanisms.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/irmin">irmin</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/irmin-unix">irmin-unix</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/mirage-irmin">mirage-irmin</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/irmin/index.html">irmin</a>, 
+             
+             <a href="http://docs.mirage.io/irmin-unix/index.html">irmin-unix</a>, 
+             
+             <a href="http://docs.mirage.io/mirage-irmin/index.html">mirage-irmin</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-github">mirage/ocaml-github</a></span>: 
+          <div class="repo_descr"><p>an OCaml interface to the GitHub APIv3 (JSON) that is compatible with Mirage and also compiles to pure JavaScript.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/github">github</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/github/index.html">github</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/ocaml-git">mirage/ocaml-git</a></span>: 
+          <div class="repo_descr"><p>Git format and protocol in pure OCaml, with support for on-disk and in-memory Git stores.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/git">git</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/git-mirage">git-mirage</a>, 
+             
+               <a href="https://opam.ocaml.org/packages/git-unix">git-unix</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/git/index.html">git</a>, 
+             
+             <a href="http://docs.mirage.io/git-mirage/index.html">git-mirage</a>, 
+             
+             <a href="http://docs.mirage.io/git-unix/index.html">git-unix</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/samoht/irmin-watcher">samoht/irmin-watcher</a></span>: 
+          <div class="repo_descr"><p>Portable filesystem watch backends using FSevents or Inotify</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/irmin-watcher">irmin-watcher</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/irmin-watcher/index.html">irmin-watcher</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">security</span>:
+     <span class="repo_header_descr"><p>Cryptography and encryption-related libraries.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirleft/ocaml-tls">mirleft/ocaml-tls</a></span>: 
+          <div class="repo_descr"><p>a pure OCaml implementation of Transport Layer Security.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/tls">tls</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/tls/index.html">tls</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirleft/ocaml-nocrypto">mirleft/ocaml-nocrypto</a></span>: 
+          <div class="repo_descr"><p>a small cryptographic library that puts emphasis on the applicative style and ease of use. It includes basic ciphers (AES, 3DES, RC4), hashes (MD5, SHA1, SHA2), public-key primitives (RSA, DSA, DH) and a strong RNG (Fortuna).</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/nocrypto">nocrypto</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/nocrypto/index.html">nocrypto</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirleft/ocaml-x509">mirleft/ocaml-x509</a></span>: 
+          <div class="repo_descr"><p>X.509 is a public key infrastructure used mostly on the Internet, and this library implements most parts of RFC5280 and RFC6125.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/x509">x509</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/x509/index.html">x509</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+         <li class="repo_odd">
+          <span class="repo_link"><a href="https://github.com/mirleft/ocaml-asn1-combinators">mirleft/ocaml-asn1-combinators</a></span>: 
+          <div class="repo_descr"><p>a library for expressing ASN.1 in OCaml by embedding the abstract syntax directly in the language.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/asn1-combinators">asn1-combinators</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/asn1-combinators/index.html">asn1-combinators</a>
+             
+           </div>
+          
+         </li>
+       
+     
+   </ul>
+  </div>
+  
+   <div class="repo_header">
+     <span class="repo_header_type">testing</span>:
+     <span class="repo_header_descr"><p>Libraries to assist with building unit tests and coverage.</p>
+</span>
+   <ul>
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+         <li class="repo_even">
+          <span class="repo_link"><a href="https://github.com/mirage/alcotest">mirage/alcotest</a></span>: 
+          <div class="repo_descr"><p>a lightweight and colourful test framework that exposes simple interface to perform unit tests.</p>
+</div>
+          
+           <div class="repo_opam"><span class="repo_opam_header">opam:</span>
+             
+               <a href="https://opam.ocaml.org/packages/alcotest">alcotest</a>
+             
+             <br />
+             <span class="repo_opam_header">docs:</span>
+             
+             <a href="http://docs.mirage.io/alcotest/index.html">alcotest</a>
+             
+           </div>
+          
+         </li>
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+       
+     
+   </ul>
+  </div>
+   
+</div>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

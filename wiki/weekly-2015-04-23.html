@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-04-23</title>
+  <meta name="description" content="23rd Apr 2015: Release of 2.4.0, Irmin updates, TLS and Jitsu">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-04-23">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-04-23</h1>
+  </header>
+
+  <div class="article-content">
+    <p>23rd Apr 2015: Release of 2.4.0, Irmin updates, TLS and Jitsu</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage 2.4.0 released</li>
+  <li>Irmin updates</li>
+  <li>TLS status</li>
+  <li>Quality and Test</li>
+  <li>Jitsu/NSDI</li>
+  <li>Mirage.io</li>
+  <li>3.0 Planning</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, David Kaloper,
+Thomas Leonard, Jon Ludlum, Anil Madhavapeddy, Hannes Mehnert,
+Richard Mortier, Dave Scott, Magnus Skjegstad and Jeremy Yallop</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-240-released">Mirage 2.4.0 released</h4>
+
+<p>ThomasG released <code class="highlighter-rouge">mirage.2.4.0</code>, along with <code class="highlighter-rouge">conduit.0.8.0</code>,
+<code class="highlighter-rouge">mirage-conduit.2.1.0</code>, <code class="highlighter-rouge">tcpip.2.4.0</code> and <code class="highlighter-rouge">mirage-http.2.2.0</code>. These releases
+improve the TLS support, fix ARP issues, make the mirage HTTP server signature
+only depend on V1.FLOW and fix some usability issues with the mirage
+command-line tool. 2.4.0 is an intermediate release to help unblock some of
+the interface changes required, but is not the ‘supported’ SSL release yet.
+We can prepare a release properly when DavidK finishes the entropy support</p>
+
+<p>See the thread on the mailing list: “<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-04/msg00048.html">Release of Mirage 2.4.0</a>”</p>
+
+<p>Anil is planning to do a blog post on 2.4.0 and is cherry picking some things
+to unblock something else.</p>
+
+<h4 id="irmin-updates">Irmin updates</h4>
+
+<!-- **Custom Merges** - Defining custom merges should be done. -->
+
+<p><strong>Watch API</strong> - Is done but the tests are not done and they’re not working.
+It’s a matter of fixing the tests not bugs in this case.</p>
+
+<p><a href="https://github.com/talex5/cuekeeper">CueKeeper</a> is now using the new API.  Sync support can sync between two
+branches but not sever sync. Next step is to achieve remote sync. Should be ok
+but cannot use git-format yet. Transcoding may be possible but not just yet.
+Cannot quite use git-format everywhere as there are other things we need to
+think about (zlib etc). Basically ocaml-git needs to work from JavaScript.</p>
+
+<h4 id="tls-status">TLS status</h4>
+
+<p><strong>Entropy</strong> - There’s an issue that is tracking all the remaining pieces for
+Entropy support (<a href="https://github.com/mirleft/ocaml-nocrypto/issues/55">mirleft/ocaml-nocrypto#55</a>).</p>
+
+<p>DavidK wrote up the current state of things on the issue and it’s almost there.
+He just needs to finish the discussions with ThomasL about ARM support. Anil
+has been reviewing the code for nocrypto and it looks good. AsyncSSL is hard
+to use correctly - certificate validation was working only a month ago.</p>
+
+<p>First user of the TLS (outside those who developed it) is
+<a href="https://realworldocaml.org">https://realworldocaml.org</a>. There’s not been a single crash or issue and
+it’s not on a loop so if it did go down, we would know about it fairly quickly.
+We currently have an ‘A’ from the <a href="https://www.ssllabs.com/ssltest/analyze.html?d=realworldocaml.org&amp;latest">SSL tests</a> but we’d really like
+to get an A+. It seems that may have more to do with browsers at this stage
+than anything to do with TLS.</p>
+
+<p>In terms of releases, we first need ASN1 to go out and then nocrypto after
+it’s been cleaned up, then some modifications to TLS to remove some deprecated
+code. At that point, we should have out of the box support for MirageOS!</p>
+
+<p>There are also things that need to be fixed in <code class="highlighter-rouge">xentropyd</code>. DavidK will remove
+the entropy signature from nocrypto and at some point will also work on a
+Piñata summary post.</p>
+
+<h4 id="quality-and-test">Quality and test</h4>
+
+<p>There are now bulk build results available at <a href="http://opam.ocaml.org/builds">http://opam.ocaml.org/builds</a>.
+These is are lists of what works, is just broken and highlights where
+something may have changed.  This is a <em>very</em> experimental script (it’s a bit
+messy at the moment).  We can make a MirageOS specific version which should be
+quicker to run — this one takes a day and a half to run.</p>
+
+<p>We should also be keeping an eye on <a href="https://github.com/mirage/is-mirage-broken/blob/master/logs/README.md">is-mirage-broken</a>, as we need to keep
+that fixed. ThomasL is in town and is thinking of doing some UI and
+Irmin-based stuff which could be cool.</p>
+
+<p>We’re also looking at adding <a href="https://www.scaleway.com">Scaleway’s ARM cloud</a> as a place to
+run tests and services.  If people want access to ARM machines there we can
+likely arrange for that — however we don’t want them to go unused. It would be
+neat to use them as build bots (i.e. doing the build in the cloud but
+deploying to Cubieboards). They’re currently trying to get Xen booted
+(<a href="https://github.com/scaleway/kernel-tools/issues/14">scaleway/kernel-tools#14</a>).  In the meantime, if anyone wants
+to try them out, they have a one month free trial.</p>
+
+<h4 id="jitsunsdi">Jitsu/NSDI</h4>
+
+<p>Working on getting the release of Jitsu into the mirage-dev repo. ThomasG is
+working on TCP/IP code and may be able to merge that into main stack soon.
+Is also cleaning up the Jitsu code-base and adding ARP support too. Anil has
+an ancient patch but is not confident about merging it yet.</p>
+
+<p>Magnus is also working on a blog post about Jitsu, which will hopefully be
+ready soon.</p>
+
+<p>We want to get Jitsu running on one of our machines and Anil will set that up
+soon (without the synjitsu component for now). Once Dave has set up XenServer
+on the relevant machine and we’ll take it from there.</p>
+
+<h4 id="mirageio">Mirage.io</h4>
+
+<p>Getting this up and running depends on the state of the Monk machine.
+We’ll have to come back to this when it’s ready.</p>
+
+<h4 id="planning">3.0 planning</h4>
+
+<p>Only had a brief amount of time to discuss this but the feeling is tha
+quality and test will be key. We need to improve our workflows to have better
+processes such that things break less often. When things are reported as
+broken, we need to move to fix them.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Handling constraints in the mirage tool - Discussed <a href="http://openmirage.org/wiki/weekly-2015-04-09/#Handlingconstraintsinthemiragetool">last week</a>
+but nothing further to add this time around.</p>
+  </li>
+  <li>
+    <p>Tests for <code class="highlighter-rouge">js_of_ocaml</code>? This would be cool but we also need to be careful
+with stack overflows (cf. tail recursion).</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 6th May</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

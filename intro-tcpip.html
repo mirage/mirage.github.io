@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Fitting the modular MirageOS TCP/IP stack together</title>
+  <meta name="description" content="A critical part of any unikernel is its network stack – it’s difficult tothink of a project that needs a cloud platform or runs on a set-top box with nonetwo...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//intro-tcpip">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Fitting the modular MirageOS TCP/IP stack together</h1>
+    <p class="article_meta"><time datetime="2014-07-17T00:00:00+00:00" itemprop="datePublished">Jul 17, 2014</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>A critical part of any unikernel is its network stack – it’s difficult to
+think of a project that needs a cloud platform or runs on a set-top box with no
+network communications.</p>
+
+<p>Mirage provides a number of <a href="https://github.com/mirage/mirage/tree/master/types">module
+types</a> that abstract
+interfaces at different layers of the network stack, allowing unikernels to
+customise their own stack based on their deployment needs. Depending on the
+abstractions your unikernel uses, you can fulfill these abstract interfaces
+with implementations ranging from the venerable and much-imitated Unix sockets
+API to a clean-slate Mirage <a href="https://github.com/mirage/mirage-tcpip">TCP/IP
+stack</a> written from the ground up in
+pure OCaml!</p>
+
+<p>A Mirage unikernel will not use <em>all</em> these interfaces, but will pick those that
+are appropriate for the particular application at hand. If your unikernel just
+needs a standard TCP/IP stack, the <code class="highlighter-rouge">STACKV4</code> abstraction will be sufficient.
+However, if you want more control over the implementation of the different
+layers in the stack or you don’t need TCP support, you might construct your
+stack by hand using just the <a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/types/V1.mli#L263">NETWORK</a>, <a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/types/V1.mli#L316">ETHIF</a>, <a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/types/V1.mli#L368">IPV4</a> and <a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/types/V1.mli#L457">UDPV4</a> interfaces.</p>
+
+<h2 id="how-a-stack-looks-to-a-mirage-application">How a Stack Looks to a Mirage Application</h2>
+
+<p>Mirage provides a high-level interface to a TCP/IP network stack through the module type
+<a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/types/V1.mli#L581">STACKV4</a>.
+(Currently this can be included with <code class="highlighter-rouge">open V1_LWT</code>, but soon <code class="highlighter-rouge">open
+V2_LWT</code> will also bring this module type into scope as well when Mirage 2.0 is released.)</p>
+
+<pre><code class="language-OCaml">(** Single network stack *)                                                     
+module type STACKV4 = STACKV4                                                   
+  with type 'a io = 'a Lwt.t                                                    
+   and type ('a,'b,'c) config = ('a,'b,'c) stackv4_config                       
+   and type ipv4addr = Ipaddr.V4.t                                              
+   and type buffer = Cstruct.t 
+</code></pre>
+
+<p><code class="highlighter-rouge">STACKV4</code> has useful high-level functions, a subset of which are reproduced below:</p>
+
+<pre><code class="language-OCaml">    val listen_udpv4 : t -&gt; port:int -&gt; UDPV4.callback -&gt; unit
+    val listen_tcpv4 : t -&gt; port:int -&gt; TCPV4.callback -&gt; unit
+    val listen : t -&gt; unit io
+</code></pre>
+
+<p>as well as submodules that include functions for data transmission:</p>
+
+<pre><code class="language-OCaml">    module UDPV4 :
+      sig
+        type callback =
+            src:ipv4addr -&gt; dst:ipv4addr -&gt; src_port:int -&gt; buffer -&gt; unit io
+        val input :
+          listeners:(dst_port:int -&gt; callback option) -&gt; t -&gt; ipv4input
+        val write :
+          ?source_port:int -&gt;
+          dest_ip:ipv4addr -&gt; dest_port:int -&gt; t -&gt; buffer -&gt; unit io
+</code></pre>
+
+<pre><code class="language-OCaml">    module TCPV4 :
+      sig
+        type flow
+        type callback = flow -&gt; unit io
+        val read : flow -&gt; [ `Eof | `Error of error | `Ok of buffer ] io
+        val write : flow -&gt; buffer -&gt; unit io
+        val close : flow -&gt; unit io
+        val create_connection :
+          t -&gt; ipv4addr * int -&gt; [ `Error of error | `Ok of flow ] io
+        val input : t -&gt; listeners:(int -&gt; callback option) -&gt; ipv4input
+</code></pre>
+
+<p>These should look rather familiar if you’ve used the Unix sockets
+API before, with one notable difference: the stack accepts functional
+callbacks to react to events such as a new connection request.  This
+permits callers of the library to define the precise datastructures that
+are used to store intermediate state (such as active connections).
+This becomes important when building very scalable systems that have
+to deal with <a href="https://en.wikipedia.org/wiki/C10k_problem">lots of concurrent connections</a>
+efficiently.</p>
+
+<h2 id="configuring-a-stack">Configuring a Stack</h2>
+
+<p>The <code class="highlighter-rouge">STACKV4</code> signature shown so far is just a module signature, and you
+need to find a concrete module that satisfies that signature.  The known
+implementations of a module can be found in the <code class="highlighter-rouge">mirage</code> CLI frontend,
+which provids the <a href="https://github.com/mirage/mirage/blob/8b59fbf0b223b3c5c70d4939b5674ecdd7521804/lib/mirage.mli#L266">configuration API</a> for unikernels.<br />
+There are currently two implementations for <code class="highlighter-rouge">STACKV4</code>: <code class="highlighter-rouge">direct</code> and <code class="highlighter-rouge">socket</code>.</p>
+
+<pre><code class="language-OCaml">module STACKV4_direct: CONFIGURABLE with                                        
+  type t = console impl * network impl * [`DHCP | `IPV4 of ipv4_config]         
+                                                                                
+module STACKV4_socket: CONFIGURABLE with                                        
+  type t = console impl * Ipaddr.V4.t list  
+</code></pre>
+
+<p>The <code class="highlighter-rouge">socket</code> implementations rely on an underlying OS kernel to provide the
+transport, network, and data link layers, and therefore can’t be used for a Xen
+guest VM deployment.  Currently, the only way to use <code class="highlighter-rouge">socket</code> is by configuring
+your Mirage project for Unix with <code class="highlighter-rouge">mirage configure --unix</code>.  This is the mode
+you will most often use when developing high-level application logic that doesn’t
+need to delve into the innards of the network stack (e.g. a REST website).</p>
+
+<p>The <code class="highlighter-rouge">direct</code> implementations use the <a href="https://github.com/mirage/mirage-tcpip">mirage-tcpip</a> implementations of the
+transport, network, and data link layers.  When you use this stack, all the network
+traffic from the Ethernet level up will be handled in pure OCaml.  This means that the
+<code class="highlighter-rouge">direct</code> stack will work with either a Xen
+guest VM (provided there’s a valid network configuration for the unikernel’s
+running environment of course), or a Unix program if there’s a valid <a href="https://en.wikipedia.org/wiki/TUN/TAP">tuntap</a> interface.
+<code class="highlighter-rouge">direct</code> this works with both <code class="highlighter-rouge">mirage configure --xen</code> and <code class="highlighter-rouge">mirage configure --unix</code>
+as long as there is a corresponding available device when the unikernel is run.</p>
+
+<p>There are a few Mirage functions that provide IPv4 (and UDP/TCP) stack
+implementations (of type <code class="highlighter-rouge">stackv4 impl</code>), usable from your application code.
+The <code class="highlighter-rouge">stackv4 impl</code> is generated in <code class="highlighter-rouge">config.ml</code> by some logic set when the
+program is <code class="highlighter-rouge">mirage configure</code>‘d - often by matching an environment variable.
+This means it’s easy to flip between different stack implementations when
+developing an application just be recompiling the application.  The <code class="highlighter-rouge">config.ml</code>
+below allows the developer to build socket code with <code class="highlighter-rouge">NET=socket make</code> and
+direct code with <code class="highlighter-rouge">NET=direct make</code>.</p>
+
+<pre><code class="language-OCaml">let main = foreign "Services.Main" (console @-&gt; stackv4 @-&gt; job)
+
+let net =
+  try match Sys.getenv "NET" with
+    | "direct" -&gt; `Direct
+    | "socket" -&gt; `Socket
+    | _        -&gt; `Direct
+  with Not_found -&gt; `Direct
+
+let dhcp =
+  try match Sys.getenv "ADDR" with
+    | "dhcp"   -&gt; `Dhcp
+    | "static" -&gt; `Static
+    | _ -&gt; `Dhcp
+  with Not_found -&gt; `Dhcp
+
+let stack console =
+  match net, dhcp with
+  | `Direct, `Dhcp   -&gt; direct_stackv4_with_dhcp console tap0
+  | `Direct, `Static -&gt; direct_stackv4_with_default_ipv4 console tap0
+  | `Socket, _       -&gt; socket_stackv4 console [Ipaddr.V4.any]
+
+let () =
+  register "services" [
+    main $ default_console $ stack default_console
+  ]
+</code></pre>
+
+<p>Moreover, it’s possible to configure multiple stacks individually for use in
+the same program, and to <code class="highlighter-rouge">register</code> multiple modules from the same <code class="highlighter-rouge">config.ml</code>.
+This means functions can be written such that they’re aware of the network
+stack they ought to be using, and no other - a far cry from developing network
+code over most socket interfaces, where it can be quite difficult to separate
+concerns nicely.</p>
+
+<pre><code class="language-OCaml">let client = foreign "Unikernel.Client" (console @-&gt; stackv4 @-&gt; job)
+let server = foreign "Unikernel.Server" (console @-&gt; stackv4 @-&gt; job) 
+
+let client_netif = (netif "0")
+let server_netif = (netif "1") 
+
+let client_stack = direct_stackv4_with_dhcp default_console client_netif
+let server_stack = direct_stackv4_with_dhcp default_console server_netif
+
+let () = 
+  register "unikernel" [
+    main $ default_console $ client_stack;
+    server $ default_console $ server_stack 
+  ]
+
+</code></pre>
+
+<h2 id="acting-on-stacks">Acting on Stacks</h2>
+
+<p>Most network applications will either want to listen for incoming connections
+and respond to that traffic with information, or to connect to some remote
+host, execute a query, and receive information.  <code class="highlighter-rouge">STACKV4</code> offers simple ways
+to define functions implementing either of these patterns.</p>
+
+<h3 id="establishing-and-communicating-across-connections">Establishing and Communicating Across Connections</h3>
+
+<p><code class="highlighter-rouge">STACKV4</code> offers <code class="highlighter-rouge">listen_tcpv4</code> and <code class="highlighter-rouge">listen_udpv4</code> functions for establishing
+listeners on specific ports.  Both take a <code class="highlighter-rouge">stack impl</code>, a named <code class="highlighter-rouge">port</code>, and a
+<code class="highlighter-rouge">callback</code> function.</p>
+
+<p>For UDP listeners, which are datagram-based rather than connection-based,
+<code class="highlighter-rouge">callback</code> is a function of the source IP, destination IP, source port, and the
+<code class="highlighter-rouge">Cstruct.t</code> that contains the payload data.  Applications that wish to respond
+to incoming UDP packets with their own UDP responses (e.g., DNS servers) can
+use this information to construct reply packets and send them with
+<code class="highlighter-rouge">UDPV4.write</code> from within the callback function.</p>
+
+<p>For TCP listeners, <code class="highlighter-rouge">callback</code> is a function of <code class="highlighter-rouge">TCPV4.flow -&gt; unit Lwt.t</code>.  <code class="highlighter-rouge">STACKV4.TCPV4</code> offers <code class="highlighter-rouge">read</code>, <code class="highlighter-rouge">write</code>, and <code class="highlighter-rouge">close</code> on <code class="highlighter-rouge">flow</code>s for application writers to build higher-level protocols on top of.</p>
+
+<p><code class="highlighter-rouge">TCPV4</code> also offers <code class="highlighter-rouge">create_connection</code>, which allows client application code to establish TCP connections with remote servers.  In success cases, <code class="highlighter-rouge">create_connection</code> returns a <code class="highlighter-rouge">TCPV4.flow</code>, which can be acted on just as the data in a <code class="highlighter-rouge">callback</code> above.  There’s also a polymorphic variant for error conditions, such as an unreachable remote server.</p>
+
+<h3 id="a-simple-example">A Simple Example</h3>
+
+<p>Some very simple examples of user-level TCP code are included in <a href="https://github.com/mirage/mirage-tcpip/tree/master/examples">mirage-tcpip/examples</a>.  <code class="highlighter-rouge">config.ml</code> is identical to the first configuration example above, and will build a <code class="highlighter-rouge">direct</code> stack by default.</p>
+
+<p>Imagine a very simple application - one which simply repeats any data back to the sender, until the sender gets bored and wanders off (<a href="https://en.wikipedia.org/wiki/Echo_Protocol">RFC 862</a>, for the curious).</p>
+
+<pre><code class="language-OCaml">open Lwt
+open V1_LWT
+
+module Main (C: V1_LWT.CONSOLE) (S: V1_LWT.STACKV4) = struct
+  let report_and_close c flow message =
+    C.log c message;
+    S.TCPV4.close flow
+
+  let rec echo c flow =
+    S.TCPV4.read flow &gt;&gt;= fun result -&gt; (
+      match result with  
+        | `Eof -&gt; report_and_close c flow "Echo connection closure initiated."
+        | `Error e -&gt; 
+          let message = 
+          match e with 
+            | `Timeout -&gt; "Echo connection timed out; closing.\n"
+            | `Refused -&gt; "Echo connection refused; closing.\n"
+            | `Unknown s -&gt; (Printf.sprintf "Echo connection error: %s\n" s)
+             in
+          report_and_close c flow message
+        | `Ok buf -&gt;
+            S.TCPV4.write flow buf &gt;&gt;= fun () -&gt; echo c flow
+        ) 
+
+  let start c s = 
+    S.listen_tcpv4 s ~port:7 (echo c);
+    S.listen s
+
+end
+</code></pre>
+
+<p>All the application programmer needs to do is define functionality in relation to <code class="highlighter-rouge">flow</code> for sending and receiving data, establish this function as a callback with <code class="highlighter-rouge">listen_tcpv4</code>, and start a listening thread with <code class="highlighter-rouge">listen</code>.</p>
+
+<h2 id="more-complex-uses">More Complex Uses</h2>
+
+<p>An OCaml HTTP server, <a href="http://www.github.com/mirage/ocaml-cohttp">Cohttp</a>, is currently powering this very blog.  A simple static webserver using Cohttp <a href="https://github.com/mirage/mirage-skeleton/tree/master/static_website">is included in <code class="highlighter-rouge">mirage-skeleton</code></a>.</p>
+
+<p><a href="https://tls.openmirage.org/">The OCaml-TLS demonstration server</a> announced here <a href="http://openmirage.org/blog/introducing-ocaml-tls">just a few days ago</a> is also running atop Cohttp - <a href="https://github.com/mirleft/tls-demo-server">source is available on Github</a>.</p>
+
+<h2 id="the-future">The future</h2>
+
+<p>Mirage’s TCP/IP stack is under active development!  <a href="https://github.com/mirage/mirage-tcpip/search?q=TODO&amp;ref=cmdform">Some low-level details</a> are still stubbed out, and we’re working on implementing some of the trickier corners of TCP, as well as <a href="http://somerandomidiot.com/blog/2014/05/22/throwing-some-fuzzy-dice/">doing automated testing</a> on the stack.  We welcome testing tools, bug reports, bug fixes, and new protocol implementations!</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

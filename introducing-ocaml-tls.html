@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Introducing transport layer security (TLS) in pure OCaml</title>
+  <meta name="description" content="We announce a beta release of ocaml-tls, a clean-slate implementation ofTransport Layer Security (TLS) inOCaml.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//introducing-ocaml-tls">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Introducing transport layer security (TLS) in pure OCaml</h1>
+    <p class="article_meta"><time datetime="2014-07-08T00:00:00+00:00" itemprop="datePublished">Jul 8, 2014</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>We announce a <strong>beta</strong> release of <code class="highlighter-rouge">ocaml-tls</code>, a clean-slate implementation of
+<a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">Transport Layer Security</a> (TLS) in
+OCaml.</p>
+
+<h3 id="what-is-tls">What is TLS?</h3>
+
+<p>Transport Layer Security (TLS) is probably the most widely deployed
+security protocol on the Internet. It provides communication privacy
+to prevent eavesdropping, tampering, and message forgery. Furthermore,
+it optionally provides authentication of the involved endpoints. TLS
+is commonly deployed for securing web services (<a href="http://tools.ietf.org/html/rfc2818">HTTPS</a>), emails,
+virtual private networks, and wireless networks.</p>
+
+<p>TLS uses asymmetric cryptography to exchange a symmetric key, and
+optionally authenticate (using X.509) either or both endpoints. It
+provides algorithmic agility, which means that the key exchange
+method, symmetric encryption algorithm, and hash algorithm are
+negotiated.</p>
+
+<h3 id="tls-in-ocaml">TLS in OCaml</h3>
+
+<p>Our implementation <a href="https://github.com/mirleft/ocaml-tls">ocaml-tls</a> is already able to interoperate with
+existing TLS implementations, and supports several important TLS extensions
+such as server name indication (<a href="https://tools.ietf.org/html/rfc4366">RFC4366</a>, enabling virtual hosting)
+and secure renegotiation (<a href="https://tools.ietf.org/html/rfc5746">RFC5746</a>).</p>
+
+<p>Our [demonstration server]<sup id="fnref:7"><a href="#fn:7" class="footnote">1</a></sup> runs <code class="highlighter-rouge">ocaml-tls</code> and renders exchanged
+TLS messages in nearly real time by receiving a trace of the TLS
+session setup. If you encounter any problems, please give us [feedback]<sup id="fnref:14"><a href="#fn:14" class="footnote">2</a></sup>.</p>
+
+<p><code class="highlighter-rouge">ocaml-tls</code> and all dependent libraries are available via [OPAM]<sup id="fnref:18"><a href="#fn:18" class="footnote">3</a></sup> (<code class="highlighter-rouge">opam install tls</code>). The [source is available]<sup id="fnref:1"><a href="#fn:1" class="footnote">4</a></sup>
+under a BSD license. We are primarily working towards completeness of
+protocol features, such as client authentication, session resumption, elliptic curve and GCM
+cipher suites, and have not yet optimised for performance.</p>
+
+<p><code class="highlighter-rouge">ocaml-tls</code> depends on the following independent libraries: [ocaml-nocrypto]<sup id="fnref:6"><a href="#fn:6" class="footnote">5</a></sup> implements the
+cryptographic primitives, [ocaml-asn1-combinators]<sup id="fnref:5"><a href="#fn:5" class="footnote">6</a></sup> provides ASN.1 parsers/unparsers, and
+[ocaml-x509]<sup id="fnref:8"><a href="#fn:8" class="footnote">7</a></sup> implements the X509 grammar and certificate validation (<a href="https://tools.ietf.org/html/rfc5280">RFC5280</a>). [ocaml-tls]<sup id="fnref:1:1"><a href="#fn:1" class="footnote">4</a></sup> implements TLS (1.0, 1.1 and 1.2; <a href="https://tools.ietf.org/html/rfc2246">RFC2246</a>,
+<a href="https://tools.ietf.org/html/rfc4346">RFC4346</a>, <a href="https://tools.ietf.org/html/rfc5246">RFC5246</a>).</p>
+
+<p>We invite the community to audit and run our code, and we are particularly interested in discussion of our APIs.
+Please use the [mirage-devel mailing list]<sup id="fnref:9"><a href="#fn:9" class="footnote">8</a></sup> for discussions.</p>
+
+<p><strong>Please be aware that this release is a <em>beta</em> and is missing external code audits.
+It is not yet intended for use in any security critical applications.</strong></p>
+
+<p>In our [issue tracker]<sup id="fnref:14:1"><a href="#fn:14" class="footnote">2</a></sup> we transparently document known attacks against TLS and our mitigations
+([checked]<sup id="fnref:4"><a href="#fn:4" class="footnote">9</a></sup> and [unchecked]<sup id="fnref:11"><a href="#fn:11" class="footnote">10</a></sup>).
+We have not yet implemented mitigations against either the
+[Lucky13]<sup id="fnref:12"><a href="#fn:12" class="footnote">11</a></sup> timing attack or traffic analysis (e.g. [length-hiding padding]<sup id="fnref:13"><a href="#fn:13" class="footnote">12</a></sup>).</p>
+
+<h3 id="trusted-code-base">Trusted code base</h3>
+
+<p>Designed to run on Mirage, the trusted code base of <code class="highlighter-rouge">ocaml-tls</code> is small. It includes the libraries already mentioned,
+[<code class="highlighter-rouge">ocaml-tls</code>]<sup id="fnref:1:2"><a href="#fn:1" class="footnote">4</a></sup>, [<code class="highlighter-rouge">ocaml-asn-combinators</code>]<sup id="fnref:5:1"><a href="#fn:5" class="footnote">6</a></sup>, [<code class="highlighter-rouge">ocaml-x509</code>]<sup id="fnref:8:1"><a href="#fn:8" class="footnote">7</a></sup>,
+and [<code class="highlighter-rouge">ocaml-nocrypto</code>]<sup id="fnref:6:1"><a href="#fn:6" class="footnote">5</a></sup> (which uses C implementations of block
+ciphers and hash algorithms). For arbitrary precision integers needed in 
+asymmetric cryptography, we rely on [<code class="highlighter-rouge">zarith</code>]<sup id="fnref:15"><a href="#fn:15" class="footnote">13</a></sup>, which wraps
+[<code class="highlighter-rouge">libgmp</code>]<sup id="fnref:16"><a href="#fn:16" class="footnote">14</a></sup>. As underlying byte array structure we use
+[<code class="highlighter-rouge">cstruct</code>]<sup id="fnref:17"><a href="#fn:17" class="footnote">15</a></sup> (which uses OCaml <code class="highlighter-rouge">Bigarray</code> as storage).</p>
+
+<p>We should also mention the OCaml runtime, the OCaml compiler, the
+operating system on which the source is compiled and the binary is executed, as
+well as the underlying hardware. Two effectful frontends for
+the pure TLS core are implemented, dealing
+with side-effects such as reading and writing from the network: <a href="http://ocsigen.org/lwt/api/Lwt_unix">Lwt_unix</a> and
+Mirage, so applications can run directly as a Xen unikernel.</p>
+
+<h3 id="why-a-new-tls-implementation">Why a new TLS implementation?</h3>
+
+<p><strong>Update:</strong>
+Thanks to <a href="http://frama-c.com/">Frama-C</a> guys for <a href="https://twitter.com/spun_off/status/486535304426188800">pointing</a> <a href="https://twitter.com/spun_off/status/486536572792090626">out</a>
+that <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1266">CVE-2014-1266</a> and <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0224">CVE-2014-0224</a> are <em>not</em> memory safety issues, but
+logic errors. This article previously stated otherwise.</p>
+
+<p>There are only a few TLS implementations publicly available and most
+programming languages bind to OpenSSL, an open source implementation written
+in C. There are valid reasons to interface with an existing TLS library,
+rather than developing one from scratch, including protocol complexity and
+compatibility with different TLS versions and implementations. But from our
+perspective the disadvantage of most existing libraries is that they
+are written in C, leading to:</p>
+
+<ul>
+  <li>Memory safety issues, as recently observed by <a href="https://en.wikipedia.org/wiki/Heartbleed">Heartbleed</a> and GnuTLS
+session identifier memory corruption (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3466">CVE-2014-3466</a>) bugs;</li>
+  <li>Control flow complexity (Apple’s goto fail, <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1266">CVE-2014-1266</a>);</li>
+  <li>And difficulty in encoding state machines (OpenSSL change cipher suite
+attack, <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0224">CVE-2014-0224</a>).</li>
+</ul>
+
+<p>Our main reasons for <code class="highlighter-rouge">ocaml-tls</code> are that OCaml is a modern functional
+language, which allows concise and declarative descriptions of the
+complex protocol logic and provides type safety and memory safety to help
+guard against programming errors. Its functional nature is extensively
+employed in our code: the core of the protocol is written in purely
+functional style, without any side effects.</p>
+
+<p>Subsequent blog posts <a href="https://github.com/mirage/mirage/issues/257">over the coming
+days</a> will examine in more detail
+the design and implementation of the four libraries, as well as the security
+trade-offs and some TLS attacks and our mitigations against them.  For now
+though, we invite you to try out our <strong>[demonstration server]<sup id="fnref:7:1"><a href="#fn:7" class="footnote">1</a></sup></strong>
+running our stack over HTTPS.  We’re particularly interested in feedback on our <a href="https://github.com/mirleft/ocaml-tls">issue tracker</a> about
+clients that fail to connect, and any queries from anyone reviewing the <a href="https://github.com/mirleft/">source code</a>
+of the constituent libraries.</p>
+
+<hr />
+
+<p>Posts in this TLS series:</p>
+
+<ul>
+  <li><a href="http://openmirage.org/blog/introducing-ocaml-tls">Introducing transport layer security (TLS) in pure OCaml</a></li>
+  <li><a href="http://openmirage.org/blog/introducing-nocrypto">OCaml-TLS: building the nocrypto library core</a></li>
+  <li><a href="http://openmirage.org/blog/introducing-x509">OCaml-TLS: adventures in X.509 certificate parsing and validation</a></li>
+  <li><a href="http://openmirage.org/blog/introducing-asn1">OCaml-TLS: ASN.1 and notation embedding</a></li>
+  <li><a href="http://openmirage.org/blog/ocaml-tls-api-internals-attacks-mitigation">OCaml-TLS: the protocol implementation and mitigations to known attacks</a></li>
+</ul>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:7">
+      <p>https://tls.openmirage.org/ <a href="#fnref:7" class="reversefootnote">&#8617;</a> <a href="#fnref:7:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:14">
+      <p>https://github.com/mirleft/ocaml-tls/issues <a href="#fnref:14" class="reversefootnote">&#8617;</a> <a href="#fnref:14:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:18">
+      <p>https://opam.ocaml.org/packages/tls/tls.0.1.0/ <a href="#fnref:18" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:1">
+      <p>https://github.com/mirleft/ocaml-tls <a href="#fnref:1" class="reversefootnote">&#8617;</a> <a href="#fnref:1:1" class="reversefootnote">&#8617;<sup>2</sup></a> <a href="#fnref:1:2" class="reversefootnote">&#8617;<sup>3</sup></a></p>
+    </li>
+    <li id="fn:6">
+      <p>https://github.com/mirleft/ocaml-nocrypto <a href="#fnref:6" class="reversefootnote">&#8617;</a> <a href="#fnref:6:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:5">
+      <p>https://github.com/mirleft/ocaml-asn1-combinators <a href="#fnref:5" class="reversefootnote">&#8617;</a> <a href="#fnref:5:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:8">
+      <p>https://github.com/mirleft/ocaml-x509 <a href="#fnref:8" class="reversefootnote">&#8617;</a> <a href="#fnref:8:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:9">
+      <p>http://lists.xenproject.org/archives/html/mirageos-devel/ <a href="#fnref:9" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:4">
+      <p>https://github.com/mirleft/ocaml-tls/issues?labels=security+concern&amp;page=1&amp;state=open <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:11">
+      <p>https://github.com/mirleft/ocaml-tls/issues?labels=security+concern&amp;page=1&amp;state=closed <a href="#fnref:11" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:12">
+      <p>http://www.isg.rhul.ac.uk/tls/Lucky13.html <a href="#fnref:12" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:13">
+      <p>http://tools.ietf.org/html/draft-pironti-tls-length-hiding-02 <a href="#fnref:13" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:15">
+      <p>https://forge.ocamlcore.org/projects/zarith <a href="#fnref:15" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:16">
+      <p>https://gmplib.org/ <a href="#fnref:16" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:17">
+      <p>https://github.com/mirage/ocaml-cstruct <a href="#fnref:17" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

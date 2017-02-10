@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-08-20</title>
+  <meta name="description" content="20th Aug 2014: XenSummit feedback, Conduit patches and ARM profiling">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-08-20">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-08-20</h1>
+  </header>
+
+  <div class="article-content">
+    <p>20th Aug 2014: XenSummit feedback, Conduit patches and ARM profiling</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>XenSummit Talk</li>
+  <li>Conduit merge</li>
+  <li>Irmin status update</li>
+  <li>Profiling ARM</li>
+  <li>Xen-ARM vs Xen-x86</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Jon Ludlam, Anil Madhavapeddy, Richard Mortier and Dave Scott.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="xensummit-talk">XenSummit Talk</h4>
+
+<p>Anil is in Chicago at the annual <a href="http://events.linuxfoundation.org/events/xen-project-developer-summit">Xen Developer Summit</a> speaking
+about Mirage 2.0 and branch consistency for Xen Stub Domains (<a href="http://sched.co/1nhbdHE">abstract</a>).
+Some feedback from the talk was emailed to the list and is summarised here
+(see the <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-08/msg00100.html">thread for discussion</a>).</p>
+
+<ul>
+  <li>
+    <p>Git workflow very popular. Lots of people twigged onto the maintainability
+benefits of <code class="highlighter-rouge">git bisect</code> automation in particular.</p>
+  </li>
+  <li>
+    <p>Questions about why Xenstore transactions are still necessary in the modern
+world.  Can replace with consensus protocols instead?  Maybe time for an ABI
+bump to deprecate the ancient xenstore protocol.</p>
+  </li>
+  <li>
+    <p>Space usage is a concern — building an RRD-style constant size library to
+maintain progressive history would be a big win.</p>
+  </li>
+  <li>
+    <p><em>Excellent</em> talk from Felipe Huici from NEC about building much denser  VM
+workloads, and he observed that Xenstored/xenconsoled are a big bottleneck  at
+~10000 VMs (<a href="http://www0.cs.ucl.ac.uk/staff/f.huici/presentations/clickos-xendevsummit14.pdf">slides</a>).  Some sub notes:</p>
+    <ul>
+      <li>We could write a mirage xenconsoled to log to irmin and drain guest
+ console rings much faster.</li>
+      <li>A distributed xenstored+irmin would allow significantly more scalability
+ than attempting to build a serially fast version.</li>
+      <li>Felipe has the beginning of a simple c++ xenstored that doesn’t implement
+ the full semantics, but is enough for MiniOS.</li>
+      <li>It may be useful to negotiate a xenstore v2 protocol and use that for new
+ guests.  It could use a simple fixed-length binary protocol
+ (protobuf-style?), and eliminate the need for transactions perhaps.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>In general, it was very positive and there was lots of interest in Irmin. Some
+feedback from attendees is that some more structure around Mirage would help
+people who want to contribute. Right now there are libraries everywhere and
+it’s difficult to see where you can get involved without having to understand
+everything. Making a framework around the upcoming headline features would be
+especially useful. This would be something like a roadmap for Mirage 3.0.
+Overall, we should be aiming to get better at this kind of thing with every
+release (and for the most part, we seem to be —
+<a href="http://openmirage.org/community/">feedback is always welcome</a>!).</p>
+
+<h4 id="conduit-merge">Conduit merge</h4>
+
+<p>Got HTTP request working through Mirage. Requires DNS and TCP set up and the
+like. It’s quite a big patch set, which touches a number of libraries and a
+number of things are not backward compatible.  Hence these need to be
+co-ordinated and there’s an issue to track this (<a href="https://github.com/mirage/mirage/issues/287">mirage/mirage#287</a>).
+Dave will add vchan support when ready. This is an important set of patches
+and we will get a working transport layer.  The updates to mirage-skeleton are
+minor and also tracked in the issue.</p>
+
+<h4 id="irmin-status-update">Irmin status update</h4>
+
+<p>ThomasG investigating how he could remove the <code class="highlighter-rouge">core_kernel</code> dependency
+and is also cleaning up
+Benjamin Farinier’s <code class="highlighter-rouge">queues</code> and <code class="highlighter-rouge">ropes</code> work to port that in.
+<a href="https://github.com/mirage/irmin/issues">Bug reports</a> are coming in from early users and one of the
+main points is that we should improve the user side of things.</p>
+
+<h4 id="profiling-arm">Profiling ARM</h4>
+
+<p>ThomasL trying to get profiling data out of ARM, with the intent of producing
+some fun and useful graphs to share.</p>
+
+<p>Anil previously mentioned getting ethernet at 100MB. Seems we can get 18MB over
+UDP at the moment and Linux only manages 13MB. TCP on Mirage is 11MB and Linux
+gets 40MB. Not really clear what these difference are due to. Also tried to
+dump from console but turned out to be Xen that was rate limiting things. Anil
+suggested that Thomas check that the free slots in rings are being fully
+utilised.</p>
+
+<p>It would be really useful if opam can make the profiling process easier. A
+compiler switch could help with this and ThomasG can look into that (for
+native, not bytecode).</p>
+
+<p>When this is done, ThomasL will write it all up with lots of pretty graphs.</p>
+
+<h4 id="xen-arm-vs-xen-x86">Xen-ARM vs Xen-x86</h4>
+
+<p>Amir has some fairly basic questions about Xen, Mirage and ARM.  Specifically,
+what the differences are between Xen on the cloud (x86) and embedded devices
+(ARM). Others tell him this mainly relates to Mini-OS and it’s relation to
+Mirage (and ClickOS and HaLVM etc). There are several posts that might help
+explain things, for example ThomasL’s <a href="http://openmirage.org/blog/introducing-xen-minios-arm">blog post on ARM</a> and wiki
+pages on <a href="http://openmirage.org/wiki/xen-events">Xen events</a> and <a href="http://openmirage.org/wiki/xen-on-cubieboard2">setting up a Cubieboard2</a>.
+Amir will start with those and if anything isn’t clear, he’ll ask ThomasG
+about it. Amir might write this up for the website if it’ll help explain to
+others too.</p>
+
+<p><em>[edit: This is proof that there’s no such thing as a stupid question - AC]</em></p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p><strong>ARM features</strong>: New stuff coming. Next version of Xen might take advantage
+of this so we should think about this in time.</p>
+  </li>
+  <li>
+    <p>Some of the packages in the <a href="https://github.com/xapi-project/opam-repo-dev">Xapi opam remote</a> are ready to go
+upstream. Largely because Dave got them in shape recently.</p>
+  </li>
+  <li>
+    <p>We had another hiccup with the call today and we need to fix this. Proposal
+is that we sort out a GoToMeeting account such that more than one person can
+start the call. GTM is better than Google Hangouts as it allows for people to
+dial in by phone (very useful when travelling or on poor wifi).</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>2nd September</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

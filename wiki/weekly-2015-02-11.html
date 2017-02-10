@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-02-11</title>
+  <meta name="description" content="11th Feb 2015: Improving quality, error handling, TLS merge and GSoC">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-02-11">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-02-11</h1>
+  </header>
+
+  <div class="article-content">
+    <p>11th Feb 2015: Improving quality, error handling, TLS merge and GSoC</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Improving Quality</li>
+  <li>Error Handling RFC</li>
+  <li>TLS merge progress</li>
+  <li>OPAM 1.2 only</li>
+  <li>GSoC Projects</li>
+  <li>FOSDEM demo</li>
+  <li>Bitcoin Piñata</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, David Kaloper,
+Thomas Leonard, Jon Ludlam, Anil Madhavapeddy, Hannes Mehnert, Richard
+Mortier, Dave Scott, Mindy Preston and Nicolas Ojeda Bar</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="improving-quality">Improving Quality</h4>
+
+<p>We need to improve this in a more general and automated way. So far, we’ve done
+quite well with local library testing but we don’t really have the ability to
+test things in coordinated way for unikernels.  Specifically, we don’t really
+have much end-to-end testing that looks at the complete toolchain. The only
+place where this surfaces for us is still mirage-www (this website!), as bugs
+tend to appear there whenever a wider issue occurs (cf. the recent crash on
+boot - <a href="https://github.com/mirage/mirage/issues/357">mirage/mirage#375</a>). Finding bugs in an automated way and reporting
+them is important as the project grows.</p>
+
+<p>Some options include providing a manifest of specific versions and running
+tests that way.  It would allow us to take different libraries and bisect
+issues.  We would have to build this ourselves as we still have very few
+automated tests e.g <a href="https://github.com/mirage/is-mirage-broken/blob/master/logs/README.md">is-mirage-broken</a> (and it’s not enough to just have
+tests — we also have to fix things that they show as broken).</p>
+
+<p>Another thought is that instead of merging directly into the upstream OPAM
+repository (which is when we realise things aren’t quite right), maybe we can
+merge into a staging repo and ensure they pass a bunch of additional tests. 
+Provided tests pass, then the libraries can be merged upstream en-masse — in a
+known-working state. However, we must take care to balance things between
+staging and releases — we don’t want to end up with a large backlog of
+‘unreleased’ software and then do infrequent ‘big-bang’ releases.  We need to
+test and release upstream often and no-one should have to add the staging
+remote just to use up to date software (that would merely shift the current 
+problem from the main OPAM repo to our staging repo).</p>
+
+<p>Related to the above, the ability to splice from an OPAM remote might be good 
+(currently have to take <em>everything</em> on a remote).  Perhaps ThomasG, Anil and
+Louis Gesbert can discuss at this. At the moment, trying to add test cases
+into libraries will make a big difference as an interim workflow.  For
+example, Magnus has been patching TCP/IP to have some functional testing on
+Travis and we could do this for other libraries too, e.g DNS, Cohttp, etc and
+the approach would be useful elsewhere too.  Getting some kind of Xen testing
+into <a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a> would also be great.</p>
+
+<h4 id="error-handling-rfc">Error Handling RFC</h4>
+
+<p>Thomas Leonard <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-01/msg00143.html">began a discussion</a> on Error handling in Mirage and
+<a href="https://github.com/mirage/mirage-www/pull/274">submitted a page</a> to the website as an RFC. Since then, he’s tried to
+document what people advocating for polymorphic variants were describing but,
+it would be better if other people can read it and advocate for their opinion
+(DavidK would take a look). There are also things from 4.02 that we might want
+to consider. In general, one of the themes that emerged from the discussions
+so far is the difference of Error-handling ‘in the large’ and ‘in the small’.</p>
+
+<h4 id="opam-12-support-only">OPAM 1.2 support only</h4>
+
+<p>The <a href="https://github.com/mirage/mirage/pull/353">patch to the mirage tool</a> has been made but not merged yet.
+ThomasG needs to get around to this and will do in due course.</p>
+
+<h4 id="tls-merge-progress">TLS Merge progress</h4>
+
+<p>We are almost there with this and there are number of patches that need to be
+reviewed and merged (<a href="https://github.com/mirage/mirage-dev/pull/52">mirage/mirage-dev#52</a>). The largest blockers are the
+blobs of C code and getting them to run on Mirage. The last mile still hasn’t
+been covered as the entropy story is not yet complete — we need to get
+<code class="highlighter-rouge">xentropyd</code> out first. Currently it’s not reliable enough as things start
+hanging. Once that’s out of the way we’re looking good.  DavidK is working on
+it.</p>
+
+<h4 id="gsoc-projects">GSoC Projects</h4>
+
+<p>As part of Xen, we will be submitting projects as part of Google Summer of
+Code (GSoC). We’ve been curating a set of <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">Pioneer Projects</a> and we
+can definitely add to this list. A quick call for ideas resulted in several
+potential projects being proposed and these will be added to the projects page.
+Very briefly, we discussed:</p>
+
+<ul>
+  <li>A router VM, which can route traffic and be a DHCP server.</li>
+  <li>A syslog unikernel</li>
+  <li>A Firewall</li>
+  <li>OCaml SSH</li>
+</ul>
+
+<p>Please see the <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">Pioneer Projects page</a> for more details.</p>
+
+<h4 id="fosdem-demo">FOSDEM Demo</h4>
+
+<p>Amir gave a demo at FOSDEM of a unikernel running on a Cubieboard2, that would
+serve the 2048 game when people connected to its Wifi access point.  Mindy,
+Magnus and DavidK helped to get the Wifi bridge working and the demo was quite
+successful. There’s a <a href="http://amirchaudhry.com/unikernel-arm-demo-fosdem/">blog post</a> describing the event and the <a href="https://github.com/amirmc/fosdemo">repo</a>
+is available with instructions on what to do. Several people expressed an
+interest in summer projects so they were directed to the Pioneer Projects page.</p>
+
+<h4 id="bitcoin-piata">Bitcoin Piñata</h4>
+
+<p>Yesterday, saw the release of the <a href="http://ownme.ipredator.se/">Bitcoin Piñata</a>, which is designed
+to draw more attention to the OCaml TLS stack and unikernels. Amir wrote a
+<a href="http://amirchaudhry.com/bitcoin-pinata/">background post</a> to provide some context around it and both of these
+appear to have spread very quickly over social media.  The challenge is to
+break into a unikernel and recover the private key to a bitcoin address (and
+then make off with the bitcoins) — Hence the name, Piñata.  If someone does
+manage to take the coins, we should see the transaction in the <a href="https://blockchain.info/address/183XuXTTgnfYfKcHbJ4sZeF46a49Fnihdh">blockchain</a>.
+Somewhat ironically, it seems that people have <em>added</em> some coins to the
+address (albeit only a small amount). The Piñata is due to be up for about a
+month, or until the coins are gone — the only reason for the time limit is due
+to the maintenance burden of keeping the site up and dealing with issues (cf.
+the site was subjected to a <a href="http://en.wikipedia.org/wiki/SYN_flood">SYN flood</a> the evening after it went
+live.).</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>The next call is scheduled for <strong>Wednesday, 25th February</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

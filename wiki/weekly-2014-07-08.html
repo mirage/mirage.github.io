@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-07-08</title>
+  <meta name="description" content="8th July 2014: More releases, ARM, Blog posts and OSCON prep">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-07-08">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-07-08</h1>
+  </header>
+
+  <div class="article-content">
+    <p>8th July 2014: More releases, ARM, Blog posts and OSCON prep</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage 1.2 release</li>
+  <li>ARM integration</li>
+  <li>Blog post progress</li>
+  <li>OSCON prep
+    <ul>
+      <li>Comments on news release</li>
+      <li>Coordinated stories?</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Leonard, Anil Madhavapeddy,
+Richard Mortier, Mindy Preston and David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-12-release">Mirage 1.2 release</h4>
+
+<p>Mirage 1.2 was released on Monday, as well as <code class="highlighter-rouge">ocaml-tls</code>. Anil’s been
+fixing up deployment scripts (turns out they’re a useful reminder of where
+all the unikernels are being deployed). Also set up a pool of TLS servers to
+deal with traffic.</p>
+
+<p>Merged in Thomas Leonard’s changes and will be cutting 2.0 releases slowly
+over time. Aim is to put them out there and in place for the announcement.</p>
+
+<p>Thomas L’s changes are easy to deal with and they clean up a lot stuff (as
+long as you don’t depend on c libraries. There may be possible regressions
+but these might only affect one external user.</p>
+
+<p>This was followed by some discussion about cstruct and memory (see AoB).
+This will be on the agenda for the next call so it’s captured properly.</p>
+
+<p><strong>TROVE</strong> - Amir asked about the <a href="https://github.com/mirage/mirage-www/blob/master/TROVE">TROVE file</a> and whether we’ve
+captured all the libraries. Anil has been maintaining it but others should
+also take a look and help out if they spot anything. Dave mentioned that
+work on the <code class="highlighter-rouge">ocaml-xenstore</code> repo is underway and he’s tidying it up and
+moving pieces around.</p>
+
+<h4 id="arm-update">ARM update</h4>
+
+<p>ARM is merged now and you can run the console stuff with what’s in the
+<code class="highlighter-rouge">master</code> branch now. Thomas L is working on getting Mirage to work with
+c-stubs. Everything seems to be working from what Thomas L can tell and is
+trying to move all the checksum code out of <code class="highlighter-rouge">mirage-platform</code>. He noticed
+there are some c-libraries that get used and it appears that code is
+duplicated. There was some discussion about this (Amir decided to make this
+an Agenda item for the next call).</p>
+
+<p>Anil pointed out that a people have asked how they can try out the ARM work.
+and we should make this as easy for them as possible. Anil will go through
+the existing information and tidy things up.  Specifically, will need to
+updated the scripts that produce an SD card image aimed at the Cubieboard
+(no-one else has had a chance to try this yet).</p>
+
+<p>There was a question for Thomas L about Hard Float to Soft Float, and
+whether this would be complicated to do.</p>
+
+<h4 id="blog-posts-pre-oscon">Blog posts pre-OSCON</h4>
+
+<p>We have an <a href="https://github.com/mirage/mirage/issues/257">issue</a> that’s tracking the progress of the blog posts and the
+first two have now gone live. One is about the <a href="http://openmirage.org/blog/mirage-1.2-released">Mirage 1.2 release</a> and
+the other <a href="http://openmirage.org/blog/introducing-ocaml-tls">introduces ocaml-tls</a>.  The remaining posts are on
+track and all is looking good so far.</p>
+
+<p>Mort did point out that some of the posts are quite long and were
+substantive enough to be broken if to shorter posts if we wanted. Amir would
+rather stick with the current schedule as he’d like to get everything out
+before the main 2.0 announcements. Everyone agrees that in principle there
+isn’t anything wrong with long posts and since these also serve as
+documentation, it’s useful to have in one place.</p>
+
+<p>It would be great if people could review each other’s posts before they go
+live so that we catch any issues early. Otherwise we might have to edit a
+live post, which is a bit tedious.</p>
+
+<h4 id="oscon-prep">OSCON prep</h4>
+
+<p>A quick run through of the work needed before the OSCON talk. Mort is
+planning to create IOCaml notebooks for each demo and will be working on
+this from tomorrow. There’s also the somewhat crude version of using GitHub
+pushes to update infrastructure. i.e have a simple website unikernel-website
+running on EC2 and when a new push is made to the repository, a new image is
+built and pushed out, and then the DNS server is pointed at the <em>new</em>
+unikernel.</p>
+
+<p>After some brief discussion, Anil said he’d make the code work for this
+(webserver, DNS, etc) so Mort will focus on the IOCaml notebooks. We’d also
+like the mirage-www site to be a pool of different sites running on
+different backends (e.g ARM, UNIX, Xen). This would be very useful for
+testing and also help with load-balancing. Anil is also dealing with this.</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p><strong>Irmin</strong> and FAT - Really want to get rid of the FAT layer in Irmin. Amir
+notes that there’s a joke in here about ‘one weird old tip’.</p>
+  </li>
+  <li>
+    <p>Everyone should keep an eye out for <strong>unusual cstruct bugs</strong>. We had a
+<a href="https://github.com/mirage/mirage-tcpip/issues/56">subtle one recently</a> and it wasn’t a type-safety issue but a
+bounds issue. Whenever you see anything, please just file an issue.
+Thanks to Mindy for catching this.</p>
+  </li>
+  <li>
+    <p><strong>cstruct/memory</strong> - Need to get cstruct/memory zeroed out. Some discussion
+about dealing with this and where it should happen and what, specifically,
+we’re protecting against. Would be interesting to re-run benchmarks but this
+is a long-standing thing about having performance testing to see regressions.
+Amir proposes we discuss this next time (add to agenda).</p>
+  </li>
+  <li>
+    <p><strong>Articles and blog roll</strong> - If you notice or write articles on other
+sites, please add them to the link log on mirage-www. Alternatively,
+just create an issue with the link and someone (prob Amir) will make sure
+they get merged into the site. We also need mirage-www to support multiple
+authors for blog posts and add a blog roll of contributors. Should also also
+make the link log visible on the main site. Amir will file some issues about
+these. Anil also mentioned including Thomas Leonard’s posts on 0Install as
+these are a great mechanism to distribute unikernels.</p>
+  </li>
+  <li>
+    <p><strong>News release</strong> - Amir needs feedback on this to ensure accuracy.
+Thanks to those who responded but others need to get back to him soon.</p>
+  </li>
+  <li>
+    <p>Next call will take place on the 22nd, but be aware that Anil and Mort
+will be at OSCON in Portland, Oregon.</p>
+  </li>
+  <li>
+    <p>Mort and Mindy will be on the <a href="http://sched.co/1nnPP3B">GSoC/OPW panel at Xen Summit</a>.
+<a href="http://www.youtube.com/watch?v=EbEBErvW-Uc">Nanoo-nanoo!</a> <em>[I couldn’t resist - AC :)]</em></p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

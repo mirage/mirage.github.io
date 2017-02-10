@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-10-28</title>
+  <meta name="description" content="28th Oct 2014: Docker tests, mirage-dev, tracing and onboarding newcomers">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-10-28">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-10-28</h1>
+  </header>
+
+  <div class="article-content">
+    <p>28th Oct 2014: Docker tests, mirage-dev, tracing and onboarding newcomers</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Review notes from last time</li>
+  <li><code class="highlighter-rouge">is-mirage-broken</code> and Docker</li>
+  <li><code class="highlighter-rouge">mirage-dev</code> releases</li>
+  <li>Tracing</li>
+  <li><code class="highlighter-rouge">mirage-tc</code> release</li>
+  <li>(good?) use of custom configure and make scripts</li>
+  <li>Mirage task list for newcomers</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Hannes Mehnert, Mindy Preston, Dave Scott,
+Magnus Skjegstad and Nik Sultana</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="is-mirage-broken-and-docker">is-mirage-broken and Docker</h4>
+
+<p>Nik Sultana working on a new tool aims to make builds of Mirage applications
+on various operating systems, using the Docker images (see the
+<a href="https://github.com/mirage/is-mirage-broken/">repo</a>). This is a continuation of looking at Bash scripts.
+It just runs a cron job everyday and lets us know if we’ve broken any
+interfaces. Currently trying to make it colourful or use images (suggestions
+welcome!).</p>
+
+<p>At the moment we only have two repos being tested this way so it would be good
+if people added their own.  For example, the TLS stack would be useful —
+Hannes can do this (and may also add the XMPP stuff).</p>
+
+<p>The logs are in a <a href="https://github.com/mirage/is-mirage-broken/blob/master/logs/README.md">README file</a> and you can see (at time of the call)
+that mirage-skeleton and mirage-www both build on Ubunty Trusty (with OCaml
+4.01.0) but not the others, as yet.</p>
+
+<p>The aim is to merge the output to <code class="highlighter-rouge">mirage-www</code> at some point but we should
+also close the loop somehow by notifying people (maybe send emails).
+This is sort of like TravisCI but instead the builds happen on a fixed
+schedule (via cron), rather than on each pull request.  This helps to surface a
+different set of issues. Should look at how to close the loop over the next
+few weeks (perhaps getting emails working first).</p>
+
+<h4 id="mirage-dev-releases">mirage-dev releases</h4>
+
+<p>Dave was going do these releases but found more bugs, which got in the way. On
+the positive side, <code class="highlighter-rouge">mirage-dev</code> is getting better and better and now the TLS
+work is added too.</p>
+
+<p>Packaging metadata is the most awkward stuff which affects the build.
+Thomas is adding OPAM files to the projects he’s making and using the pin and
+publish workflow, which is an improvement (NB: OPAM 1.2 is released now, which
+makes this available to everyone).</p>
+
+<p>We should switch all things over to OPAM 1.2 workflows but should take note of
+any blog posts/docs that need to be updated (brief segue into blog aggregation
+— see AOB).</p>
+
+<h4 id="tracing">Tracing</h4>
+
+<p>ThomasL wrote a <a href="http://roscidus.com/blog/blog/2014/10/27/visualising-an-asynchronous-monad/">blog post about Mirage tracing</a>. Everyone was in
+awe. When the work is finished, we should have a post on the Mirage website.</p>
+
+<p>Some questions about when people can start using it. Would be great to get
+more feedback from others trying it out. At the moment it requires lots of
+pins and there was a thought about adding it to <code class="highlighter-rouge">mirage-dev</code> but we really
+should flush the queue of releases before adding more things.</p>
+
+<p>If anyone wants to use it to explore the TCP stack, that would be very useful 
+ThomasL already looked at UDP). Maybe Nik can think about this, for example
+looking at the behaviour of our stack during ping flood (currently we crash!).
+In general, looking at the network stack is a good way forward.</p>
+
+<p>Mindy will try out the tracing if she can reproduce the memory leaks she’s had
+on her unikernel blog (it does reboot fine). It’s not clear if that issue is
+related to the network stack or the K/V store (crunch). In any case, Mindy
+will write up what she finds (and we should be surprised if it turns out that
+crunch does <em>not</em> have problems). In addition, it’ll be interesting to see
+what issues crop up if traces last more than a few seconds. Let’s see what
+happens.</p>
+
+<h4 id="mirage-tc-release">mirage-tc release</h4>
+
+<p>ThomasG has pulled out <code class="highlighter-rouge">mirage-tc</code> from Irmin.  Mirage Type-classes is a set
+of functors and combinators to pretty-print (using sexplib), to convert to and
+from and JSON and Cstruct buffers. There are some examples in the Readme on
+the <a href="https://github.com/mirage/mirage-tc">mirage-tc repo</a>.</p>
+
+<p>It’s already released in OPAM and could imagine it being useful for the TLS
+stuff (but that may introduce a dependency on <code class="highlighter-rouge">mirage-tc</code>).
+Feedback is welcome!</p>
+
+<h4 id="custom-configure-and-make-scripts">custom configure and make scripts</h4>
+
+<p>ThomasG debugged a bunch of stuff and found that make and config scripts are
+doing far too much magic. It would be good to have some consistent way to do
+this … perhaps something like a tool for consistently describing a project!
+<em>(sidenote: For the uninitiated this was a reference to <a href="https://github.com/samoht/assemblage">Assemblage</a>, which
+ThomasG and Daniel Bünzli have been working on but is not yet ready for
+users)</em>. Unfortunately, this means dealing with build systems which is usually
+complicated.</p>
+
+<p>In general, config is a substantive and unsolved problem. Lots of breakages
+and issues because of optional dependencies (depopts). To try and help with
+this this, we’ve been removing depopts and replacing with virtual packages.
+These issues are cropping up just because the amount of code and number of
+libraries is growing. We do need a more consistent DSL for this.</p>
+
+<p>There’s a particular problem with <code class="highlighter-rouge">pkg-config</code> being a is bit broken on Mac
+OSX but it’s better to try and fix that than do anything else (already been
+pushing fixes). Anil will fix GMP and pkg-config and notes that Yosemite 
+latest release of OSX) has bridging support, which means not needing tuntap
+modules any more. This is very handy.</p>
+
+<h4 id="mirage-tasks-list-for-newcomers">Mirage tasks list for newcomers</h4>
+
+<p>Lots of people have been asking about ‘junior jobs’ — we really don’t 
+like this term so if you have a better one please do
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">suggest it on the list</a>.</p>
+
+<p>This came up again in the OPW rounds and Mirage is now an even bigger (more
+daunting?) project. There are actually lots of tasks like this available so
+Anil will collate them and make them visible to others.  Suggestion of a wiki
+page like the kind the <a href="https://ocamllabs.github.io/compiler-hacking/">Compiler Hacking sessions</a> maintain
+could be good(<a href="https://github.com/ocamllabs/compiler-hacking/wiki">link</a>). This works very well for them, and they
+have expertise and time ratings for each task, but it does take regular
+maintenance.</p>
+
+<p>Whether people are familiar with OCaml also makes a difference as there may be
+multiple learning curves involved so a straight-forward rating system is
+unlikely to work. Mindy mentioned that when she was looking at the project,
+she picked an area that she knew something about (networking), which made it
+easier to pick up what was going on.</p>
+
+<p>This led to the idea that we should split out the possible tasks/subprojects
+by some kind of functional area so that newcomers can pick something they’re
+already familiar with e.g networking stack, file systems, hypervisor etc. This
+seems like a sensible structure to present and neatly points people to
+specific sets of libraries so they don’t have to be overwhelmed with the
+project as a whole. Anil will put something together along these lines. Mort
+really wants to work on the training material over the next months so this
+will be useful. Mindy also suggested adding things to <a href="https://openhatch.org">OpenHatch</a>, which is
+one mechanism people search for FOSS projects to contribute to.</p>
+
+<p>Amir raised the prospect of what we want from Mirage 3.0 and that we should
+plan this with enough time. One interesting suggestion is having a fully
+working Javascript backend. Will raise this next time to capture people’s
+thoughts. Of course, we do still need to get all the things for 2.0 finished
+first, including the TLS stack and deciding on C library handling.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>TLS on Xen: Trying to upstream things to zarith but could just patch in OPAM
+repo instead? Separate package for things is sometimes better as it helps with
+debugging.</p>
+  </li>
+  <li>
+    <p>Thoughts on folding content into the openmirage.org site. Could run syndic
+in unix and commit the results. Could run this on the same place as the cron
+job. Amir to try a manual run of syndic with people’s blogs posts, taking the
+code from OCaml.org.</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>12th November</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

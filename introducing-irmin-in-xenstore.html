@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using Irmin to add fault-tolerance to the Xenstore database</title>
+  <meta name="description" content="This is the second in a series of posts that introduces the Irmin distributed storage engine.You might like to begin with the introductory post.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//introducing-irmin-in-xenstore">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Using Irmin to add fault-tolerance to the Xenstore database</h1>
+    <p class="article_meta"><time datetime="2014-07-21T00:00:00+00:00" itemprop="datePublished">Jul 21, 2014</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p><em>This is the second in a series of posts that introduces the <a href="https://github.com/mirage/irmin">Irmin</a> distributed storage engine.
+You might like to begin with the <a href="http://openmirage.org/blog/introducing-irmin">introductory post</a>.</em></p>
+
+<p><a href="http://wiki.xen.org/wiki/XenStore">Xenstore</a> is a critical service found on all hosts
+running <a href="http://www.xen.org/">Xen</a>. Xenstore is necessary to
+  * configure all VM I/O devices such as disk controllers and network interface cards;
+  * share performance statistics and OS version information; and
+  * signal VMs during shutdown, suspend, resume, migrate etc.</p>
+
+<p>Xenstore must be <strong>reliable</strong>: if it fails then the host is unmanageable and must be rebooted.</p>
+
+<p>Xenstore must be <strong>secure</strong>: if it is compromised by a VM then that VM can access data belonging
+to other VMs.</p>
+
+<p>The current version of Xenstore is <a href="http://xenbits.xen.org/gitweb/?p=xen.git;a=tree;f=tools/ocaml/xenstored;h=0d762f2a61de098c0100814e0c140575b51688a3;hb=stable-4.4">already written in OCaml</a>
+and documented in the paper
+<a href="http://gazagnaire.org/pub/GH09.pdf">OXenstored: an efficient hierarchical and transactional database using functional programming with reference cell comparisons</a> presented at ICFP 2009.
+The existing code works very reliably, but there is always room for improvement
+for debuggability of such a complex system component. This is where Irmin, the
+storage layer of Mirage 2.0, can help.</p>
+
+<p>But first, a quick Xenstore primer:</p>
+
+<h3 id="xen-and-xenstore-in-30-seconds">Xen and Xenstore in 30 seconds</h3>
+
+<p>The Xen hypervisor focuses on isolating VMs from each-other; the hypervisor provides a virtual CPU scheduler
+and a memory allocator but does not perform I/O on behalf of guest VMs.
+On a Xen host, privileged server VMs perform I/O on behalf of client VMs.
+The configuration for calculating which server VM services requests for which client VMs is stored in Xenstore, as
+key/value pairs.</p>
+
+<p>The following diagram shows a Xen host with a single client and server VM, with
+a single virtual device in operation.  Disk blocks and network packets flow via
+shared memory between Xen-aware drivers in the VMs, shown in the lower-half.
+The control-plane, shown in the upper-half, contains the metadata about the
+datapath: how the device should appear in the client VM; where the I/O should
+go in the server VM; where the shared memory control structures are etc.</p>
+
+<p><img src="/graphics/xenstore-diagram.png" alt="Device configuration is stored in Xenstore as key=value pairs." /></p>
+
+<p>The Xenstore device attach protocol insists that all device keys are added
+through atomic transactions, i.e. partial updates are never visible to clients and transactions
+cannot interfere with each other.
+A Xenstore server must abort transactions whose operations were not successfully
+isolated from other transactions. After an abort, the client is expected to retry.
+Each key=value write is communicated to the server as a single request/response, so transactions
+comprising multiple writes are open for multiple round-trip times.
+This protocol is baked into guest VM kernels (including Linux, FreeBSD, Mirage, …)
+and won’t change anytime soon.</p>
+
+<p>Xenstore is used heavily when lots of VMs are starting in parallel. Each VM typically
+has several devices, each of these devices is added in a parallel transaction and therefore
+many transactions are open at once. If the server aborts too many of these transactions,
+causing the clients to retry, the system will make little progress and may appear to live-lock.
+The challenge for a Xenstore implementation is to minimise the number of aborted
+transactions and retries, without compromising on the isolation guarantee.</p>
+
+<h3 id="irmin-xenstore-design-goals">Irmin Xenstore design goals</h3>
+
+<p>The design goals of the Irmin-based Mirage Xenstore server are:
+  1. safely restart after a crash;
+  2. make system debugging easy; and
+  3. go really fast!</p>
+
+<p>How does Irmin help achieve these goals?</p>
+
+<h3 id="restarting-after-crashes">Restarting after crashes</h3>
+
+<p>The Xenstore service is a reliable component and very rarely crashes. However,
+if a crash does occur, the impact is severe on currently running virtual
+machines. There is no protocol for a running VM to close its connection to a
+Xenstore and open a new one, so if Xenstore crashes then running VMs are simply
+left orphaned. VMs in this state are impossible to manage properly: there is no
+way to shut them down cleanly, to suspend/resume or migrate, or to configure
+any disk or network interfaces. If Xenstore crashes, the host must be rebooted
+shortly after.</p>
+
+<p>Irmin helps make Xenstore recoverable after a crash, by providing a library
+that applications can use to persist and synchronise distributed data
+structures on disk and in memory. By using Irmin to persist all our state
+somewhere sensible and taking care to manage our I/O carefully, then the server
+process becomes stateless and can be restarted at will.</p>
+
+<p>To make Xenstore use Irmin,
+the first task is to enumerate all the different kinds of state in the running process.
+This includes the obvious key-value pairs used for VM configuration
+as well as data currently hidden away in the OCaml heap:
+the addresses in memory of established communication rings,
+per-domain quotas, pending watch events and watch registrations etc etc. 
+Once the state has been enumerated it must be mapped onto key-value pairs which can
+be stored in Irmin. Rather than using ad-hoc mappings everywhere, the Mirage Irmin
+server has
+<a href="https://github.com/mirage/ocaml-xenstore-server/blob/blog/introducing-irmin-in-xenstore/server/pMap.mli">persistent Maps</a>,
+<a href="https://github.com/mirage/ocaml-xenstore-server/blob/blog/introducing-irmin-in-xenstore/server/pSet.ml">persistent Sets</a>,
+<a href="https://github.com/mirage/ocaml-xenstore-server/blob/blog/introducing-irmin-in-xenstore/server/pQueue.ml">persistent Queues</a>
+and
+<a href="https://github.com/mirage/ocaml-xenstore-server/blob/blog/introducing-irmin-in-xenstore/server/pRef.ml">persistent reference cells</a>.</p>
+
+<p>Irmin applications are naturally written as functors, with the details of the persistence kept
+abstract.
+The following <a href="https://github.com/mirage/irmin/blob/0.8.3/lib/core/irminView.mli">Irmin-inspired</a> signature represents what Xenstore needs
+from Irmin:
+```
+module type VIEW = sig
+  type t</p>
+
+<p>val create: unit -&gt; t Lwt.t
+  (** Create a fresh VIEW from the current state of the store.
+      A VIEW tracks state queries and updates and acts like a branch
+      which has an explicit [merge]. *)</p>
+
+<p>val read: t -&gt; Protocol.Path.t -&gt; 
+    [ <code class="highlighter-rouge">Ok of Node.contents | </code>Enoent of Protocol.Path.t ] Lwt.t
+  (** Read a single key *)</p>
+
+<p>val list: t -&gt; Protocol.Path.t -&gt; 
+    [ <code class="highlighter-rouge">Ok of string list | </code>Enoent of Protocol.Path.t ] Lwt.t
+  (** List all the children of a key *)</p>
+
+<p>val write: t -&gt; Protocol.Path.t -&gt; Node.contents -&gt; 
+    [ `Ok of unit ] Lwt.t
+  (** Update a single key *)</p>
+
+<p>val mem: t -&gt; Protocol.Path.t -&gt; bool Lwt.t
+  (** Check whether a key exists *)</p>
+
+<p>val rm: t -&gt; Protocol.Path.t -&gt; [ `Ok of unit ] Lwt.t
+  (** Remove a key *)</p>
+
+<p>val merge: t -&gt; string -&gt; bool Lwt.t
+  (** Merge this VIEW into the current state of the store *)
+end
+```
+The main ‘business logic’ of Xenstore can then be functorised over this signature relatively easily.
+All we need is to instantiate the functor using Irmin to persist the data somewhere sensible.
+Eventually we will need two instantiations: one which runs as a userspace application and which
+writes to the filesystem; and a second which will run as a
+native Xen kernel (known as a <a href="xenstore-stub.md">xenstore stub domain</a>)
+and which will write to a fixed memory region (like a ramdisk).
+The choice of which to use is left to the system administrator. Currently most (if not all)
+distribution packagers choose to run Xenstore in userspace. Administrators who wish to
+further secure their hosts are encouraged to run the kernelspace version to isolate Xenstore
+from other processes (where a VM offers more isolation than a container, which offers more
+isolation than a chroot). Note this choice is invisible to the guest VMs.</p>
+
+<p>So far in the Irmin Xenstore integration only the userspace instantiation has been implemented.
+One of the most significant user-visible features is that all of the operations done through
+Irmin can be inspected using the standard <code class="highlighter-rouge">git</code> command line tool.
+The runes to configure Irmin to write
+<a href="http://git-scm.com">git</a> format data to the filesystem are as follows:
+<code class="highlighter-rouge">
+    let open Irmin_unix in
+    let module Git = IrminGit.FS(struct
+      let root = Some filename
+      let bare = true
+    end) in
+    let module DB = Git.Make(IrminKey.SHA1)(IrminContents.String)(IrminTag.String) in
+    DB.create () &gt;&gt;= fun db -&gt;
+</code>
+where keys and values will be mapped into OCaml <code class="highlighter-rouge">strings</code>, and our
+<code class="highlighter-rouge">VIEW.t</code> is simply an Irmin <code class="highlighter-rouge">DB.View.t</code>. All that remains is to implement
+<code class="highlighter-rouge">read</code>, <code class="highlighter-rouge">list</code>, <code class="highlighter-rouge">write</code>, <code class="highlighter-rouge">rm</code> by
+  1. mapping Xenstore <code class="highlighter-rouge">Protocol.Path.t</code> values onto Irmin keys; and
+  2. mapping Xenstore <code class="highlighter-rouge">Node.contents</code> records onto Irmin values.</p>
+
+<p>As it happens Xenstore and Irmin have similar notions of “paths” so the first mapping is
+easy. We currently use <a href="https://github.com/janestreet/sexplib">sexplib</a> to map Node.contents
+values onto strings for Irmin.</p>
+
+<p>The resulting <a href="https://github.com/mirage/ocaml-xenstore-server/blob/blog/introducing-irmin-in-xenstore/userspace/main.ml#L101">Irmin glue module</a> looks like:
+<code class="highlighter-rouge">
+    let module V = struct
+      type t = DB.View.t
+      let create = DB.View.create
+      let write t path contents =
+        DB.View.update t (value_of_filename path) (Sexp.to_string (Node.sexp_of_contents contents))
+      (* omit read,list,write,rm for brevity *)
+      let merge t origin =
+        let origin = IrminOrigin.create "%s" origin in
+        DB.View.merge_path ~origin db [] t &gt;&gt;= function
+        | `Ok () -&gt; return true
+        | `Conflict msg -&gt;
+          info "Conflict while merging database view: %s" msg;
+          return false
+    end in
+</code>
+The <code class="highlighter-rouge">write</code> function simply calls through to Irmin’s <code class="highlighter-rouge">update</code> function, while the <code class="highlighter-rouge">merge</code> function
+calls Irmin’s <code class="highlighter-rouge">merge_path</code>. If Irmin cannot merge the transaction then our <code class="highlighter-rouge">merge</code> function will
+return <code class="highlighter-rouge">false</code> and this will be signalled to the client, which is expected to retry the high-level
+operation (e.g. hotplugging or unplugging a device).</p>
+
+<p>Now all that remains is to carefully adjust the I/O code so that effects (reading and writing packets
+along the persistent connections) are interleaved properly with persisted state changes and
+voilà, we now have a xenstore which can recover after a restart.</p>
+
+<h3 id="easy-system-debugging-with-git">Easy system debugging with Git</h3>
+
+<p>When something goes wrong on a Xen system it’s standard procedure to
+  1. take a snapshot of the current state of Xenstore; and
+  2. examine the log files for signs of trouble.</p>
+
+<p>Unfortunately by the
+time this is done, interesting Xenstore state has usually been deleted. Unfortunately the first task
+of the human operator is to evaluate by-hand the logged actions in reverse to figure out what the state
+actually was when the problem happened. Obviously this is tedious, error-prone and not always
+possible since the log statements are ad-hoc and don’t always include the data you need to know.</p>
+
+<p>In the new Irmin-powered Xenstore the history is preserved in a git-format repository, and can
+be explored using your favourite git viewing tool. Each store
+update has a compact one-line summary, a more verbose multi-line explanation and (of course)
+the full state change is available on demand.</p>
+
+<p>For example you can view the history in a highly-summarised form with:
+<code class="highlighter-rouge">console
+$ git log --pretty=oneline --abbrev-commit --graph
+* 2578013 Closing connection -1 to domain 0
+* d4728ba Domain 0: rm /bench/local/domain/0/backend/vbd/10 = ()
+* 4b55c99 Domain 0: directory /bench/local/domain/0/backend = [ vbd ]
+* a71a903 Domain 0: rm /bench/local/domain/10 = ()
+* f267b31 Domain 0: rm /bench/vss/uuid-10 = ()
+* 94df8ce Domain 0: rm /bench/vm/uuid-10 = ()
+* 0abe6b0 Domain 0: directory /bench/vm/uuid-10/domains = [  ]
+* 06ddd3b Domain 0: rm /bench/vm/uuid-10/domains/10 = ()
+* 1be2633 Domain 0: read /bench/local/domain/10/vss = /bench/vss/uuid-10
+* 237a8e4 Domain 0: read /bench/local/domain/10/vm = /bench/vm/uuid-10
+* 49d70f6 Domain 0: directory /bench/local/domain/10/device = [  ]
+*   ebf4935 Merge view to /
+|\
+| * e9afd9f Domain 0: read /bench/local/domain/10 =
+* | c4e0fa6 Domain 0: merging transaction 375
+|/
+</code>
+The summarised form shows both individual operations as well as isolated transactions which
+are represented as git branches.
+You can then ‘zoom in’ and show the exact state change with commands like:
+```
+$ git show bd44e03
+commit bd44e0388696380cafd048eac49474f68d41bd3a
+Author: 448 <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#105;&#114;&#109;&#105;&#110;&#115;&#117;&#108;&#101;&#064;&#111;&#112;&#101;&#110;&#109;&#105;&#114;&#097;&#103;&#101;&#046;&#111;&#114;&#103;">&#105;&#114;&#109;&#105;&#110;&#115;&#117;&#108;&#101;&#064;&#111;&#112;&#101;&#110;&#109;&#105;&#114;&#097;&#103;&#101;&#046;&#111;&#114;&#103;</a>
+Date:   Thu Jan 1 00:09:26 1970 +0000</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Domain 0: merging transaction 363
+</code></pre>
+</div>
+
+<p>diff –git a/<em>0/bench.dir/local.dir/domain.dir/7.dir/control.dir/shutdown.value b/</em>0/bench.dir/local.dir/domain.dir/7.dir/control.dir/shutdown.value
+new file mode 100644
+index 0000000..aa38106
+— /dev/null
++++ b/*0/bench.dir/local.dir/domain.dir/7.dir/control.dir/shutdown.value
+@@ -0,0 +1 @@
++((creator 0)(perms((owner 7)(other NONE)(acl())))(value halt))
+```
+Last but not least, you can <code class="highlighter-rouge">git checkout</code> to the exact time the problem occurred and examine
+the state of the store.</p>
+
+<h3 id="going-really-fast">Going really fast</h3>
+
+<p>Xenstore is part of the control-plane of a Xen system and is most heavily stressed when lots
+of VMs are being started in parallel. Each VM has multiple devices and each device is added in a
+separate transaction. These transactions remain open for multiple client-server round-trips, as
+each individual operation is sent to Xenstore as a separate RPC. 
+To provide isolation, each Xenstore transaction is represented by an Irmin <code class="highlighter-rouge">VIEW.t</code> which
+is persisted on disk as a git branch.
+When starting lots of VMs in
+parallel, lots of branches are created and must be merged back together. If a branch cannot
+be merged then an abort signal is sent to the client and it must retry.</p>
+
+<p>Earlier versions of Xenstore had naive transaction merging algorithms
+which aborted many of these transactions, causing the clients to re-issue them.This led to a live-lock
+where clients were constantly reissuing the same transactions again and again.</p>
+
+<p>Happily Irmin’s default merging strategy is much better: by default Irmin
+records the results of every operation and replays the operations on merge
+(similar to <code class="highlighter-rouge">git rebase</code>). Irmin will only generate a <code class="highlighter-rouge">Conflict</code> and signal an
+abort if the client would now see different results to those it has already
+received (imagine reading a key twice within an isolated transaction and seeing
+two different values). In the case of parallel VM starts, the keys are disjoint
+by construction so all transactions are merged trivially; clients never receive
+abort signals; and therefore the system makes steady, predictable progress
+starting the VMs.</p>
+
+<h3 id="trying-it-out">Trying it out</h3>
+
+<p>The Irmin Xenstore is under <a href="https://github.com/mirage/ocaml-xenstore-server">active development</a>
+but you can try it by:</p>
+
+<p>Install basic development tools along with the xen headers and xenstore tools (NB you don’t
+actually have to run Xen):
+<code class="highlighter-rouge">
+  sudo apt-get install libxen-dev xenstore-utils opam build-essential m4
+</code>
+Initialise opam (if you haven’t already). Make sure you have OCaml 4.01:
+<code class="highlighter-rouge">
+  opam init
+  opam update
+  opam switch 4.01.0
+</code>
+Install the OCaml build dependencies:
+<code class="highlighter-rouge">
+  opam install lwt irmin git sexplib cstruct uri sexplib cmdliner xen-evtchn shared-memory-ring io-page ounit
+</code>
+Clone the code and build it:
+<code class="highlighter-rouge">
+  git clone git://github.com/mirage/ocaml-xenstore-server
+  cd ocaml-xenstore-server
+  make
+</code>
+Run a server (as a regular user):
+<code class="highlighter-rouge">
+  ./main.native --database /tmp/db --enable-unix --path /tmp/xenstored
+</code>
+In a separate terminal, perform some operations:
+<code class="highlighter-rouge">
+  export XENSTORED_PATH=/tmp/xenstored
+  xenstore-write -s /one/two/three 4 /five/six/seven 8
+  xenstore-ls -s /
+</code>
+Next check out the git repo generated by Irmin:
+<code class="highlighter-rouge">
+  cd /tmp/db
+  git log
+</code></p>
+
+<p>Comments and/or contributions are welcome: join the <a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">Mirage email list</a> and say hi!</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2016-01-13</title>
+  <meta name="description" content="13th January 2016: Test, Hackathon, Talks and Blog posts.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2016-01-13">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2016-01-13</h1>
+  </header>
+
+  <div class="article-content">
+    <p>13th January 2016: Test, Hackathon, Talks and Blog posts.</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>Functoria release status</li>
+  <li>Logging</li>
+  <li>License files</li>
+  <li>MirageOS hackathon status</li>
+  <li>MirageOS talks at SCALEx14</li>
+  <li>Irmin blog posts</li>
+</ul>
+
+<p>Attendees:
+Amir Chaudhry (chair), Dan Williams, Mindy, Thomas Leonard, Dave Scott, Anil,
+Daniel Bunzli, David Kaloper, Hannes, Drup</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<ul>
+  <li>Travis added support for Precise.</li>
+  <li>Anil refreshed OCaml Docker images/builds</li>
+  <li>Lot of work done on the new Travis CI. If anyone else wants to try it out,
+get in touch with Anil. Can do Travis test of Ubuntu, Alpine, etc. from a
+single .yml. Not Gentoo and nixOS.</li>
+  <li>If anyone has a distro that’s not in the list it’s easy to add to the DSL
+and we’d like all Linux distros to be there. Can eventually get windows in
+there, too — depends on upstream support for docker.</li>
+  <li>This should all make opam bulk builds a lot better</li>
+</ul>
+
+<h4 id="functoria-status">Functoria status</h4>
+
+<ul>
+  <li>Bits of it got refactored and some more to be done around the definition of
+keys etc.</li>
+  <li>Anil wil refresh decks to use it and will makes sure it boots on Xen. Was
+mainly tested on Unix</li>
+</ul>
+
+<h4 id="logging">Logging</h4>
+
+<ul>
+  <li>TL made some update to <code class="highlighter-rouge">mirage-logs</code> as a result of other updates.</li>
+  <li>Would be interested in API suggestions etc and will make it an opam package
+soon.</li>
+  <li>Would be good to integrate with Functoria.</li>
+  <li>Mindy intends to do that and Anil is using it with decks.openmirage.org.</li>
+  <li>Gabriel replied to comments by email.</li>
+</ul>
+
+<h4 id="mirageos-hackathon">MirageOS hackathon</h4>
+
+<ul>
+  <li>15 people have registered!  More non-Cambridge than Cambridge people!  YAY!</li>
+  <li>There are no replies when you register. Will send confirmations.</li>
+  <li>Hannes will hopefully get some camel to eat.</li>
+  <li>AC would like public visibility of hackathon activity/projects. HM doesn’t
+want to do upfront organisation of projects.</li>
+  <li>Experience level of people attending not clear but people have motivation to
+work on this.</li>
+  <li>Might be worth sending reminder to list that any experience level is ok.</li>
+  <li>Hopefully form groups of common interest.</li>
+  <li>People might show up at random times at the beginning.</li>
+  <li>Anil will bring a bunch of cubie boards. Hannes would also like some
+yubikeys!</li>
+</ul>
+
+<h4 id="license-files">LICENSE files</h4>
+
+<ul>
+  <li>Nobody really wants to make any comments :)</li>
+  <li>Multi licensed repos should arguably be split into multiple repos.</li>
+  <li>Single license makes things easy.</li>
+  <li>Some discussion on whether we need LICENSE files</li>
+</ul>
+
+<h4 id="mirageos-at-scalex14cif2016">MirageOS at SCALEx14/CIF2016</h4>
+
+<ul>
+  <li>There are 5 MirageOS related talks at SCALE/CIF2016</li>
+</ul>
+
+<h4 id="blog-posts">Blog posts</h4>
+
+<p><strong>MirageOS end-of-year review</strong> — Status update.  Anil has a bunch of notes.
+holding off on that until the release and do the review at the same time.
+Perhaps the end of Jan. Maybe February.  Want people to use Functoria when
+they read the review post.</p>
+
+<p><strong>Irmin posts</strong> - Ask on Monday :-P</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Outreachy student? Hannes will meet again in IRC. Parsing of NTP is done.
+Invite to these calls but she’s in Seattle timezone though.</p>
+  </li>
+  <li>
+    <p>SCALE/CIF2016 conference. Arriving Thursday evening. Leave Saturday.
+Definitely two MirageOS folks.</p>
+  </li>
+  <li>
+    <p>Late notes: Amir is wondering if someone else would be interested in taking
+notes. Would be better than having delayed notes. :)</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>27th January</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

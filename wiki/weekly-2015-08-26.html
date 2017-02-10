@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-08-26</title>
+  <meta name="description" content="Agenda">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-08-26">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-08-26</h1>
+  </header>
+
+  <div class="article-content">
+    <h2 id="agenda">Agenda</h2>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>Rust progress</li>
+  <li>Irmin API changes</li>
+  <li>Minutes of previous calls</li>
+</ul>
+
+<h2 id="attendees">Attendees</h2>
+
+<p>Daniel Buenzli, Amir Chaudhry, Thomas (samoht) Gazagnaire, Thomas Leonard, Jon
+Ludlam, Anil Madhavapeddy, Hannes Mehnert, Richard (mort) Mortier (secretary),
+Mindy Preston, Dave Scott, Magnus Skejgstad</p>
+
+<h2 id="notes">Notes</h2>
+
+<h3 id="qa--test">QA &amp; Test</h3>
+
+<p>Work has proceeded on <code class="highlighter-rouge">ciso</code>, a distributed test infrastructure using Irmin as
+the coordination layer. Operates somewhat like XenStore: you can register
+watches, schedule “tasks” (comprising “jobs”) that are submitted by writing into
+the store for workers who’re registered via watches. Observe store to see entire
+status of system: jobs, workers, etc. First large-scale Irmin application. Irmin
+means you can inspect the entire state but also means that a mistake can nuke
+your entire repo (though only once). This is essentially the Grand Unified Merge
+of all of @samoht’s projects over the years.</p>
+
+<p>Discussion about deployments. @anil suggests running two deployments, for Mirage
+and OPAM respectively. Some disucssion whether Citrix want to use it for XAPI.
+Consensus from @dave/@jon was “maybe”. Similar discussion for Jane Street
+leading to question whether XenStore pieces can be pulled out separately.
+@samoht felt he could abstract the three schedulers (task, job, worker). @anil
+will try to deploy towards end of this week.</p>
+
+<p>@anil: on QA, have done lots of upstreaming, refreshed all packages on the
+planet to everywhere. ~60 patches going into OpenBSD to allow <code class="highlighter-rouge">tlstunnel</code> to be
+shipped. FreeBSD now fixed so works out of the box. ArchLinux still broken. But
+generally we’re in good shape to start getting command line tools in place to
+get the libraries out there, then go for the Full Mirage Experience.</p>
+
+<p>Discussion about ongoing <code class="highlighter-rouge">blockdev</code> naming, <code class="highlighter-rouge">.xl</code> generation etc. @dave felt PR
+ok but Travis was having some problems. He’ll take lead on merging. (<em>ed: and
+this is now done I think.</em>)</p>
+
+<p>Some discussion of grim @mort patch to get environment variable parsing into the
+<code class="highlighter-rouge">mirage</code> CLI tool. Agreement it was indeed grim and @samoht would not merge :)
+Discussion of what might need to be in <code class="highlighter-rouge">cmdliner</code> to parse environment
+variables. @daniel indicated something is coming to fix all that: features to
+compose environment variables with command-line flags, with the flag taking
+precedence in creating the <code class="highlighter-rouge">Term</code>, with auto-documentation etc. On the issue
+tracker as #23, should be complete in the next few days.</p>
+
+<h3 id="rust-support">Rust Support</h3>
+
+<p>Unfortunately, no-one very active on Rust support could make it.</p>
+
+<p>@thomas: More generally, Mini-OS patch upstreaming is on-going but Ian Campbell
+is on holiday at present. When he’s back the last patch is expected to go in.
+This is going to break the <code class="highlighter-rouge">qdom</code> scripts but no-one wants to look at it. @anil
+feels these may get nuked soon anyway.</p>
+
+<p>@thomas is going to add some <code class="highlighter-rouge">figlet</code> (perhaps) ASCII art (and kill some of the
+debug spew) to bootup to make everything friendlier.</p>
+
+<h3 id="irmin-api-changes">Irmin API Changes</h3>
+
+<p>@samoht had “nothing to say” apart from begging for more time! :)</p>
+
+<p>@thomas questions about concurrent connections and resulting API confusions.
+@samoht says current API intended to make it easy to track which objects are
+live, with the aim of hiding concurrency but at the cost of perhaps not always
+being the correct thing to do.</p>
+
+<p>Discussion about this issue and the way its supported for the indexdb backend,
+and its ability to do atomic transactions in browser, while the POSIX file-based
+backend can’t.</p>
+
+<p>Summary is that the issues arise due to invariants that the JS backend doesn’t
+maintain. Workarounds will be incoming as PRs; the first (#268) will be merged.</p>
+
+<h3 id="previous-minutes">Previous Minutes</h3>
+
+<p>@thomas noted missing minutes from the index page. @amir explained this was due
+to two issues: updates not being pushed, and the process for updating the index
+being manual and not always being done.</p>
+
+<p>(<em>ed: I note that three updates seem to be required– adding the notes
+themselves under <code class="highlighter-rouge">/tmpl/wiki/weekly/</code>, adding a reference in <code class="highlighter-rouge">src/data.ml</code>, and
+adding a link to <code class="highlighter-rouge">/tmpl/wiki/index.md</code>.</em>)</p>
+
+<h3 id="jitsu-on-monk">Jitsu on Monk</h3>
+
+<p>@anil wanted to know about homepages being served by Jitsu and how often things
+were being woken up by crawlers etc. @magnus noted that his demo pages sleep
+most of the time. @anil asked if we can put Jitsu and unikernels on <code class="highlighter-rouge">monk</code>.
+@dave felt not quite due to a Xen booting issue with CentOS7 (now installed). He
+will tag a particularly good version of the XAPI code for us to use. @anil then
+noted the main missing piece is Apache style logging from CoHTTP and Irmin which
+requires Irmin/Xen to be merged. @samoht still has patches queued. @mindy noted
+that the Irmin/ARP demo uses the Unix backend but can run in memory on Xen, and
+@samoht that <code class="highlighter-rouge">git push</code> to a <code class="highlighter-rouge">git repo</code> doesn’t work but <code class="highlighter-rouge">irmin push</code> is fine.
+There was then some general realisation that we can simply have websites <code class="highlighter-rouge">irmin
+push</code> logs to an Irmin server running on Unix listening for log collection.</p>
+
+<p>Revisiting the first point, @mort asked @anil about processing his decades of
+website logs to (effectively) explore multiplexing factors of unikernel
+(websites at least). @anil said he will look into this.</p>
+
+<h3 id="aob">AoB</h3>
+
+<p>None specified at this time.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

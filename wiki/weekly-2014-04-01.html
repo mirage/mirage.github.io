@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-04-01</title>
+  <meta name="description" content="1st April 2014: Mini-OS, IOCaml and Xenstore">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-04-01">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-04-01</h1>
+  </header>
+
+  <div class="article-content">
+    <p>1st April 2014: Mini-OS, IOCaml and Xenstore</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>GSoC/OPW update (Anil)</li>
+  <li>Core_kernel (Anil)</li>
+  <li>Iocaml update (Anil)</li>
+  <li>Irminsule xenstore (Dave)</li>
+  <li>Mirage tutorial day (Amir)</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Jonathan Ludlam, Anil Madhavapeddy,
+David Scott, David Kaloper, Hannes Mehnert, Thomas Leonard</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="google-summer-of-code--outreach-program-for-women">Google Summer of Code / Outreach Program for Women</h4>
+
+<p>We’ve got three candidates.  Need to arrange mentors and need to keep
+pushing this to make sure things go through. Had some more people asking
+about Mirage during this process.</p>
+
+<h4 id="corekernelmini-os">Core_kernel/Mini-OS</h4>
+
+<p>Should push for getting support as it’s needed for Irminsule and other stuff.
+In longer term want nice set of header files to help with cross-compilation.
+For now can copy stubs in but keep an eye on them. Only one set of c files
+we need (big array).</p>
+
+<p>Possibly need port of MiniOS to use new features of Xen.  Anil will figure
+out what’s needed. MiniOS in Xen tree has features that overlap so may need
+to turn those off. Dave will look at this.</p>
+
+<p>Problems with Core_kernel are around bin_io and sexp lib. Will report these
+to JaneStreet.</p>
+
+<h4 id="iocaml-update">IOCaml update</h4>
+
+<p>Code is at https://github.com/andrewray/iocaml.  There’s also an
+<a href="https://github.com/andrewray/opam">opam remote</a>. Can get a fully Javascript frontend. There are some issues
+with C-bindings and it’s in pre-release but people should play and report
+issues. Could use this to construct tutorials.</p>
+
+<h4 id="irminsule-xenstore">Irminsule xenstore</h4>
+
+<p>Early version is kind of working.  Question about whether if can start a VM.
+Fixing stuff up but may work on that next.</p>
+
+<h4 id="mirage-tutorial-day">Mirage tutorial day</h4>
+
+<p>Considerations for the tutorial day:</p>
+
+<ul>
+  <li>Leads</li>
+  <li>Location</li>
+</ul>
+
+<p>See <a href="/wiki/weekly-2014-03-18#Miragetutorialday">previous notes</a> for a wider set of questions.</p>
+
+<p><em>Leads</em> - Amir volunteered to lead the logistics, organisation etc for the
+tutorial day.  Need someone to step up and think about the content, e.g the
+sessions, technical needs (e.g pre-configured VMs, etc) and timing for the
+day.</p>
+
+<p><em>Location</em> - Amir is in touch with people at Citrix to see if they’d be
+willing/able to host the day.  Relevant folks are on holiday so will have to
+wait around a week before he hears back.</p>
+
+<p>Worth noting that <a href="https://codio.com">Codio</a> is a web-based IDE that can provide a dev
+environment ready to go. <a href="https://github.com/andrewray/iocaml">IOCaml</a> is also a nice framework to use too.
+Suggestion to pick a date far enough away so that we can allow time to get
+these right (and working).</p>
+
+<h4 id="other">Other</h4>
+
+<p>Switch Mirage calls to a fortnightly schedule (i.e every two weeks).</p>
+
+<p>Async Pull Request - Jon will look over it.</p>
+
+<p>Library updates - some review needed (e.g cohttp).</p>
+
+<p>Incompatible change from Mirage v1.  Will only affect mirage-net and mirage.
+if all people <code class="highlighter-rouge">opam upgrade</code>, then should be no issue as everything will
+change at once.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

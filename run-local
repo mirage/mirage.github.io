@@ -1,0 +1,5 @@
+#!/bin/sh -ex
+
+docker build -t bushel .
+docker run -it -v `pwd`:/app -p 4000:4000 bushel bundle install --path vendor/bundle
+docker run -it -v `pwd`:/app -p 4000:4000 bushel bundle exec jekyll serve --host 0.0.0.0

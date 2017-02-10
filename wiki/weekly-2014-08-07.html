@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-08-07</title>
+  <meta name="description" content="7th Aug 2014: 2.0 release review, Docs Day and ARM updates">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-08-07">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-08-07</h1>
+  </header>
+
+  <div class="article-content">
+    <p>7th Aug 2014: 2.0 release review, Docs Day and ARM updates</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>2.0 release summary
+    <ul>
+      <li>Blog posts</li>
+      <li>ARM integration</li>
+    </ul>
+  </li>
+  <li>0Install distribution
+    <ul>
+      <li>Wrapper for deploying Unikernels</li>
+    </ul>
+  </li>
+  <li>Mirage Docs day (sync w Xen Docs Day)</li>
+  <li>Carried over
+    <ul>
+      <li>zeroing out cstruct/memory</li>
+      <li>duplicated code in mirage platform</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Russell Pavlicek, Mindy Preston and Nick.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="release-summary">2.0 release summary</h4>
+
+<p><strong>Blog posts complete</strong> - The run of blog posts went very well and found
+their way onto social aggregators too.   You can find the the links to these
+discussions and other news stories about Mirage (in many different
+languages!) at <a href="http://openmirage.org/links">openmirage.org/links</a>.  There’s an outstanding
+issue to raise the visibility of this link log. Anil reports lots of
+interest at OSCON (<a href="http://www.oscon.com/oscon2014/public/schedule/detail/35024">5 star talk!</a>) and there was high-attendance
+at the workshop in Sweden.</p>
+
+<p><strong>2.0 release</strong> - It’s been a couple of weeks since the release and there’s
+been much more activity on the mailing list. Mirage is waiting on a bunch of
+patches to be merged, adding a lot of support for ARM stuff. The upcoming
+<code class="highlighter-rouge">mirage</code> 2.0 binary will mean that people can remove the pins from the
+instructions.</p>
+
+<p>At OSCON, Mort gave Russ the tour who then said there’s a nice story about
+Docker. Would be good to get as much of this stuff up front so we can get
+good story together. Anil noted that we do most of this by building this
+stuff and seeing how things work. It’s easier to quantitatively evaluate
+things.</p>
+
+<p><strong>ARM Integration</strong> - <em>Thomas L</em>: Held up by physical pages bug which
+upstream are fixing. Has updated instructions to use a patched stuff.
+All the PRs could probably be merged. Has released MiniOS 3 which has a
+larger stack. This has an extra MB and will detect stack overflow.
+Will be looking at performance next.</p>
+
+<p>Mindy offered to try things out on a BeagleBone but need to have an A20
+processor so wouldn’t work (it’s an A9). We’re planning to keep things
+focused on Cubieboard and Cubietruck for now and both are quite popular.
+Turns out that xen-arm-builder is the easiest way to get stuff on ARM.
+If anyone can explain how the Linux configuration works, it would be very
+useful to have any writeups about that. We have a bunch of new users who are
+finding all it difficult to navigate many different pieces in order to get
+up and running.</p>
+
+<p>Question on power management came up a few times at OSCON and ThomasL will
+have a look at this in due course.</p>
+
+<h4 id="install-distribution">0Install distribution</h4>
+
+<p>Thomas L talked about a 0Install wrapper around Xen’s xl for deploying
+Unikernels. Previously demoed this in April in the Lab but was somewhat
+hacky with a poor security story.  Would like to revisit this and is curious
+how it would it be wrapped. XenServer takes over the whole host and is a bit
+heavyweight. Libvirt might be an optin and should have OCaml bindings.
+‘Buzz heavyyear’ on the mailing list might have useful input. Xapi might
+also be useful to look at, so talking to Jon Ludlam too.</p>
+
+<p>Plan should be to start a thread on the Mirage List and try to get
+information from others.</p>
+
+<h4 id="mirage-docs-day">Mirage Docs day</h4>
+
+<p>Russell Pavlicek (Xen Project Evangelist) joins us and encourages us to
+organise a doc day and improve the various information available about
+Mirage OS on the Xen Project site. Currently on Wiki.XenProject.org there
+isn’t much and we should really have answers for the basics, such as What is
+Mirage?, What’s in v2? and Why should I care?. Much of this content does
+live elsewhere but representation on Xen Project is important. Items can
+(and should) still link back to the Mirage OS site.</p>
+
+<p>Anil and others note that we should take care not to give ourselves the
+burden of maintaining duplicate content, especially if it’s fast moving
+(cf. tutorials). We should aim for a set of stand-alone content and link
+appropriately.</p>
+
+<p>Xen Project normally have docs days at the end of month and we are welcome
+to join one of those or organise our own independently. Just let Russ know
+so that he can add it to the event calendar. Currently thinking of
+scheduling a Mirage Doc Day for end of September.</p>
+
+<p>Also, worth sending Russ any PDFs of slides so that they can go up on Xen
+Project. Slides there tend to get many views so it’s a great way to get more
+exposure. Anil notes that it would be better to embed them as we run our
+slides as unikernels (dog-fooding all the way!).</p>
+
+<h4 id="zeroing-out-memorycstruct">Zeroing out memory/cstruct</h4>
+
+<p>David Kaloper as done a full review and submitted a PR. There might be a
+performance hit but it’s important due to <code class="highlighter-rouge">cstruct</code>’s use in TLS stack and
+security-related code.</p>
+
+<h4 id="code-duplication-in-mirage-platform">Code duplication in Mirage Platform</h4>
+
+<p>The new <code class="highlighter-rouge">mirage</code> allows us to move code into libs. The checksum PR will mean
+we can then get rid of the duplicates in <code class="highlighter-rouge">mirage-platform</code>. In other words,
+this is fixed, but not yet merged.</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Demonstrated <strong>Irmin</strong> but it needs applications/users. Need to make
+sure Irmin links into Xen properly.  One use-case is the Mirage website.
+Once we have Irmin logging, we can turn off Google Analytics. Avoids the
+privacy leakage and will be interesting to see how this works in general.</p>
+  </li>
+  <li>
+    <p>Lots of good things coming in <strong>OCaml 4.02.0</strong> release and we get a lot of
+benefits for free. We should work on this once it’s actually released, mostly
+likely in late September.</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>19th August</strong> but Dave and Anil are due to be
+at XenSummit. Amir would like avoid the confusion of the last two calls :)</p>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

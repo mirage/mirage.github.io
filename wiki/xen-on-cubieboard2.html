@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Running Xen on the Cubieboard2</title>
+  <meta name="description" content="Author: Thomas Leonard, addendums from Anil Madhavapeddy">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/xen-on-cubieboard2">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Running Xen on the Cubieboard2</h1>
+  </header>
+
+  <div class="article-content">
+    <p><strong>Author:</strong> Thomas Leonard, addendums from Anil Madhavapeddy</p>
+
+<p>These notes detail the process of setting up a Xen system on a Cubieboard2 (or Cubietruck).
+They are based on the <a href="http://wiki.xen.org/wiki/Xen_ARM_with_Virtualization_Extensions/Allwinner">Xen ARM with Virtualization Extensions/Allwinner</a> documentation, but try to collect everything into one place.
+I’m trying to document the exact steps I took (with the wrong turns removed); some changes will be needed for other systems.</p>
+
+<p><strong>TL;DR</strong>: There is now a script available that generates an image with Xen, Ubuntu dom0, and the OCaml tools installed.  Just run the <code class="highlighter-rouge">make</code> instructions at <a href="https://github.com/mirage/xen-arm-builder">mirage/xen-arm-builder</a> and copy the resulting image onto an SDcard and boot up your Cubieboard2 or Cubietruck (password <code class="highlighter-rouge">mirage</code>/<code class="highlighter-rouge">mirage</code> which you should change as the first thing you do). The script is kept more up-to-date than the instructions on this page.</p>
+
+<p>The remainder of this guide covers:</p>
+
+<ul>
+  <li>Installing U-Boot, Xen and a Linux Dom0</li>
+  <li>Running a Linux DomU</li>
+  <li>Running a FreeBSD DomU</li>
+  <li>Running a Mini-OS DomU</li>
+</ul>
+
+<h2 id="warning-out-of-date">Warning: OUT OF DATE</h2>
+
+<p>These instructions no longer work, as some of the Git branches referred to no longer exist. Instead, please look at the scripts in the <a href="https://github.com/mirage/xen-arm-builder">mirage/xen-arm-builder</a> repository.
+They are based on these instructions, but are kept up-to-date.</p>
+
+<h2 id="glossary">Glossary</h2>
+
+<dl>
+  <dt><a href="http://en.wikipedia.org/wiki/ARM_architecture">ARMv7</a></dt>
+  <dd>Version 7 of the ARM architecture, which adds optional virtualisation support.</dd>
+  <dt><a href="http://www.arm.com/products/processors/cortex-a/cortex-a7.php">ARM Cortex-A7</a></dt>
+  <dd>A 32-bit RISC CPU designed by ARM. It implements ARMv7, including the virtualisation extensions.</dd>
+  <dt><a href="http://linux-sunxi.org">sunxi</a></dt>
+  <dd>An ARM SoC (System-on-Chip) family, made by Allwinner Tech.</dd>
+  <dt><a href="http://linux-sunxi.org/A20">A20</a></dt>
+  <dd>An SoC with two Cortex-A7 CPUs (plus GPU, memory controller, etc).</dd>
+  <dt><a href="http://docs.cubieboard.org/products/start">Cubieboard2</a></dt>
+  <dd>A small board with an A20, 1 GB RAM, etc.</dd>
+  <dt><a href="http://wandboard.org/index.php/57-20131104-wandboard-spl-universal-boot">SPL</a> (Secondary Program Loader)</dt>
+  <dd>“SPL is a very small bootloader able to fit into the very small amount of memory (128kB) available inside the CPU. SPL does autodetection and sets up memory accordingly. After memory is set up, SPL loads u-boot, and the booting proceeds as usual.”</dd>
+</dl>
+
+<h3 id="initial-testing">Initial testing</h3>
+
+<p>This step can be skipped, but it’s useful to check that everything works.</p>
+
+<p>Download <a href="http://www.cubieforums.com/index.php/topic,528.0.html">Cubieez</a>, a Debian 7.1 image that works on the Cubieboard2.
+Write to microSD card with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>dd if=cubieez_1.0.0_A20.img of=/dev/mmcblk0
+</code></pre>
+</div>
+
+<p>You will need to hook up the serial console on the Cubieboard, being careful not to connect up one of the pins.
+One good cable that is known is work can be bought <a href="http://proto-pic.co.uk/usb-to-ttl-serial-cable-debug-console-cable-for-raspberry-pi/">here</a>.
+Follow the instructions at the <a href="http://linux-sunxi.org/Cubieboard/TTL">Sunxi/TTL</a> page to connect up 3 of the cables to the right pins.</p>
+
+<p>Connect the USB serial cable and run “screen” to monitor it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>screen -h 10000 /dev/ttyUSB0 115200
+</code></pre>
+</div>
+
+<p>Note: I tried using “minicom” first, but for some reason keyboard input didn’t work with that.</p>
+
+<p>Insert microSD card in board and connect power. You should see boot messages in screen:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>U-Boot SPL 2013.04-07297-gc8f265c (Jun 17 2013 - 17:26:22)
+Board: Cubieboard2
+DRAM: 1024MB
+CPU: 960000000Hz, AXI/AHB/APB: 3/2/2
+SUNXI SD/MMC: 0
+</code></pre>
+</div>
+
+<p>You can connect a keyboard/mouse/screen and use it. The login is cubie/cubieboard.</p>
+
+<p>If the device boots instead into Android then it is probably booting from NAND (it tries the microSD first, then the NAND).</p>
+
+<h2 id="arm-toolchain">ARM Toolchain</h2>
+
+<p>To build the various binaries (U-Boot, Linux, Xen), we need an <a href="http://linux-sunxi.org/Toolchain">ARM cross-compiler toolchain</a>.</p>
+
+<p><a href="http://en.wikipedia.org/wiki/ARM_Cortex-A7_MPCore">The A20 has hardware FPU</a>, so use the hf version of the cross-compiler for best performance.</p>
+
+<p>On Arch Linux, run:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>yaourt -S arm-linux-gnueabihf-gcc
+</code></pre>
+</div>
+
+<p>On Debian testing, run (as root):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install gcc-arm-none-eabi
+</code></pre>
+</div>
+
+<p>On a modern Ubuntu, run:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install gcc-arm-linux-gnueabihf
+</code></pre>
+</div>
+
+<p>This installs files such as, say, on Ubuntu:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/usr/bin/arm-linux-gnueabihf-ld
+/usr/bin/arm-linux-gnueabihf-gcc
+</code></pre>
+</div>
+
+<p>Take note of the common prefix.  Define a variable to hold it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>export CROSS_COMPILE=arm-linux-gnueabihf-
+</code></pre>
+</div>
+
+<h2 id="u-boot">U-Boot</h2>
+
+<p>Xen needs to be started in non-secure HYP mode. Use this U-Boot Git repository:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone git://github.com/jwrdegoede/u-boot-sunxi.git
+cd u-boot-sunxi
+git checkout -b sunxi-next origin/sunxi-next
+</code></pre>
+</div>
+
+<p><strong>WARNING</strong> This branch no longer exists.</p>
+
+<p>Note: only the “sunxi-next” branch has the required hypervisor support; DO NOT use the “sunxi” branch.</p>
+
+<p>Configure and build U-Boot using the ARM toolchain:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make CROSS_COMPILE=$CROSS_COMPILE Cubieboard2_config
+make CROSS_COMPILE=$CROSS_COMPILE -j 4
+</code></pre>
+</div>
+
+<h2 id="u-boot-configuration">U-Boot configuration</h2>
+
+<p>Create a directory for the boot commands (e.g. <code class="highlighter-rouge">boot</code>). Create
+<code class="highlighter-rouge">boot/boot.cmd</code> whose content is the same as
+<a href="https://github.com/mirage/xen-arm-builder/blob/master/boot/boot-cubieboard2.cmd">boot-cubieboard2.cmd</a>
+for the Cubieboard2 or
+<a href="https://github.com/mirage/xen-arm-builder/blob/master/boot/boot-cubietruck.cmd">boot-cubietruck.cmd</a>
+for the Cubietruck.</p>
+
+<p>The above is configured to:</p>
+
+<ul>
+  <li>Load Xen, the FDT and Linux from <code class="highlighter-rouge">mmcblk0p1</code></li>
+  <li>Use <code class="highlighter-rouge">mmcblk0p2</code> as Linux’s root FS</li>
+  <li>Wait for the device (<code class="highlighter-rouge">rootwait</code>)</li>
+  <li>Run <code class="highlighter-rouge">/bin/bash</code> as init.</li>
+</ul>
+
+<p>More information on
+<a href="http://www.denx.de/wiki/view/DULG/UBoot">the format of <code class="highlighter-rouge">boot.cmd</code></a>
+is available on the <a href="http://www.denx.de/wiki/view/DULG/Manual">denx site</a>.</p>
+
+<p>Create a <code class="highlighter-rouge">boot/Makefile</code> to compile it using
+<a href="https://github.com/jwrdegoede/u-boot-sunxi/blob/sunxi/doc/mkimage.1">mkimage</a>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>all: boot.scr
+
+%.scr: %.cmd
+    ../tools/mkimage -C none -A arm -T script -d "$&lt;" "$@"
+</code></pre>
+</div>
+
+<p>Go to <code class="highlighter-rouge">boot</code> and run <code class="highlighter-rouge">make</code> to build <code class="highlighter-rouge">boot.scr</code>.</p>
+
+<p>Remark: You may have noticed that the above <code class="highlighter-rouge">.cmd</code> files allocate a
+rather large amount of memory to <code class="highlighter-rouge">dom0</code> (look at the <code class="highlighter-rouge">dom0_mem</code>
+parameter).  This is needed to compile large libraries like
+<a href="https://github.com/janestreet/core">Core</a>.
+However, if you use <code class="highlighter-rouge">autoballoon=on</code> in
+<a href="http://xenbits.xen.org/docs/unstable/man/xl.conf.5.html"><code class="highlighter-rouge">/etc/xen/xl.conf</code></a>,
+<code class="highlighter-rouge">xl</code> will automatically reduce the amount of memory assigned to dom0
+to free memory for new domains.  An OCaml daemon
+<a href="https://github.com/xapi-project/squeezed">squeezed</a>, currently in
+development (and based on
+<a href="https://github.com/xapi-project/xenopsd">xenopsd</a>), will dynamically
+move memory between dom0 and VMs to satisfy their needs.</p>
+
+<h2 id="building-linux">Building Linux</h2>
+
+<p>Get my <a href="https://github.com/talex5/linux.git">Linux Git tree</a>, master branch. This fork has a few extra patches we need.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd ../..
+git clone https://github.com/talex5/linux.git
+cd linux
+</code></pre>
+</div>
+
+<p>Configure:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make ARCH=arm multi_v7_defconfig
+make ARCH=arm menuconfig
+</code></pre>
+</div>
+
+<p>Here are the settings I used (check it works with just these settings and whether they’re all actually necessary):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>CONFIG_CROSS_COMPILE="/usr/bin/arm-linux-gnueabihf-"
+CONFIG_XEN_DOM0=y
+CONFIG_XEN=y
+CONFIG_IPV6=y
+CONFIG_NETFILTER=y
+CONFIG_NETFILTER_ADVANCED=y
+CONFIG_BRIDGE_NETFILTER=y
+CONFIG_STP=y
+CONFIG_BRIDGE=y
+CONFIG_SYS_HYPERVISOR=y
+CONFIG_XEN_BLKDEV_FRONTEND=y
+CONFIG_XEN_BLKDEV_BACKEND=y
+CONFIG_AHCI_SUNXI=y
+CONFIG_XEN_NETDEV_FRONTEND=y
+CONFIG_XEN_NETDEV_BACKEND=y
+CONFIG_INPUT_AXP20X_PEK=y
+CONFIG_INPUT_XEN_KBDDEV_FRONTEND=y
+CONFIG_HVC_DRIVER=y
+CONFIG_HVC_IRQ=y
+CONFIG_HVC_XEN=y
+CONFIG_HVC_XEN_FRONTEND=y
+CONFIG_MFD_AXP20X=y
+CONFIG_REGULATOR_AXP20X=y
+CONFIG_FB_SYS_FOPS=y
+CONFIG_FB_DEFERRED_IO=y
+CONFIG_XEN_FBDEV_FRONTEND=y
+CONFIG_MMC_SUNXI=y
+CONFIG_VIRT_DRIVERS=y
+CONFIG_XEN_BALLOON=y
+CONFIG_XEN_SCRUB_PAGES=y
+CONFIG_XEN_DEV_EVTCHN=y
+CONFIG_XEN_BACKEND=y
+CONFIG_XENFS=y
+CONFIG_XEN_COMPAT_XENFS=y
+CONFIG_XEN_SYS_HYPERVISOR=y
+CONFIG_XEN_XENBUS_FRONTEND=y
+CONFIG_XEN_GNTDEV=y
+CONFIG_XEN_GRANT_DEV_ALLOC=y
+CONFIG_SWIOTLB_XEN=y
+CONFIG_XEN_PRIVCMD=y
+ONFIG_PHY_SUN4I_USB
+CONFIG_HAS_IOPORT=y
+
+# LVM
+CONFIG_MD=y
+CONFIG_BLK_DEV_DM_BUILTIN=y
+CONFIG_BLK_DEV_DM=y
+CONFIG_DM_BUFIO=y
+CONFIG_DM_SNAPSHOT=y
+</code></pre>
+</div>
+
+<p>A simpler alternative to <code class="highlighter-rouge">make ARCH=arm menuconfig</code> is to copy
+<a href="https://github.com/mirage/xen-arm-builder/blob/master/config/config-cubie2"><code class="highlighter-rouge">config-cubie2</code></a>
+to <code class="highlighter-rouge">.config</code>
+(note that <code class="highlighter-rouge">CONFIG_CROSS_COMPILE</code> <em>must</em> have the value of <code class="highlighter-rouge">$CROSS_COMPILE</code>).</p>
+
+<p>Then:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make ARCH=arm zImage dtbs modules -j 4
+</code></pre>
+</div>
+
+<h2 id="building-xen">Building Xen</h2>
+
+<p>Currently, some minor patches are needed to the official <a href="http://www.xenproject.org/downloads/xen-archives/xen-44-series/xen-440.html">Xen 4.4 release</a>, so use this Git version:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd ..
+git clone -b stable-4.4 https://github.com/talex5/xen.git
+cd xen
+</code></pre>
+</div>
+
+<p>Edit <code class="highlighter-rouge">Config.mk</code> and turn debug on: <code class="highlighter-rouge">debug ?= y</code>.
+This enables some features that are useful when debugging guests, such as allowing guests to write debug messages to the Xen console.</p>
+
+<p>Note: If you already built Xen without debug, <code class="highlighter-rouge">make clean</code> is NOT sufficient! Use <code class="highlighter-rouge">git clean -xfd</code> for a clean build.</p>
+
+<p>Compile with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make dist-xen XEN_TARGET_ARCH=arm32 CROSS_COMPILE=$CROSS_COMPILE CONFIG_EARLY_PRINTK=sun7i -j4
+</code></pre>
+</div>
+
+<h2 id="partitioning-the-sd-card">Partitioning the SD card</h2>
+
+<p>Source: <a href="http://linux-sunxi.org/Bootable_SD_card">Bootable SD card</a></p>
+
+<p>Clear the device (maybe not really necessary):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>dd if=/dev/zero of=/dev/mmcblk0 bs=1M count=1
+</code></pre>
+</div>
+
+<p>Create a partition table. I used gparted (Device -&gt; Create Partition Table -&gt; msdos).</p>
+
+<p>Create the partitions (a 16 MB FAT boot partition, a 4 GB dom0 root, and the rest for the guests as an LVM volume):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sfdisk -R /dev/mmcblk0
+cat &lt;&lt;EOT | sudo sfdisk --in-order -uM /dev/mmcblk0
+1,16,c
+,4096,L
+,,8e
+EOT
+
+mkfs.vfat /dev/mmcblk0p1
+mkfs.ext4 /dev/mmcblk0p2
+</code></pre>
+</div>
+
+<h2 id="installing-the-bootloader">Installing the bootloader</h2>
+
+<p>Write the U-Boot SPL and main program:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>dd if=u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
+</code></pre>
+</div>
+
+<p>Mount the fat partition and copy in <code class="highlighter-rouge">boot.scr</code>, the Linux kernel, the
+FDT and Xen (you must create <code class="highlighter-rouge">/mnt/mmc1</code> if it does not exist):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/mmcblk0p1 /mnt/mmc1
+cp u-boot-sunxi/boot/boot.scr /mnt/mmc1/
+cp linux/arch/arm/boot/zImage /mnt/mmc1/vmlinuz
+cp linux/arch/arm/boot/dts/sun7i-a20-cubieboard2.dtb /mnt/mmc1/
+cp xen/xen/xen /mnt/mmc1/
+umount /mnt/mmc1
+</code></pre>
+</div>
+
+<p>For the Cubietruck, replace the third line with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cp linux/arch/arm/boot/dts/sun7i-a20-cubietruck.dtb /mnt/mmc1/
+</code></pre>
+</div>
+
+<p>(You must run these commands as root or prefix them with <code class="highlighter-rouge">sudo</code>.)</p>
+
+<h2 id="root-fs">Root FS</h2>
+
+<p>The wiki’s links to the prebuilt root images are broken, but a bit of searching turns up some alternatives.</p>
+
+<p>I used <a href="http://releases.linaro.org/14.05/ubuntu/trusty-images/developer/linaro-trusty-developer-20140522-661.tar.gz">linaro-trusty-developer-20140522-661.tar.gz</a>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/mmcblk0p2 /mnt/mmc2
+cd /mnt/mmc2
+sudo tar xf /your/path/to/linaro-trusty-developer-20140522-661.tar.gz
+sudo mv binary/* .
+sudo rmdir binary
+</code></pre>
+</div>
+
+<p>Go back to the directory where you compiled your Linux kernel and do:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make ARCH=arm INSTALL_MOD_PATH='/mnt/mmc2' modules_install
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">/mnt/mmc2/etc/fstab</code> should contain:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/dev/mmcblk0p2  / ext4   rw,relatime,data=ordered       0 1
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">/mnt/mmc2/etc/resolv.conf</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>nameserver 8.8.8.8
+</code></pre>
+</div>
+
+<p>Append to <code class="highlighter-rouge">/mnt/mmc2/etc/network/interfaces</code> (this sets up a bridge, which will be useful for guest networking):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet manual
+  up ip link set eth0 up
+
+auto br0
+iface br0 inet dhcp
+  bridge_ports eth0
+</code></pre>
+</div>
+
+<p>Unmount:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>umount /mnt/mmc2
+</code></pre>
+</div>
+
+<h2 id="boot-process">Boot process</h2>
+
+<p>At this point, it’s possible to boot and get the U-Boot prompt and run Xen and Dom0:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>U-Boot SPL 2014.04-rc2-01269-gf8616c0 (Apr 07 2014 - 18:53:46)
+Board: Cubieboard2
+DRAM: 1024 MiB
+CPU: 960000000Hz, AXI/AHB/APB: 3/2/2
+spl: not an uImage at 1600
+
+
+U-Boot 2014.04-rc2-01269-gf8616c0 (Apr 07 2014 - 18:53:46) Allwinner Technology
+
+CPU:   Allwinner A20 (SUN7I)
+Board: Cubieboard2
+I2C:   ready
+DRAM:  1 GiB
+MMC:   SUNXI SD/MMC: 0
+*** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+Net:   dwmac.1c50000
+Warning: failed to set MAC address
+
+Hit any key to stop autoboot:  0
+</code></pre>
+</div>
+
+<p>The first bit “U-Boot SPL” is the SPL running, setting up the RAM and loading the main U-Boot.
+The “spl: not an uImage at 1600” warning is harmless. It looks at offset 1600 first, and then tries 80 next and succeeds.</p>
+
+<p>The “bad CRC” warning is just because we didn’t specify an environment file.</p>
+
+<h2 id="dom0-setup">Dom0 setup</h2>
+
+<p>After booting, you should get a root prompt. Install openssh:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount -o remount,rw /
+mount -t proc proc /proc
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin
+export HOME=/root
+ifup eth0
+ip addr show dev eth0
+apt-get install openssh-server
+</code></pre>
+</div>
+
+<p>Add your ssh key:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd
+mkdir .ssh
+vi .ssh/authorized_keys
+</code></pre>
+</div>
+
+<p>Install Avahi:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install avahi-daemon libnss-mdns
+</code></pre>
+</div>
+
+<p>You must also install these packages and <code class="highlighter-rouge">avahi-utils</code> on your
+computer.</p>
+
+<p>You probably want to give your Cubieboard a nice name.  Edit
+<code class="highlighter-rouge">/etc/hostname</code> and replace the existing name with the one of your
+choice — <code class="highlighter-rouge">cubie2</code> for the following.
+(You should also change <code class="highlighter-rouge">linaro-developer</code> in <code class="highlighter-rouge">/etc/hosts</code>
+to <code class="highlighter-rouge">cubie2</code>.)
+For the changes to take effect, you can either reboot or run
+<code class="highlighter-rouge">hostname cubie2</code> followed by <code class="highlighter-rouge">/etc/init.d/avahi-daemon restart</code>.
+You should now be able to connect with e.g., from your computer</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ssh root@cubie2.local
+</code></pre>
+</div>
+
+<p>To see the list of Avahi services on your network, do <code class="highlighter-rouge">avahi-browse
+-alr</code>.  If you do not see your Cubieboard, check that its network is
+up: doing</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ip addr show
+</code></pre>
+</div>
+
+<p>at the Cubieboard root prompt, should output some information
+including a line starting with <code class="highlighter-rouge">br0:
+&lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;</code>.  If it doesn’t try</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>brctl addbr br0
+</code></pre>
+</div>
+
+<p>If you get <code class="highlighter-rouge">add bridge failed: Package not installed</code>, you forgot to
+include Ethernet bridging in your kernel (it is included with the
+recommended <code class="highlighter-rouge">.config</code> file above so this should not happen).</p>
+
+<p>Kill the network and shut down:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ifdown eth0
+mount -o remount,ro /
+halt -f
+</code></pre>
+</div>
+
+<p>Remove the <code class="highlighter-rouge">init=/bin/bash</code> from <code class="highlighter-rouge">boot.cmd</code> and put the new <code class="highlighter-rouge">boot.scr</code> into mmcblk0p1. Then boot again.
+You should now be able to ssh in directly.</p>
+
+<h2 id="xen-toolstack">Xen toolstack</h2>
+
+<p>Ssh to your Cubieboard and install the Xen tools:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install xen-utils-4.4
+</code></pre>
+</div>
+
+<p>Once Xen 4.4 is installed, you can list your domains:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># xl list
+Name                                        ID   Mem VCPUs      State   Time(s)
+Domain-0                                     0   512     2     r-----      19.7
+</code></pre>
+</div>
+
+<h2 id="lvm-configuration">LVM configuration</h2>
+
+<p>Install the LVM tools in dom0 and set up the volume group:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install lvm2
+pvcreate /dev/mmcblk0p3
+vgcreate vg0 /dev/mmcblk0p3
+</code></pre>
+</div>
+
+<h2 id="linux-domu">Linux DomU</h2>
+
+<p>Source: <a href="http://wiki.xenproject.org/wiki/Xen_ARM_with_Virtualization_Extensions/RootFilesystem">Xen ARM with Virtualization Extensions/RootFilesystem</a></p>
+
+<p>Create a new LVM partition for the guest’s root FS and format it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>lvcreate -L 4G vg0 --name linux-guest-1
+/sbin/mkfs.ext4 /dev/vg0/linux-guest-1
+</code></pre>
+</div>
+
+<p>Note: we’re going to make a fairly big VM, as we’ll be using it as a build machine soon.</p>
+
+<p>Mount it and install an OS (e.g. Ubuntu 14.04 here):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/vg0/linux-guest-1 /mnt
+debootstrap --arch armhf trusty /mnt
+chroot /mnt
+passwd
+</code></pre>
+</div>
+
+<p>Edit <code class="highlighter-rouge">/etc/hostname</code>, <code class="highlighter-rouge">/etc/network/interfaces</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>auto eth0
+iface eth0 inet dhcp
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">/etc/fstab</code> should contain:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/dev/xvda       / ext4   rw,relatime,data=ordered       0 1
+</code></pre>
+</div>
+
+<p>Add any extra software you want:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install openssh-server
+mkdir -m 0700 /root/.ssh
+vi /root/.ssh/authorized_keys
+</code></pre>
+</div>
+
+<p>Note: openssh will fail to start as port 22 is taken, but it still installs.</p>
+
+<p>Unmount:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>exit
+umount /mnt
+</code></pre>
+</div>
+
+<p>Copy the Linux kernel image into /root (the dom0 one is fine). Create <code class="highlighter-rouge">domU_test</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>kernel = "/root/zImage"
+memory = 512
+name = "Ubuntu-14.04"
+vcpus = 2
+serial="pty"
+disk = [ 'phy:/dev/vg0/linux-guest-1,xvda,w' ]
+vif = ['bridge=br0']
+extra = 'console=hvc0 xencons=tty root=/dev/xvda'
+</code></pre>
+</div>
+
+<p>You should now be able to boot the Linux guest:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>xl create domU_test -c
+</code></pre>
+</div>
+
+<h2 id="freebsd-guest">FreeBSD guest</h2>
+
+<p>Source: <a href="http://lists.freebsd.org/pipermail/freebsd-xen/2014-January/001974.html">Add support for Xen ARM guest on FreeBSD</a></p>
+
+<p>I created a VM on my laptop and installed FreeBSD from <a href="http://www.freebsd.org/where.html">FreeBSD-10.0-RELEASE-amd64-bootonly.iso</a>. I then used that to cross-compile the Xen/ARM version. Your build VM will need to have at least 4 GB of disk space.</p>
+
+<p>Get the <code class="highlighter-rouge">xen-arm-v2</code> branch:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone git://xenbits.xen.org/people/julieng/freebsd.git -b xen-arm-v2
+</code></pre>
+</div>
+
+<p>Note: I tested with the <code class="highlighter-rouge">xen-arm</code> branch, but the <code class="highlighter-rouge">xen-arm-v2</code> branch has some useful fixes.</p>
+
+<p>Note: Installing Git using FreeBSD using ports on a clean system is very slow, uses a lot of disk space, requires many confirmations and, in my case, failed. So I suggest cloning the repository with your main system and then transferring the files directly to the FreeBSD build VM instead.</p>
+
+<p>In the build FreeBSD (note: the build takes several hours; you might want to assign multiple CPUS to your VM and use <code class="highlighter-rouge">-j</code> here):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd freebsd
+truncate -s 512M xenvm.img
+mdconfig -f xenvm.img -u0
+newfs /dev/md0
+mount /dev/md0 /mnt
+
+make TARGET_ARCH=armv6 kernel-toolchain
+make TARGET_ARCH=armv6 KERNCONF=XENHVM buildkernel
+make TARGET_ARCH=armv6 buildworld
+make TARGET_ARCH=armv6 DESTDIR=/mnt installworld distribution
+
+echo "/dev/xbd0 / ufs rw 1 1" &gt; /mnt/etc/fstab
+echo 'xc0 "/usr/libexec/getty Pc" xterm on secure' &gt;&gt; /mnt/etc/ttys
+
+umount /mnt
+mdconfig -d -u0
+</code></pre>
+</div>
+
+<p>Then you can copy <code class="highlighter-rouge">xenvm.img</code> and the kernel (<code class="highlighter-rouge">/usr/obj/arm.armv6/root/freebsd/sys/XENHVM/kernel</code>) to dom0 on the Cubieboard2.
+You might want to rename the kernel (e.g. to <code class="highlighter-rouge">freebsd-kernel</code>).</p>
+
+<p>Create a new partition for it and copy the filesystem in:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>lvcreate --name freebsd -L 512M vg0
+dd if=xenvm.img of=/dev/vg0/freebsd
+</code></pre>
+</div>
+
+<p>Here’s a suitable <code class="highlighter-rouge">freebsd.cfg</code> config file:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>kernel="freebsd-kernel"
+memory=64
+name="freebsd"
+vcpus=1
+autoballon="off"
+disk=[ 'phy:/dev/vg0/freebsd,xvda,w' ]
+</code></pre>
+</div>
+
+<p>If you try to start the domain with Debian’s version of <code class="highlighter-rouge">xl</code>, you’ll get <code class="highlighter-rouge">Unable to find arch FDT info for xen-3.0-unknown</code>.
+To fix this, you need to rebuild the Xen toolstack with these two patches (I applied them to the <code class="highlighter-rouge">stable-4.4</code> branch):</p>
+
+<ul>
+  <li>https://patches.linaro.org/22228/</li>
+  <li>https://patches.linaro.org/22227/</li>
+</ul>
+
+<p>Build it using the ARM build guest:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd xen/tools
+./configure --prefix=/opt/xen-freebsd
+make
+make install
+</code></pre>
+</div>
+
+<p>Transfer <code class="highlighter-rouge">/opt/xen-freebsd</code> to dom0 and you can then start the FreeBSD domain with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>export LD_LIBRARY_PATH=/opt/xen-freebsd/lib/
+/opt/xen-freebsd/sbin/xl create -c freebsd.cfg
+</code></pre>
+</div>
+
+<p>You should get a root prompt:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># uname -a
+FreeBSD  11.0-CURRENT FreeBSD 11.0-CURRENT #2: Tue Apr 15 20:37:04 BST 2014     root@freebsd:/usr/obj/arm.armv6/root/freebsd/sys/XENHVM  arm
+</code></pre>
+</div>
+
+<h2 id="xen-mini-os">Xen Mini-OS</h2>
+
+<p>Mini-OS is a small demonstration OS for Xen. I had to make some changes to the (experimental) ARM version to make it work on the Cubieboard2.
+You’ll need to install a few things to build it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install build-essential libfdt-dev git
+</code></pre>
+</div>
+
+<p>Clone the repository and build:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone -b devel https://github.com/talex5/xen.git
+cd xen/extras/mini-os
+make
+</code></pre>
+</div>
+
+<p>Transfer the resulting <code class="highlighter-rouge">mini-os.img</code> to your dom0 and add a configuration file for it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>kernel = "/root/mini-os.img"
+memory = 128
+name = "Mini-OS"
+vcpus = 1
+serial="pty"
+disk = [ 'phy:/dev/vg0/mini-os,xvda,w' ]
+vif = ['bridge=br0']
+</code></pre>
+</div>
+
+<p>Create a disk for it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>lvcreate -L 8M vg0 --name mini-os
+</code></pre>
+</div>
+
+<p>You should now be able to start it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>xl create mini-os.cfg
+</code></pre>
+</div>
+
+<p>On success, it will write lots of text to the Xen console (note: this requires a debug build of Xen):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>(d6) dtb_pointer : 87fff000
+(d6) MM: Init
+(d6)     _text: 80008000(VA)
+(d6)     _etext: 80018f1c(VA)
+(d6)     _erodata: 8001b000(VA)
+(d6)     _edata: 8002820c(VA)
+(d6)     stack start: 8001c000(VA)
+(d6)     _end: 8002dee0(VA)
+(d6)     start_pfn: 80415
+(d6)     max_pfn: 8282d
+(d6) MM: Initialise page allocator for 80415000(80415000) - 0(8282d000)
+(d6) MM: done
+(d6) Initialising timer interface
+...
+</code></pre>
+</div>
+
+<p>You can now try <a href="/blog/introducing-xen-minios-arm">running a MirageOS unikernel</a>.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

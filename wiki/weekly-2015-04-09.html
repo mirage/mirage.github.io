@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-04-09</title>
+  <meta name="description" content="9th Apr 2015: Decoupling the mirage tool and libs, Public Q&amp;A session">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-04-09">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-04-09</h1>
+  </header>
+
+  <div class="article-content">
+    <p>9th Apr 2015: Decoupling the mirage tool and libs, Public Q&amp;A session</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>Irmin update</li>
+  <li>Handling constraints in the Mirage tool</li>
+  <li>MirageOS Public Hangout/FAQ session</li>
+</ul>
+
+<p>Attendees:
+Amir Chaudhry (chair), Thomas Gazagnaire, Heidi Howard, David Kaloper,
+Masoud Koleini, Thomas Leonard, Hannes Mehnert, Richard Mortier,
+Nicolas Ojeda Bar, Mindy Preston and Magnus Skjegstad</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and test</h4>
+
+<p>There was a meeting of the test breakout squad, which included Mort, Mindy,
+David Scott, Magnus and ThomasG. There was a long discussion last week and
+they covered a variety of items, such as reproduction of issues, component
+tests and other things. There’s room for improvement everywhere!</p>
+
+<p>There are some useful things to get started with, for example simply
+documenting assumptions in stack would a step forward (e.g. blocking vs
+non-blocking, etc).  It would also be helpful to define best practise and we
+can look to certain libraries for this (cf. Dave and Vchan).</p>
+
+<p>There are several actions that arose from the test meeting and Mort has notes
+that he’ll write up when he gets a chance.</p>
+
+<p>ThomasL also noted that Travis has a new build cluster on Amazon, as long as
+<code class="highlighter-rouge">sudo</code> is not needed. It would speed things up if we can we get PPA added to
+that.</p>
+
+<h4 id="irmin-update">Irmin update</h4>
+
+<p>ThomasG is reworking the the watch API.  Added two functions and is adding
+unit tests too.  The API is still not settled as ThomasL has posed questions
+that need to be addressed. The new LCA code is much faster though.</p>
+
+<p>Although ThomasG is currently focused on Watch, merge is the big thing missing
+at the moment. ThomasL is specifically waiting for for support for this and
+it’s the main thing he needs before he can ‘release’ <a href="https://github.com/talex5/cuekeeper">CueKeeper</a> to others.</p>
+
+<h4 id="jitsu-update">Jitsu update</h4>
+
+<p>Jitsu will be <a href="https://www.usenix.org/conference/nsdi15/technical-sessions/presentation/madhavapeddy">presented at NSDI</a> in less than a month.  There
+haven’t been many updates since last time, though work is taking place to add
+libxl support (and keep support for both libvirt and libxl).  The code that
+exists in the main branch can can be used and is the version we used for the
+experiments in the upcoming paper.  It’s stable but currently a bit difficult
+to use. Should try and improve this before the presentation itself, so Magnus
+needs to make some releases.  Amir is preparing a news release to coincide
+with the NSDI talk and will circulate off-list for feedback.</p>
+
+<h4 id="handling-constraints-in-the-mirage-tool">Handling constraints in the mirage tool</h4>
+
+<p>We had a brief discussion about trying to decouple the releases of libraries
+from the <code class="highlighter-rouge">mirage</code> tool itself.</p>
+
+<p>We’re not in a good place at the moment as we can’t release a number of
+libraries without also having to update and release a new version of <code class="highlighter-rouge">mirage</code>
+too.  Currently there is no way to set constraints in the Mirage tool itself,
+which leads to a situation where a number of new libraries may be available in
+OPAM but the Mirage tool cannot use them — i.e. there are packages that are
+more recent than <code class="highlighter-rouge">mirage</code> knows about. Therefore the Mirage tool becomes a
+bottleneck.  There are many libraries that are in this situation, so this is
+not an isolated case. The opinion at the moment seems to be to push the onus
+of updating <code class="highlighter-rouge">mirage</code> onto the maintainer of the respective repos, but this has
+it’s own issues (and failure modes).</p>
+
+<p>This is something that we will need to discuss further so we should bring it
+up on the next call.</p>
+
+<h4 id="tls-entropy-story">TLS entropy story</h4>
+
+<p>DavidK still working on this! Ask again in two weeks.</p>
+
+<h4 id="mirageos-public-hangoutfaq-session">MirageOS Public Hangout/FAQ session</h4>
+
+<p>A question came in by email about hosting a public hangout for people who may
+be interested in learning more about unikernels and MirageOS. One of the
+points that occurred to us was whether this is a repeat of the written
+information we already have, a Q&amp;A with the developers, or a wider-ranging
+discussion about where MirageOS and unikernels are going.  All are valid areas
+but serve different audiences and require different attendees/prep.</p>
+
+<p>In general, it was felt that this would be A Good Thing, as long everyone can
+get something out of it. For example, it would be great for us to hear of
+use-cases and we could record the session and post it to the website as
+further material.  It would also allow us to correct any misconceptions about
+unikernels and our approach.  There were a few comments that although we have
+quite an open process, we could do a better job of communicating the project.</p>
+
+<p>In terms of format, we seemed to settle on something with a partial
+presentation (less than 30mins) followed by open Q&amp;A.  Sourcing questions
+would also allow us to put together an FAQ and become more aware of — and deal
+with — the common issues that crop up.  It might even be worth asking around
+directly for what people would like to get out of the session and go from
+there.  Amir will look into this and will bring up some ideas in about a month
+(i.e. in the call after the next one).</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Amir apologises for the recurring delays in getting the call notes up.</p>
+  </li>
+  <li>
+    <p>Hannes has more thoughts to share on security things. Will post to the list.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 22nd April</strong>, though we may
+have to shift to the Thursday again. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Running MirageOS Xen kernels</title>
+  <meta name="description" content="Building a MirageOS unikernel for Xen, e.g., as at the end of how to build the MirageOS website results in a Xen PV kernel with a .xen extension. This must b...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/xen-boot">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Running MirageOS Xen kernels</h1>
+  </header>
+
+  <div class="article-content">
+    <p>Building a MirageOS unikernel for Xen, e.g., as at <a href="/wiki/mirage-www">the end of how to build the MirageOS website</a> results in a Xen PV kernel with a <code class="highlighter-rouge">.xen</code> extension. This must be booted as a normal Xen domU kernel. The specifics vary based on your setup or cloud provider, and in some cases are wrapped up in the Mirari configuration and deployment tool.</p>
+
+<h2 id="open-source-xen">Open Source Xen</h2>
+
+<p>When using open-source Xen, you need to create a configuration file, e.g., <code class="highlighter-rouge">app.cfg</code>, for the VM that looks something like:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    name="app"
+    kernel="app.xen"
+</code></pre>
+</div>
+
+<p>You can launch this domain with <code class="highlighter-rouge">xm create -c app.cfg</code> (for Xen versions earlier than 4.1) and <code class="highlighter-rouge">xl create -c app.cfg</code> for Xen 4.1 or greater.</p>
+
+<p>Alternatively, for Xen versions greater than 4.1, you can simply invoke Mirage to do this for you:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    $ mirage configure -t xen
+    $ make
+</code></pre>
+</div>
+
+<p>The <a href="/wiki/mirage-www">MirageOS website</a> contains an example.  Thie <code class="highlighter-rouge">mirage configure</code> will create an <code class="highlighter-rouge">xl</code> configuration file, and you will
+then need to edit it to add any VIFs or disks required by your application.  Consult the Xen documentation for your distro for
+the specifics on this.</p>
+
+<h2 id="amazon-ec2">Amazon EC2</h2>
+
+<p>Amazon has recently added support for booting <a href="http://ec2-downloads.s3.amazonaws.com/user_specified_kernels.pdf">user-specified kernels</a>. This involves a two-stage boot procedure behind the scenes:</p>
+
+<ul>
+  <li>The VM is launched using a <code class="highlighter-rouge">pvgrub</code> stub domain that is a micro-kernel containing a small grub interpreter.</li>
+  <li><code class="highlighter-rouge">pvgrub</code> mounts the root device, looks for <code class="highlighter-rouge">/boot/menu.lst</code>, and parses it for the default kernel location on that filesystem.</li>
+  <li>The actual kernel is loaded into memory, and <code class="highlighter-rouge">pvgrub</code> execs it, erasing it from memory.</li>
+  <li>From this point on, the second kernel is active and boot proceeds normally.</li>
+</ul>
+
+<p>So to boot a MirageOS kernel on EC2, it must first be wrapped in a block device. After that, the image needs to be bundled into an AMI, and then registered as a bootable image using the EC2 tools.</p>
+
+<p>###Command Line Tools</p>
+
+<p>First download the <a href="http://aws.amazon.com/developertools/351">API tools</a> and <a href="http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip">AMI tools</a> from Amazon.
+Edit your <code class="highlighter-rouge">.profile</code> to add the following variables:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">EC2_USER</code>: 12 digit account number (not email) obtained from the EC2 management console.</li>
+  <li><code class="highlighter-rouge">EC2_ACCESS</code>: from Account/Access credentials in the EC2 management console.</li>
+  <li><code class="highlighter-rouge">EC2_ACCESS_SECRET</code>: as above, in a different tab.</li>
+  <li><code class="highlighter-rouge">EC2_CERT</code>: location of the certificate file you download from the Account/Access page.</li>
+  <li><code class="highlighter-rouge">EC2_PRIVATE_KEY</code>: location of the private key.</li>
+</ul>
+
+<p>There is a script that then takes care of packaging up the MirageOS kernel image and uploading it to Amazon automatically..
+It is found at <a href="https://raw.githubusercontent.com/mirage/mirage/master/scripts/ec2.sh">scripts/ec2.sh</a>, and you specify your <code class="highlighter-rouge">kernel.xen</code> file as the first argument to the script.</p>
+
+<h3 id="using-micro-instances">Using micro instances</h3>
+
+<p>To use the EC2 <code class="highlighter-rouge">t1.micro</code> instances the kernel needs to reside inside an EBS volume. To create a bootable EBS volume containing an MirageOS kernel use the following steps:</p>
+
+<ul>
+  <li>Start a t1.micro instance: <code class="highlighter-rouge">ec2-run-instances ami-7f418316 -k mirage -t t1.micro</code> - We need this instance to access the EBS volume which will later contain our MirageOS kernel</li>
+  <li>Create an EBS volume: <code class="highlighter-rouge">ec2-create-volume --size 1</code> - We use the smallest possible size: 1G</li>
+  <li>Attach volume to your instance: <code class="highlighter-rouge">ec2-attach-volume ${VOLUME} -i ${INSTANCE} -d /dev/sdh</code> - Where <code class="highlighter-rouge">$VOLUME</code> is your volume id and <code class="highlighter-rouge">$INSTANCE</code> is your instance id</li>
+  <li>Login to the miro instance using ssh: <code class="highlighter-rouge">ssh -i mirage-ssh-key.pem ec2-user@${PUBLIC-AWS-NAME}</code> - Where <code class="highlighter-rouge">$PUBLIC-AWS-NAME</code> is your public DNS name of your running micro instance</li>
+  <li>Create a partition on <code class="highlighter-rouge">/dev/sdh</code> and format it using <code class="highlighter-rouge">mkfs.ext2 /dev/sdh1</code> and mount the volume: <code class="highlighter-rouge">sudo mount /dev/sdh1 /mnt</code></li>
+  <li>Copy a Xen MirageOS kernel (e.g. the http example with DHCP enabled) to the running micro instance</li>
+  <li>Login via ssh and move the kernel to <code class="highlighter-rouge">/mnt/kernel</code></li>
+  <li>Create grub directories <code class="highlighter-rouge">sudo mkdir -p /mnt/boot/grub/</code></li>
+  <li>Create grub menu.lst file in <code class="highlighter-rouge">/mnt/boot/grub/menu.lst</code></li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    default 0
+    timeout 1
+    title Mirage-Test
+         root (hd0,0)
+         kernel /kernel
+</code></pre>
+</div>
+
+<ul>
+  <li>Log out of instance</li>
+  <li>Create EBS snapshot <code class="highlighter-rouge">ec2-create-snapshot ${VOLUME}</code></li>
+  <li>You can stop the running micro instance now</li>
+  <li>Register your AMI using <code class="highlighter-rouge">ec2-register --snapshot ${SNAPSHOT} --kernel aki-4e7d9527 --architecture x86_64</code> Note the familiar kernel id: This is the pv-grub kernel that is also used in <code class="highlighter-rouge">script/ec2.sh</code>.</li>
+  <li>Start your EBS backed MirageOS kernel in a micro instance: <code class="highlighter-rouge">ec2-run-instances ${EBSAMI} -k mirage -t t1.micro</code></li>
+</ul>
+
+<p>This process could be put in a script easily.</p>
+
+<h2 id="xen-cloud-platform">Xen Cloud Platform</h2>
+
+<p>The <a href="http://www.xen.org/products/cloudxen.html">Xen Cloud Platform</a> is a distribution that provides cluster-wide support for multi-tenant VMs. It uses a command-line interface and an XML-RPC API to configure and control VMs.</p>
+
+<p>There is a script in <a href="https://github.com/avsm/mirage/tree/master/scripts/xcp.sh">scripts/xcp.sh</a> that takes a <code class="highlighter-rouge">kernel.xen</code> output from MirageOS and makes the appropriate API and SSH calls. Thanks to <a href="https://twitter.com/mcclurmc">Mike McClurg</a> from Citrix for contributing this script.</p>
+
+<h2 id="rackspace-cloud">Rackspace Cloud</h2>
+
+<p>Noone has tried this yet. Get in touch if you do!</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

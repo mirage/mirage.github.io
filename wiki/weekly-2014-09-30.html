@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-09-30</title>
+  <meta name="description" content="30th Sep 2014: Mirage 2.0 libs, Calendar and some Jitsu">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-09-30">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-09-30</h1>
+  </header>
+
+  <div class="article-content">
+    <p>30th Sep 2014: Mirage 2.0 libs, Calendar and some Jitsu</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage 2.0 libs status</li>
+  <li>Unix dependencies in Calendar package</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Leonard, Anil Madhavapeddy,
+Mindy Preston, Dave Scott and Magnus Skjegstad</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-20-libs">Mirage 2.0 libs</h4>
+
+<p>There’s a meta problem where Travis keeps failing and this is making it quite
+difficult to triage issues. Not had time to deal with this yet.</p>
+
+<p><strong>cohttp</strong> - Still want to cut package but there’s a backlog of 15 outstanding
+PRSs on OPAM. Spent some time cleaning up PRs from last few weeks and aiming
+to get these pushed through in the next few weeks.</p>
+
+<p><strong>mirage-dev</strong> - Decision to cut a bunch of releases based on <code class="highlighter-rouge">mirage-dev</code> as
+it’s stable and working. That will make it easier to do the next round of
+releases but care should be taken to deal with any incoming issues as a result
+of these releases.  Intent is to stop changing ‘v1’ at this point.  Another
+benefit of these releases is that we’ll no longer need all the pinned repos to
+get ARM working. Incidentally, all known ARM bugs are fixed and ThomasL has
+reviewed Dave Scott’s patches, so will release miniOS as well.</p>
+
+<p>Fixes are coming in for the TLS stack. We really need to figure out how to get
+entropy into TLS and there are some thoughts on using vchan to do this.</p>
+
+<p>Also discussed the need for more unit tests, specifically for grant tables etc.</p>
+
+<p>Anil, Dave and Thomas will come up with a plan before end of week as to what
+to do regarding all the pending releases.  Thankfully we’ve avoided breakages
+by avoiding partial releases. Question about only supporting 4.02.0 because of
+conduit.  It would benefit a lot from 4.02.0 features and make a number of
+things much easier.</p>
+
+<h4 id="unix-dependencies-in-calendar-package">Unix dependencies in Calendar package</h4>
+
+<p>There was a brief discussion on the mailing list regarding blockers for
+getting a blog feed on the Mirage website.  Essentially, this necessitates
+date parsing, which someone will need to implement and may be non-trivial.</p>
+
+<p>There’s an issue on an external library tracking this if anyone would like to
+get involved (see <a href="https://github.com/Cumulus/Syndic/issues/23#issuecomment-56914187">Cumulus/Syndic#23</a>).</p>
+
+<!-- 
+http://lists.xenproject.org/archives/html/mirageos-devel/2014-09/msg00118.html
+https://github.com/mirage/mirage-www/pull/208
+-->
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Removing Xenstore from <code class="highlighter-rouge">mirage-platform</code>. Jon Ludlam still looking at this
+and it needs some refactoring. Suspend/resume might also be glitchy.</p>
+  </li>
+  <li>
+    <p>Xen/ARM hosting: Could be interesting for community to host Unikernels on
+ARM boards. Could then use that platform to do power measurements and
+regression tests etc. These could be deployed in people’s homes but would
+require further thought.</p>
+  </li>
+  <li>
+    <p>Need an Irmin free of <code class="highlighter-rouge">core_kernel</code>. Can then use it for logging layers.
+Thomas still working on this.</p>
+  </li>
+  <li>
+    <p>Next call is scheduled for <strong>14th October</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

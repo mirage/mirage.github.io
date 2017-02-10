@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-03-11</title>
+  <meta name="description" content="11th Mar 2015: More racing, Testing, Networking, Large merges and Cleanups">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-03-11">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-03-11</h1>
+  </header>
+
+  <div class="article-content">
+    <p>11th Mar 2015: More racing, Testing, Networking, Large merges and Cleanups</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Race issues</li>
+  <li>Quality and Test</li>
+  <li>Networking stack</li>
+  <li>Outstanding Merges (TLS and DEVICE)</li>
+  <li>Improve onboarding
+    <ul>
+      <li>GitHub Org cleanup</li>
+      <li>Better documentation</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Attendees:
+Amir Chaudhry (chair), Thomas Gazagnaire, David Kaloper, Thomas Leonard,
+Jon Ludlam, Anil Madhavapeddy, Hannes Mehnert, Richard Mortier and Dave Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="race-issues">Race issues</h4>
+
+<p>The startOfDay race issue between netback and netfront — discussed on the
+<a href="http://openmirage.org/wiki/weekly-2015-02-25#miragenetxenraceissue">last call</a> — is still unresolved. It’s still difficult to
+reproduce but we do have a <a href="https://github.com/mirage/mirage-net-xen/issues/20#issuecomment-78264578">minimal example</a> of this problem, which
+should help greatly. It only seems to surface when it’s on a live Xen host
+which is why it’s a tricky one to deal with.  It would be very useful if
+anyone can provide other examples of this problem, especially to see if the
+issue exists on x86 and it hasn’t surfaced yet.</p>
+
+<p>In the meantime, we might need to put a ‘sleep’ into <code class="highlighter-rouge">mirage-net-xen</code> to get
+it to work for the time being. Ironically, this whole issue didn’t occur until
+ThomasL’s optimisations, which in a way, means they were good enough to
+surface this issue (in other words, this is still progress!).</p>
+
+<h4 id="quality-and-test">Quality and test</h4>
+
+<p>The testing breakout squad <a href="http://openmirage.org/wiki/weekly-2015-02-25#Qualityandtestinfrastructure">we proposed</a> didn’t quite convene but
+things around test are still getting better. Anil has been fixing breakages
+reported via <a href="https://github.com/mirage/is-mirage-broken/blob/master/logs/README.md">is-mirage-broken</a> and things look good as mirage-skeleton
+is now successfully building across all platforms. cohttp and TLS are also
+part of those tests and some of them are in a known-broken state (due to other
+outstanding work). We need to get this up to 100% pass rate before we do much
+more. There are still some more tweaks to commit but things look much better
+than they did before.</p>
+
+<p>Magnus has been working on a Mirage net front end (including pcap), so we don’t
+need a real network to test. There is also the testing repo from Masoud, which
+Mort will try out.  We need a Xen machine to do this so will have to
+discuss where this can take place.</p>
+
+<p>Amir noticed a <a href="http://opam.ocaml.org/packages/quickcheck/quickcheck.1.0.2/">QuickCheck</a> library in OPAM so perhaps we could
+use it. However, Anil pointed our that there is likely to be a fair amount of
+plumbing and scaffolding involved in order to get to something useful (which
+still needs someone to put in the effort). Dave has been using BISECT and
+coveralls, which he’s been happy with (and slightly addicted to).  You can see
+examples of this in the <a href="https://github.com/mirage/shared-block-ring">shared-block-ring</a> repo (which is at 81% coverage
+and <a href="https://coveralls.io/r/mirage/shared-block-ring?branch=master">climbing!</a>).  It would be good to get some notes written
+down and sent out to the list about this process and hooking together with
+Travis.</p>
+
+<h4 id="networking-stack">Networking stack</h4>
+
+<p>So far you’ll notice that we’ve mainly discussed issues relating to the
+network stack.  It’s obvious that this is a critical piece of infrastructure so
+we need continue the improvements we’ve been making.  However, we also need to
+be <em>charting</em> this progress, which means gathering base-line numbers before
+doing releases. We’ll be able to do much more functional testing when Magnus’
+work is complete and Anil will also talk to Mindy about her work. Overall,
+things are going well, we’re continually improving and it would be good to
+monitor that progress.</p>
+
+<h4 id="outstanding-merges-device-and-tls">Outstanding Merges (DEVICE and TLS)</h4>
+
+<p>There are a couple of wide-ranging changes that are being tracked and releases
+of various libraries need to be co-ordinated appropriately.</p>
+
+<p><strong>Removing DEVICE.connect</strong> (<a href="https://github.com/mirage/mirage/pull/350">mirage/mirage#350</a>) — As of yesterday, all the
+relevant libraries have been updated and released so the <code class="highlighter-rouge">DEVICE.connect</code>
+changes have now been merged. This involved coordinated changes and releases
+of at least 15 libraries.  This also allowed us to update the old repos with
+new Travis scripts and improvements to OPAM metadata.  As a result of this and
+other activity, we <a href="http://openmirage.org/releases#miragev230Interfacecleanupsandentropysupport">released Mirage 2.3.0</a> into the upstream OPAM
+repository yesterday.</p>
+
+<p><strong>TLS Support</strong> (<a href="https://github.com/mirage/mirage-dev/pull/52">mirage/mirage-dev#52</a>) — This is still awaiting a few
+patch reviews/merges of a number of different libraries, which is nearly
+complete. Just awaiting changes to Conduit, OCaml-TLS and also a release of 
+Ctypes 0.4.0. Once TLS support is complete, we will be able to release
+Mirage 2.4.0</p>
+
+<h4 id="improve-onboarding">Improve onboarding</h4>
+
+<p>Some informal feedback from a few people has been that MirageOS is still an
+intimidating project to get involved with. To some extent this is unavoidable
+as certain aspects require experience of systems/protocols before diving in
+(or the will and patience to acquire that experience), and we’re still
+building out our set of simpler Pioneer Projects. However, there are certain
+things we can do to help make it easier for people who may be looking around
+but are still reluctant to email the list. For example, we could work on the
+following over the next few months:</p>
+
+<p><strong>GitHub Org cleanup</strong> — We have a large number of repos accumulating on the
+Mirage GitHub Org and a number of them are no longer relevant (cf. <code class="highlighter-rouge">mirari</code>).
+We could identify these libraries and move them out into a separate Org
+(say, mirage-attic) so that only current repos remain in the primary
+organisation — we’d have to also update any OPAM-repo metadata as part of this
+(it’s highly unlikely that anyone is using these libs — it’s just so that we do
+this properly).  Doing this would allow a newcomer to be sure that any of the
+libraries in the GitHub org are worth looking at. In addition to this, we
+should also clean up stale issues across all the remaining repos so that they
+reflect current reality.</p>
+
+<p><strong>Improve documentation</strong> — Due to separate efforts towards an
+<a href="http://www.cl.cam.ac.uk/projects/ocamllabs/tasks/index.html#platform">OCaml Platform</a>, we now have
+<a href="http://opam.ocaml.org/blog/codoc-0-2-0-released/">new documentation generation tools</a> available to us. These are still
+in alpha but they go some way to improving the docs we can produce for
+collections of libraries (CSS notwithstanding). We’d encourage people to begin
+using these tools (and submitting patches if possible). In addition, there
+have been a lot of blog posts about how to do things with Mirage and it’s time
+we turned those into actual documentation on the website. In other words,
+sweep through the material we’ve created and backport it onto the site. This
+makes it significantly easier to maintain as the underlying tools progress.</p>
+
+<p>Neither of the above activities is particularly challenging, but it’s more
+about setting aside the time to complete them.  In the past we’ve proposed
+having a ‘doc-day’ of our own (similar to Xen’s document days), so that we can
+get together and just tick things off.  We may need to schedule a few days
+like that to get these things done.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Would like to move the <strong>Mirage site to be HTTPS</strong> only, which needs TLS.
+Hannes is keen to do this and Anil has all the necessary certificates.  Will
+need TLS conduit. Running the website this way will test the whole stack. Amir
+notes that website is still the canary as when end-to-end thing break, that’s
+the first place we notice. We need to fix things quickly when they do go down.</p>
+  </li>
+  <li>
+    <p><strong>Irmin feedback</strong>: Some discussions on the mailing list about the API and
+some feedback from early users (ThomasL and KC). Turns our that some aspects
+of Dave’s work on shared-block-ring can help with some of ThomasG’s activities.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 25th March</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

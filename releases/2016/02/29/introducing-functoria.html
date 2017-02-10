@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Introducing Functoria</title>
+  <meta name="description" content="For the last few months, I’ve been working with Thomas on improving the mirage tool andI’m happy to present Functoria, a library to create arbitrary MirageOS...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//releases/2016/02/29/introducing-functoria.html">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">Introducing Functoria</h1>
+    <p class="article_meta"><time datetime="2016-02-29T00:00:00+00:00" itemprop="datePublished">Feb 29, 2016</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>For the last few months, I’ve been working with <a href="http://www.gazagnaire.org">Thomas</a> on improving the <code class="highlighter-rouge">mirage</code> tool and
+I’m happy to present <a href="https://github.com/mirage/functoria">Functoria</a>, a library to create arbitrary MirageOS-like DSLs. Functoria is independent from <code class="highlighter-rouge">mirage</code> and will replace the core engine, which was somewhat bolted on to the tool until now.</p>
+
+<p>This introduces a few breaking changes so please consult
+<a href="../docs/breaking-changes">the breaking changes page</a> to see what is different and how to fix things if needed.
+The good news is that it will be much more simple to use, much more flexible,
+and will even produce pretty pictures!</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>For people unfamiliar with MirageOS, the <code class="highlighter-rouge">mirage</code> tool handles configuration of mirage unikernels by reading an OCaml file describing the various pieces and dependencies of the project.
+Based on this configuration it will use <a href="http://opam.ocaml.org/">opam</a> to install the dependencies, handle various configuration tasks and emit a build script.</p>
+
+<p>A very simple configuration file looks like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>open Mirage
+let main = foreign "Unikernel.Main" (console @-&gt; job)
+let () = register "console" [main $ default_console]
+</code></pre>
+</div>
+
+<p>It declares a new functor, <code class="highlighter-rouge">Unikernel.Main</code>, which take a console as an argument and instantiates it on the <code class="highlighter-rouge">default_console</code>. For more details about unikernel configuration, please read the <a href="../wiki/hello-world">hello-world</a> tutorial.</p>
+
+<h2 id="keys">Keys</h2>
+
+<p>A <a href="https://github.com/mirage/mirage/issues/229">much</a> <a href="https://github.com/mirage/mirage/issues/228">demanded</a> <a href="https://github.com/mirage/mirage/issues/231">feature</a> has been the ability to define so-called bootvars.
+Bootvars are variables whose value is set either at configure time or at
+startup time.</p>
+
+<p>A good example of a bootvar would be the IP address of the HTTP stack. For example, you may wish to:</p>
+
+<ul>
+  <li>Set a good default directly in the <code class="highlighter-rouge">config.ml</code></li>
+  <li>Provide a value at configure time, if you are already aware of deployment conditions.</li>
+  <li>Provide a value at startup time, for last minute changes.</li>
+</ul>
+
+<p>All of this is now possible using <strong>keys</strong>. A key is composed of:
+- <em>name</em> — The name of the value in the program.
+- <em>description</em> — How it should be displayed/serialized.
+- <em>stage</em> — Is the key available only at runtime, at configure time, or both?
+- <em>documentation</em> — This is not optional, so you have to write it.</p>
+
+<p>Imagine we are building a multilingual unikernel and we want to pass the
+default language as a parameter. The language parameter is an optional string, so we use the <a href="http://mirage.github.io/functoria/Functoria_key.Arg.html#VALopt"><code class="highlighter-rouge">opt</code></a> and <a href="http://mirage.github.io/functoria/Functoria_key.Arg.html#VALstring"><code class="highlighter-rouge">string</code></a> combinators. We want to be able to define it both
+at configure and run time, so we use the stage <code class="highlighter-rouge">`Both</code>. This gives us the following code:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let lang_key =
+  let doc = Key.Arg.info
+      ~doc:"The default language for the unikernel." [ "l" ; "lang" ]
+  in
+  Key.(create "language" Arg.(opt ~stage:`Both string "en" doc))
+</code></pre>
+</div>
+
+<p>Here, we defined both a long option <code class="highlighter-rouge">--lang</code>, and a short one <code class="highlighter-rouge">-l</code>, (the format is similar to the one used by <a href="http://erratique.ch/software/cmdliner">Cmdliner</a>).
+In the unikernel, the value is retrieved with <code class="highlighter-rouge">Key_gen.language ()</code>.</p>
+
+<p>The option is also documented in the <code class="highlighter-rouge">--help</code> option for both <code class="highlighter-rouge">mirage configure</code> (at configure time) and <code class="highlighter-rouge">./my_unikernel</code> (at startup time).</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>       -l VAL, --lang=VAL (absent=en)
+           The default language for the unikernel.
+</code></pre>
+</div>
+
+<p>A simple example of a unikernel with a key is available in <a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a> in the <a href="https://github.com/mirage/mirage-skeleton/tree/master/hello"><code class="highlighter-rouge">hello</code> directory</a>.</p>
+
+<h3 id="switching-implementation">Switching implementation</h3>
+
+<p>We can do much more with keys, for example we can use them to switch devices at configure time.
+To illustrate, let us take the example of dynamic storage, where we want to choose between a block device and a crunch device with a command line option.
+In order to do that, we must first define a boolean key:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let fat_key =
+  let doc = Key.Arg.info
+      ~doc:"Use a fat device if true, crunch otherwise." [ "fat" ]
+  in
+  Key.(create "fat" Arg.(opt ~stage:`Configure bool false doc))
+</code></pre>
+</div>
+
+<p>We can use the <a href="http://mirage.github.io/functoria/Functoria.html#VALif_impl"><code class="highlighter-rouge">if_impl</code></a> combinator to choose between two devices depending on the value of the key.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let dynamic_storage =
+  if_impl (Key.value fat_key)
+    (kv_ro_of_fs my_fat_device)
+    (my_crunch_device)
+</code></pre>
+</div>
+
+<p>We can now use this device as a normal storage device of type <code class="highlighter-rouge">kv_ro impl</code>! The key is also documented in <code class="highlighter-rouge">mirage configure --help</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>       --fat=VAL (absent=false)
+           Use a fat device if true, crunch otherwise.
+</code></pre>
+</div>
+
+<p>It is also possible to compute on keys before giving them to <code class="highlighter-rouge">if_impl</code>, combining multiple keys in order to compute a value, and so on. For more details, see the <a href="http://mirage.github.io/functoria/">API</a> and the various examples available in <a href="https://github.com/mirage/mirage">mirage</a> and <a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a>.</p>
+
+<p>Switching keys opens various possibilities, for example a <code class="highlighter-rouge">generic_stack</code> combinator is now implemented in <code class="highlighter-rouge">mirage</code> that will switch between socket stack, direct stack with DHCP, and direct stack with static IP, depending on command line arguments.</p>
+
+<h2 id="drawing-unikernels">Drawing unikernels</h2>
+
+<p>All these keys and dynamic implementations make for complicated unikernels. In order to clarify what is going on and help to configure our unikernels, we have a new command: <code class="highlighter-rouge">describe</code>.</p>
+
+<p>Let us consider the <code class="highlighter-rouge">console</code> example in <a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>open Mirage
+
+let main = foreign "Unikernel.Main" (console @-&gt; job)
+let () = register "console" [main $ default_console]
+</code></pre>
+</div>
+
+<p>This is fairly straightforward: we define a <code class="highlighter-rouge">Unikernel.Main</code> functor using a console and we
+instantiate it with the default console. If we execute <code class="highlighter-rouge">mirage describe --dot</code> in this directory, we will get the following output.</p>
+
+<p><a href="/assets/img/dot/console.svg"><img src="/assets/img/dot/console.svg" alt="A console unikernel" title="My little unikernel" /></a></p>
+
+<p>As you can see, there are already quite a few things going on!
+Rectangles are the various devices and you’ll notice that
+the <code class="highlighter-rouge">default_console</code> is actually two consoles: the one on Unix and the one on Xen. We use the <code class="highlighter-rouge">if_impl</code> construction — represented as a circular node — to choose between the two during configuration.</p>
+
+<p>The <code class="highlighter-rouge">key</code> device handles the runtime key handling. It relies on an <code class="highlighter-rouge">argv</code> device, which is similar to <code class="highlighter-rouge">console</code>. Those devices are present in all unikernels.</p>
+
+<p>The <code class="highlighter-rouge">mirage</code> device is the device that brings all the jobs together (and on the hypervisor binds them).</p>
+
+<h2 id="data-dependencies">Data dependencies</h2>
+
+<p>You may have noticed dashed lines in the previous diagram, in particular from <code class="highlighter-rouge">mirage</code> to <code class="highlighter-rouge">Unikernel.Main</code>. Those lines are data dependencies. For example, the <code class="highlighter-rouge">bootvar</code> device has a dependency on the <code class="highlighter-rouge">argv</code> device. It means that <code class="highlighter-rouge">argv</code> is configured and run first, returns some data — an array of string — then <code class="highlighter-rouge">bootvar</code> is configured and run.</p>
+
+<p>If your unikernel has a data dependency — say, initializing the entropy — you can use the <code class="highlighter-rouge">~deps</code> argument on <code class="highlighter-rouge">Mirage.foreign</code>. The <code class="highlighter-rouge">start</code> function of the unikernel will receive one extra argument for each dependency.</p>
+
+<p>As an example, let us look at the <a href="http://mirage.github.io/functoria/Functoria_app.html#VALapp_info"><code class="highlighter-rouge">app_info</code></a> device. This device makes the configuration information available at runtime. We can declare a dependency on it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let main =
+  foreign "Unikernel.Main" ~deps:[abstract app_info] (console @-&gt; job)
+</code></pre>
+</div>
+
+<p><a href="/assets/img/dot/info.svg"><img src="/assets/img/dot/info.svg" alt="A unikernel with info" title="My informed unikernel" /></a></p>
+
+<p>The only difference with the previous unikernel is the data dependency — represented by a dashed arrow — going from <code class="highlighter-rouge">Unikernel.Main</code> to <code class="highlighter-rouge">Info_gen</code>. This means that <code class="highlighter-rouge">Unikernel.Main.start</code> will take an extra argument of type <code class="highlighter-rouge">Mirage_info.t</code> which we can, for example, print:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>name: console
+libraries: [functoria.runtime; lwt.syntax; mirage-console.unix;
+            mirage-types.lwt; mirage.runtime; sexplib]
+packages: [functoria.0.1; lwt.2.5.0; mirage-console.2.1.3; mirage-unix.2.3.1;
+           sexplib.113.00.00]
+</code></pre>
+</div>
+
+<p>The complete example is available in <a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a> in the <a href="https://github.com/mirage/mirage-skeleton/tree/master/app_info"><code class="highlighter-rouge">app_info</code> directory</a>.</p>
+
+<h2 id="sharing">Sharing</h2>
+
+<p>Since we have a way to draw unikernels, we can now observe the sharing between various pieces. For example, the direct stack with static IP yields this diagram:</p>
+
+<p><a href="/assets/img/dot/stack.svg"><img src="/assets/img/dot/stack.svg" alt="A stack unikernel" title="My stack unikernel" /></a></p>
+
+<p>You can see that all the sub-parts of the stack have been properly shared. To be merged, two devices must have the same name, keys, dependencies and functor arguments.
+To force non-sharing of two devices, it is enough to give them different names.</p>
+
+<p>This sharing also works up to switching keys. The generic stack gives us this diagram:</p>
+
+<p><a href="/assets/img/dot/dynamic.svg"><img src="/assets/img/dot/dynamic.svg" alt="A dynamic stack unikernel" title="My generic unikernel" /></a></p>
+
+<p>If you look closely, you’ll notice that there are actually <em>three</em> stacks in the last example: the <em>socket</em> stack, the <em>direct stack with DHCP</em>, and the <em>direct stack with IP</em>. All controlled by switching keys.</p>
+
+<h2 id="all-your-functors-are-belong-to-us">All your functors are belong to us</h2>
+
+<p>There is more to be said about the new capabilities offered by functoria, in particular on how to define new devices. You can discover them by looking at the <a href="https://github.com/mirage/mirage">mirage</a> implementation.</p>
+
+<p>However, to wrap up this blog post, I offer you a visualization of the MirageOS website itself (brace yourself). <a href="/assets/img/dot/www.svg">Enjoy!</a></p>
+
+<p><em>Thanks to <a href="http://mort.io">Mort</a>, <a href="http://somerandomidiot.com">Mindy</a>, <a href="http://amirchaudhry.com">Amir</a> and <a href="https://github.com/yallop">Jeremy</a>
+for their comments on earlier drafts.</em></p>
+
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+     <li><a href="/videos-around-world-2015">Videos from around the world!</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

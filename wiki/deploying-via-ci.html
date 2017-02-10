@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Deploying via Continuous Integration</title>
+  <meta name="description" content="This live MirageOS website is written as a MirageOS application itself, with thesource code on mirage/mirage-www onGitHub. Our workflow is such that we can s...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/deploying-via-ci">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Deploying via Continuous Integration</h1>
+  </header>
+
+  <div class="article-content">
+    <p>This live MirageOS website is written as a MirageOS application itself, with the
+source code on <a href="https://github.com/mirage/mirage-www">mirage/mirage-www</a> on
+GitHub. Our workflow is such that we can send a
+<a href="https://github.com/mirage/mirage-www/pulls?direction=desc&amp;page=1&amp;sort=created&amp;state=closed">pull request</a>
+to update the website, and have a fully standalone Xen kernel committed into the
+binary
+<a href="https://github.com/mirage/mirage-www-deployment">mirage/mirage-www-deployment</a>
+repository.</p>
+
+<p>This all works by installing a fresh MirageOS installation for each change
+committed to the website, and rebuilding the entire website unikernel from scratch
+(a process that takes around 5-7 minutes without any parallel building). We use
+the free <a href="http://travis-ci.org">Travis Continuous Integration</a> for automating
+all of this, so that we don’t need to host any servers to go from pull request
+to a deployed cloud.</p>
+
+<h3 id="getting-started-with-travis">Getting started with Travis</h3>
+
+<p>First, log into <a href="http://travis-ci.com">Travis</a> and sign in via your GitHub
+credentials. Click on the <a href="https://travis-ci.org/profile">Accounts</a> button on
+the top-right and you should see a list of the all the GitHub repositories that
+you have access to. Just click the <em>On</em> switch for the one you want to start
+testing (in our case,
+<a href="https://github.com/mirage/mirage-www">mirage/mirage-www</a>). Nothing will
+actually happen until the next code push or pull request goes to that
+repository. Behind the scenes, the <em>On</em> button that you clicked use the GitHub
+APIs to turn on the Travis post-commit hook for your repository.</p>
+
+<p>Create a <code class="highlighter-rouge">.travis.yml</code> file in your main repository that references the
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton">OCaml Travis CI Skeleton</a>
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/.travis-mirage.sh">Mirage</a>
+script. Travis doesn’t have native support for OCaml, but it isn’t really needed
+since we can just use the <code class="highlighter-rouge">C</code> mode and write our own shell scripts. The <code class="highlighter-rouge">env</code>
+variables define a matrix of the different combinations of MirageOS backends
+that we want to test. Just remove variations that you don’t care about to avoid
+wasting Travis’ CPU time (open source projects are supported on a fair-use basis
+by them).</p>
+
+<p>Here’s the first part of the <code class="highlighter-rouge">.travis.yml</code> used by
+<a href="https://github.com/mirage/mirage-www">mirage/mirage-www</a>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>language: c
+install: wget https://raw.githubusercontent.com/ocaml/ocaml-travisci-skeleton/master/.travis-mirage.sh
+script: bash -ex .travis-mirage.sh
+env:
+  matrix:
+  - OCAML_VERSION=4.02 MIRAGE_BACKEND=unix MIRAGE_NET=socket
+  - OCAML_VERSION=4.02 MIRAGE_BACKEND=unix MIRAGE_NET=direct
+  - OCAML_VERSION=4.02 MIRAGE_BACKEND=xen  DEPLOY=1 XENIMG="openmirage.org"
+    IP="46.43.42.147" NETMASK="255.255.255.128" GATEWAYS="46.43.42.129"
+    TLS=0 HOST="openmirage.org" REDIRECT="https://mirage.io"
+    UPDATE_GCC_BINUTILS=1
+  - OCAML_VERSION=4.02 MIRAGE_BACKEND=xen DEPLOY=1 XENIMG="mirage.io"
+    IP="46.43.42.146" NETMASK="255.255.255.128" GATEWAYS="46.43.42.129"
+    TLS=1 HOST="mirage.io" SECRETS=fat
+    UPDATE_GCC_BINUTILS=1
+</code></pre>
+</div>
+
+<p>This is followed by a set of <code class="highlighter-rouge">global</code> <code class="highlighter-rouge">secure</code> keys that we’ll come back to
+below when talking about deployment.</p>
+
+<p>Every pull request and commit to the
+<a href="https://github.com/mirage/mirage-www">mirage-www</a> repository then triggers a
+set of test builds via <a href="https://travis-ci.org/">Travis CI</a>, ensuring we
+consistently build for the range of MirageOS backends. Each build runs in a
+separate VM provisioned by the Travis infrastructure, invoking the
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/.travis-mirage.sh">.travis-mirage.sh</a>
+script, which begins:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># If a fork of these scripts is specified, use that GitHub user instead
+fork_user=${FORK_USER:-ocaml}
+
+# If a branch of these scripts is specified, use that branch instead of 'master'
+fork_branch=${FORK_BRANCH:-master}
+
+### Bootstrap
+
+set -uex
+
+get() {
+  wget https://raw.githubusercontent.com/${fork_user}/ocaml-travisci-skeleton/${fork_branch}/$@
+}
+
+TMP_BUILD=$(mktemp -d)
+cd ${TMP_BUILD}
+
+get .travis-ocaml.sh
+sh .travis-ocaml.sh
+export OPAMYES=1
+eval $(opam config env)
+</code></pre>
+</div>
+
+<p>This fetches and executes the
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/.travis-ocaml.sh">.travis-ocaml.sh</a>
+script which installs the requested version of OCaml, various native packages we
+will need, and the latest OPAM from an Ubuntu package repository we maintain.</p>
+
+<p>The script then continues:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>opam install ocamlfind
+
+get yorick.mli
+get yorick.ml
+get travis_mirage.ml
+
+ocamlc.opt yorick.mli
+ocamlfind ocamlc -c yorick.ml
+
+ocamlfind ocamlc -o travis-mirage -package unix -linkpkg yorick.cmo travis_mirage.ml
+cd -
+
+${TMP_BUILD}/travis-mirage
+</code></pre>
+</div>
+
+<p>This fetches a helper library,
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/yorick.mli"><code class="highlighter-rouge">yorick</code></a>,
+and builds it; and finally fetches, builds and executes
+<a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/travis_mirage.ml">travis_mirage.ml</a>
+with the environment variables defined in the
+<a href="https://github.com/mirage/mirage-www/.travis.yml">.travis.yml</a> file. This piece
+of OCaml sets the environment to use OPAM, installs any pins requested by
+setting the variable <code class="highlighter-rouge">PINS</code> in the <code class="highlighter-rouge">.travis.yml</code> file (none in this case), and
+then executes the following commands:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>eval $(opam config env)
+
+opam update -u
+opam install mirage
+MODE=$MIRAGE_BACKEND make configure
+make build
+</code></pre>
+</div>
+
+<p>The build is configured via variables set in the <code class="highlighter-rouge">.travis.yml</code>
+(<code class="highlighter-rouge">MIRAGE_BACKEND</code>, <code class="highlighter-rouge">IP</code>, <code class="highlighter-rouge">NETMASK</code> and so on), and then executed.</p>
+
+<h3 id="pushing-to-the-deployment-repository">Pushing to the deployment repository</h3>
+
+<p>Builds occur for all the specified backends. One of these is the Xen backend,
+the output of which must be pushed to the
+<a href="https://github.com/mirage/mirage-www-deployment">deployment repository</a> if the
+build was triggered by a commit (not a pull request) to the main <code class="highlighter-rouge">mirage-www</code>
+repo. To do so securely we use Travis’
+<a href="http://about.travis-ci.org/docs/user/encryption-keys/">support for encrypted environment variables</a>.
+The basic workflow is that you encrypt key/value pairs using a public key that
+they publish per GitHub repository. Once registered, this is made available as a
+decrypted environment variable within the Travis worker. You can use this to
+transmit API keys or other authentication data that you need to commit to the
+<code class="highlighter-rouge">travis.yml</code> file, but obviously can’t leave on a public repository for the
+world to see.</p>
+
+<p>The small hitch with this whole scheme is that there’s a very small limit
+of about 90 bytes or so for the size of each individual environment variable
+that’s exported, and so you can’t just stash an SSH private key in there.
+Instead, it needs to be Base64 encoded, split it up into multiple environment
+variables of the right size, and then reassembled within the Travis VM.  Rather
+than deal with importable shell scripts between MacOS X and Linux, we provide
+a small <code class="highlighter-rouge">travis-senv</code> command-line tool to make this easier.</p>
+
+<p>To use it, just <code class="highlighter-rouge">opam install travis-senv</code> and follow the instructions on the
+<a href="https://github.com/avsm/travis-senv">README at the homepage</a>. The final
+fragment of the
+<a href="https://github.com/mirage/mirage-www/blob/master/travis_mirage.ml">travis_mirage.ml</a>,
+having defined the following predicates:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let is_deploy = getenv_default "DEPLOY" "false" |&gt; fuzzy_bool_of_string
+let is_travis_pr =
+  getenv_default "TRAVIS_PULL_REQUEST" "false" |&gt; fuzzy_bool_of_string
+let have_secret =
+  getenv_default "XSECRET_default_0" "false" |&gt; fuzzy_bool_of_string
+let is_xen =
+  getenv_default "MIRAGE_BACKEND" "" |&gt; function "xen" -&gt; true | _ -&gt; false
+let travis_branch = getenv_default "TRAVIS_BRANCH" ""
+</code></pre>
+</div>
+
+<p>…shows this in action:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>if is_deploy &amp;&amp; is_xen &amp;&amp; have_secret &amp;&amp; (not is_travis_pr) &amp;&amp;
+   travis_branch = "master"
+then begin
+  let ssh_config = "Host mir-deploy github.com
+                   \  Hostname github.com
+                   \  StrictHostKeyChecking no
+                   \  CheckHostIP no
+                   \  UserKnownHostsFile=/dev/null"
+  in
+  export "XENIMG" "mir-${XENIMG:-$TRAVIS_REPO_SLUG#mirage/mirage-}.xen";
+  export "MIRDIR" "${MIRDIR:-src}";
+  export "DEPLOYD" "${TRAVIS_REPO_SLUG#*/}-deployment";
+
+  (* setup ssh *)
+  ?|  "opam install travis-senv";
+  ?|  "mkdir -p ~/.ssh";
+  ?|  "travis-senv decrypt &gt; ~/.ssh/id_dsa";
+  ?|  "chmod 600 ~/.ssh/id_dsa";
+  ?|~ "echo '%s' &gt; ~/.ssh/config" ssh_config;
+  (* configure git for github *)
+  ?|  "git config --global user.email 'travis@openmirage.org'";
+  ?|  "git config --global user.name 'Travis the Build Bot'";
+  ?|  "git config --global push.default simple";
+  (* clone deployment repo *)
+  ?|  "git clone git@mir-deploy:${TRAVIS_REPO_SLUG}-deployment";
+  (* remove and recreate any existing image for this commit *)
+  ?|  "rm -rf $DEPLOYD/xen/$TRAVIS_COMMIT";
+  ?|  "mkdir -p $DEPLOYD/xen/$TRAVIS_COMMIT";
+  ?|  "cp $MIRDIR/$XENIMG $MIRDIR/config.ml $DEPLOYD/xen/$TRAVIS_COMMIT";
+  ?|  "bzip2 -9 $DEPLOYD/xen/$TRAVIS_COMMIT/$XENIMG";
+  ?|  "echo $TRAVIS_COMMIT &gt; $DEPLOYD/xen/latest";
+  (* commit and push changes *)
+  ?|  "cd $DEPLOYD &amp;&amp;\
+       \ git add xen/$TRAVIS_COMMIT xen/latest &amp;&amp;\
+       \ git commit -m \"adding $TRAVIS_COMMIT for $MIRAGE_BACKEND\" &amp;&amp;\
+       \ git push"
+end
+</code></pre>
+</div>
+
+<p>(The <code class="highlighter-rouge">?|</code> and <code class="highlighter-rouge">?|~</code> operators are defined in <a href="https://github.com/ocaml/ocaml-travisci-skeleton/blob/master/yorick.ml"><code class="highlighter-rouge">yorick.ml</code></a> and act simply as shell
+invocations piping <code class="highlighter-rouge">stdin</code>/<code class="highlighter-rouge">stdout</code>/<code class="highlighter-rouge">stderr</code> in the usual way, with
+success/failure tests on the status of each invoked command.)</p>
+
+<p>While this fragment is a bit longer than the rest, it’s actually rather
+straightforward. We install <code class="highlighter-rouge">travis-senv</code> and use it to retrieve our SSH
+deployment key (which is stored encrypted in the <code class="highlighter-rouge">.travis.yml</code> file, and can
+only be decrypted by the Travis infrastructure). Once that’s installed, we
+initialise <code class="highlighter-rouge">git</code> and clone the deployment repository. We then compress our
+output unikernel, update the <code class="highlighter-rouge">xen/latest</code> pointer to refer to the new unikernel,
+commit everything, and push the results back.</p>
+
+<h3 id="updating-the-live-website">Updating the live website</h3>
+
+<p>The live website runs on a Xen machine which has a crontab entry in dom0 that
+polls the
+<a href="http://github.com/mirage/mirage-www-deployment">mirage/mirage-www-deployment</a>
+repository for new content via <code class="highlighter-rouge">git pull</code>. When new content <strong>is</strong> obtained, a
+Git <a href="http://git-scm.com/docs/githooks#_post_merge"><code class="highlighter-rouge">post-merge.hook</code></a> is invoked
+which
+<a href="https://github.com/mirage/mirage-www-deployment/blob/master/scripts/post-merge.hook">stops the current unikernel and boots the newly updated latest version</a>.
+This machine doesn’t need to have any of the MirageOS tools installed, and if
+there’s an error in an updated website, we can simply revert back to a previous
+as previous binary revisions of the site remain in the deployment repository.</p>
+
+<p>The same approach could be used to deploy to Heroku, Rackspace or EC2 instead of
+a custom Xen host; we’ll cover this in future updates.</p>
+
+<p><em>(Note: This article is based on a similar blog post for general OCaml use
+ available
+ <a href="http://anil.recoil.org/2013/10/06/travis-secure-ssh-integration.html">here</a>.)</em></p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

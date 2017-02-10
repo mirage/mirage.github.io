@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-06-10</title>
+  <meta name="description" content="10th June 2014: Irmin, Conduit, Deployment and Fist pumping">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-06-10">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-06-10</h1>
+  </header>
+
+  <div class="article-content">
+    <p>10th June 2014: Irmin, Conduit, Deployment and Fist pumping</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Xen Hackathon summary</li>
+  <li>Irmin update</li>
+  <li>OCaml conduit progress</li>
+  <li>Networking fuzz testing</li>
+  <li>Unikernel deployment</li>
+  <li>Call schedule and organisation</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Richard Mortier, Mindy Preston and David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="xen-hackathon">Xen Hackathon</h4>
+
+<p>The <a href="http://wiki.xenproject.org/wiki/Hackathon/May2014">Xen Developer Hackathon</a> took place a couple of weeks ago and
+Anil, ThomasL, Dave, Jon and Nik all attended.  Apparently it did turn into
+a chatathon as <a href="http://openmirage.org/wiki/weekly-2014-05-27#XenHackathon">previously predicted</a>.</p>
+
+<p>A group of people went through Amir’s <a href="http://amirchaudhry.com/from-jekyll-to-unikernel-in-fifty-lines/">Jekyll to Unikernel post</a> to
+get their sites building using TravisCI. They did get this working but the
+post was written based on a Mac workflow and some parts didn’t work well on
+other machines, specifically involving tap interfaces (e.g. <code class="highlighter-rouge">sudo mirage run</code>
+didn’t work as expected). In general, Amir mentioned that the blog post
+isn’t going to get updated but it should point to somewhere that current
+information is available for people to follow (that can account for any
+quirks on different systems). The Mirage website would be good but updating
+this isn’t as easy as a wiki.</p>
+
+<p>Other than the above, there were lots of conversations with others people
+including those trying lots guests on Xen and seeing lots of latency.
+Important for us as we want to be able to run lots of unikernels on top of a
+single Xen instance.</p>
+
+<h4 id="irmin">Irmin</h4>
+
+<p><a href="https://github.com/mirage/irmin">Irmin</a> 0.8.1 was <a href="https://github.com/mirage/irmin/releases/tag/0.8.1">released</a>. ThomasG has been
+working on an filesystem backend implementation. You can take a normal
+filesystem and write at the block level. Next step is to expose Irmin as a
+filesystem. So you can use the filesystem and connect somewhere else to get
+the history back.  Practically speaking, you build an Irmin filesystem on
+top of an existing filesystem (e.g FAT). It’ll be a combinator that takes
+the FAT implementation and make a new one that’s used/exposed (so the file
+system is like staging). <em>[If these notes are confusing, it’s because I
+couldn’t keep up - AC :)]</em></p>
+
+<p>ThomasG also learned that the DOS protocol doesn’t let you have two letter
+directories. Also had some discussion on FAT, blockstore and key value
+stores.</p>
+
+<h4 id="conduit">Conduit</h4>
+
+<p>The network stack has become a chimney, where the underlying choices are
+affecting things further up the stack. Anil has been thinking about
+different approaches and discussing things with people. One thought was
+around using functors but that leads to having a functorised stack and then the
+applications also have to deal with things this way and whole universe becomes
+functorised. This becomes difficult to use.  Another approach is to use
+objects (or at least partially) and this seems like it would work much
+better. In any case, this is blocking other people’s cohttp fixes but looks
+like there is a workable solution to this. Anil will have to write this
+down to clarify it and the details are quite involved (but are to do with
+existential types – in case anyone feels like diving into it).</p>
+
+<p>In general conduit will permit people to use either openSSL bindings or the
+new <a href="https://github.com/mirleft/ocaml-tls">TLS library</a> and doesn’t impose those choices on anyone.</p>
+
+<h4 id="network-fuzz-testing">Network fuzz testing</h4>
+
+<p>Mindy is in a cycle of finding bugs and fixing them. Been thinking about
+the platform question and doing research today. Also saw
+<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-06/msg00031.html">Balraj’s email</a>, who has been bisecting to figure out where/when
+the problems arose in the stack. It turns out that it’s a set of commits
+over Christmas/New Year by Anil.</p>
+
+<p>Overall, it’s a great sign that we’re able to go back and pin down which set
+of commits introduced the problems but it does show that we need to improve
+the type safety in the stack and add unit tests. Any thoughts on unit test
+frameworks for networking protocols would be useful so please do send them to
+the <a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a>.</p>
+
+<h4 id="unikernel-deployment">Unikernel deployment</h4>
+
+<p>We currently have two machines, configured with Xen that we could deploy our
+unikernels to. Amir would like to put his unikernels there and (when stable)
+start moving more of the static sites we have to those machines. It should
+be possible to get an account for Anil and at the moment users would need to
+write their own config file. There is the question of DNS servers.</p>
+
+<p>In the long term the idea is that we each have our own unikernel DNS servers
+but in the short term to have a separate DNS server that would know about
+the mapping between the names and the IP addresses. We have a set of IP
+addresses on a wiki and can grab one of those and run with it. For example
+Mort has one but has not deployed yet as he’s blocked on filesystem issues.
+Essentially, his site is large enough (papers, media, etc) that he needs two
+FAT images, which isn’t handled very well.  Can achieve it locally but it
+requires tweaking by hand and shell scripts, so not really appropriate for
+deployment. Is thinking of patching the Mirage tool but has not time to get
+to that. Should create an issue to track this as others are likely to follow
+in his wake as their sites grow (e.g Amir switched from Crunch to FAT some
+time ago). An issue might help surface others who are having similar kinds
+of problems.</p>
+
+<h4 id="call-schedule-and-organisation">Call schedule and organisation</h4>
+
+<p>Amir points out that we should improve the call organisation. Announcement
+of the call was sent about an hour beforehand and we should be giving others
+more time. Proposed that a notice is sent on the Monday beforehand to the
+list to collect <a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">Agenda items</a>, and then the call is confirmed the
+following day.  Regular people on the call can help by adding their agenda
+items in advance and Amir will structure them and help keep the call focused
+(which it usually is anyway).</p>
+
+<h4 id="aob">AoB</h4>
+
+<p>Mindy and ThomasL have written some <strong>awesome blog posts</strong> recently. The
+posts made it to the front pages of news aggregators and generated a lot of
+interesting discussion. The posts were
+<a href="http://roscidus.com/blog/blog/2014/06/06/python-to-ocaml-retrospective/">Python to OCaml: Retrospective</a> (<a href="https://news.ycombinator.com/item?id=7858276">HN</a>, <a href="http://www.reddit.com/r/programming/comments/27h2q5/python_to_ocaml_retrospective/">Reddit</a>)
+and <a href="http://www.somerandomidiot.com/blog/2014/06/03/the-minnesota-goodbye/">The Minnesota Goodbye</a> (<a href="https://news.ycombinator.com/item?id=7844307">HN</a>).</p>
+
+<p><strong>OCaml-TLS</strong> is is gearing up to an alpha release and we will point people
+to the Mirage mailing list for communications.</p>
+
+<p>Some <strong>discussion about Mirage 2.0</strong> release and what the requirements would
+be for it. Would need ARM support, Irmin and a story on distributed
+computing. This all seems achievable but really would like to have this by
+the time of <a href="http://www.oscon.com/oscon2014/public/schedule/detail/35024">OSCON</a>.</p>
+
+<p><strong>Carmack</strong> thinks we’re “really interesting”. Cue lots of fist pumping.</p>
+
+<p><a href="https://twitter.com/ID_AA_Carmack/status/476046680698003458"><img src="/graphics/carmack-unikernel.jpg" alt="Carmack on Unikernels" /></a></p>
+
+<p>Next call will be <strong>24th June</strong>. Amir will send an email to the list for
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">Agenda items</a> on the 23rd.</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MirageOS travels to OSCON'13: a trip report</title>
+  <meta name="description" content="Now that Mirage OS is rapidly converging on aDeveloper Preview Release 1, wetook it for a first public outing atOSCON’13, the O’Reilly Open SourceConference....">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//oscon13-trip-report">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">MirageOS travels to OSCON'13: a trip report</h1>
+    <p class="article_meta"><time datetime="2013-08-08T00:00:00+00:00" itemprop="datePublished">Aug 8, 2013</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>Now that Mirage OS is rapidly converging on a
+<a href="http://github.com/avsm/mirage/issues/102">Developer Preview Release 1</a>, we
+took it for a first public outing at
+<a href="http://www.oscon.com/oscon2013/">OSCON’13</a>, the O’Reilly Open Source
+Conference. OSCON is in its 15th year now, and is a meeting place for
+developers, business people and investors. It was a great opportunity to show
+MirageOS off to some of the movers and shakers in the OSS world.</p>
+
+<p>Partly because MirageOS is about synthesising extremely specialised guest
+kernels from high-level code, and partly because both Anil and I are
+constitutionally incapable of taking the easy way out, we self-hosted the
+slide deck on Mirage: after some last-minute hacking – on content not Mirage
+I should add! – we built a self-contained unikernel of the talk.</p>
+
+<p>This was what you might call a “full stack” presentation: the custom
+unikernel (flawlessly!) ran a type-safe
+<a href="https://github.com/mirage/mirage-platform/blob/master/xen/lib/netif.ml">network device driver</a>,
+OCaml <a href="http://github.com/mirage/mirage-net">TCP/IP stack</a> supporting an OCaml
+<a href="http://github.com/mirage/ocaml-cohttp">HTTP</a> framework that served slides
+rendered using <a href="http://lab.hakim.se/reveal-js/">reveal.js</a>. The slide deck,
+including the turbo-boosted
+<a href="http://www.youtube.com/watch?v=2Mx8Bd5JYyo">screencast</a> of the slide deck
+compilation, is hosted as another MirageOS virtual machine at
+<a href="http://decks.openmirage.org/">decks.openmirage.org</a>. We hope to add more
+slide decks there soon, including resurrecting the tutorial! The source code
+for all this is in the <a href="http://github.com/mirage/mirage-decks">mirage-decks</a>
+GitHub repo.</p>
+
+<h3 id="the-talk">The Talk</h3>
+
+<p>The talk went down pretty well – given we were in a graveyard slot on Friday
+after many people had left, attendance was fairly high (around 30-40), and the
+<a href="http://www.oscon.com/oscon2013/public/schedule/detail/28956">feedback scores</a>
+have been positive (averaging 4.7/5) with comments including “excellent
+content and well done” and “one of the most excited projects I heard about”
+(though we are suspicious that just refers to Anil’s usual high-energy
+presentation style…).</p>
+
+<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style>
+<div class="embed-container">    <iframe title="YouTube video player" width="640" height="390" src="//www.youtube.com/embed/2Mx8Bd5JYyo" frameborder="0" allowfullscreen=""></iframe></div>
+
+<p>Probably the most interesting chat after the talk was with the Rust authors
+at Mozilla (<a href="http://twitter.com/pcwalton">@pcwalton</a> and
+<a href="https://github.com/brson">@brson</a>) about combining the Mirage
+<a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf">unikernel</a> techniques
+with the <a href="http://www.rust-lang.org">Rust</a> runtime. But perhaps the most
+surprising feedback was when Anil and I were stopped in the street while
+walking back from some well-earned sushi, by a cyclist who loudly declared
+that he’d really enjoyed the talk and thought it was a really exciting project
+– never done something that achieved public acclaim from the streets before
+:)</p>
+
+<h3 id="book-signing-and-xenorg">Book Signing and Xen.org</h3>
+
+<p>Anil also took some time to sit in a book signing for his forthcoming
+<a href="http://realworldocaml.org">Real World OCaml</a> O’Reilly book.  This is
+really important to making OCaml easier to learn, especially given that
+all the Mirage libraries are using it.  Most of the dev team (and especially
+thanks to <a href="https://twitter.com/heidiann360">Heidi Howard</a> who bravely worked
+through really early alpha revisions) have been giving
+us feedback as the book is written, using the online commenting system.</p>
+
+<p>The Xen.org booth was also huge, and we spent quite a while plotting the
+forthcoming Mirage/Xen/ARM backend. We’re pretty much just waiting for the
+<a href="http://cubieboard.org">Cubieboard2</a> kernel patches to be upstreamed (keep an
+eye <a href="http://linux-sunxi.org/Main_Page">here</a>) so that we can boot Xen/ARM VMs
+on tiny ARM devices.  There’s a full report about this on the
+<a href="http://blog.xen.org/index.php/2013/07/31/the-xen-project-at-oscon/">xen.org</a>
+blog post about OSCon.</p>
+
+<h3 id="galois-and-halvm">Galois and HalVM</h3>
+
+<p>We also stopped by the <a href="http://corp.galois.com">Galois</a> to chat with <a href="https://twitter.com/acwpdx">Adam
+Wick</a>, who is the leader of the
+<a href="http://corp.galois.com/halvm">HalVM</a> project at Galois. This is a similar
+project to Mirage, but, since it’s written in Haskell, has more of a focus
+on elegant compositional semantics rather than the more brutal performance
+and predictability that Mirage currently has at its lower levels.</p>
+
+<p>The future of all this ultimately lies in making it easier for these
+multi-lingual unikernels to be managed and for all of them to communicate more
+easily, so we chatted about code sharing and common protocols (such as
+<a href="https://github.com/vbmithr/ocaml-vchan">vchan</a>) to help interoperability.
+Expect to see more of this once our respective implementations get more
+stable.</p>
+
+<p>All-in-all OSCON’13 was a fun event and definitely one that we look forward
+returning to with a more mature version of MirageOS, to build on the momentum
+begun this year!  Portland was an amazing host city too, but what happens in
+Portland, stays in Portland…</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-11-26</title>
+  <meta name="description" content="26th Nov 2014: Entropy, Config modularity, IPv6 stack and Pioneer projects">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-11-26">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-11-26</h1>
+  </header>
+
+  <div class="article-content">
+    <p>26th Nov 2014: Entropy, Config modularity, IPv6 stack and Pioneer projects</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Configuration Modularity</li>
+  <li>Entropy for Mirage/TLS</li>
+  <li>Merging IPv6 and STACKV4</li>
+  <li>Conduit lives!</li>
+  <li>Pioneer projects</li>
+  <li>Irmin update</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Richard Mortier, Hannes Mehnert, Nicolas Ojeda Bar,
+Dave Scott and Magnus Skjegstad</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="configuration-modularity">Configuration Modularity</h4>
+
+<p>There’s been a <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-11/msg00094.html">discussion about configuration modularity</a> on
+the mailing list and ThomasG will be looking at this for the medium term. This
+isn’t particularly urgent but we do need to have an idea of what to do. As a
+first step, ThomasG will discuss this with Mort when he’s next in Cambridge,
+with the aim of getting some thoughts written down for further discussion.</p>
+
+<h4 id="entropy-for-miragetls">Entropy for Mirage/TLS</h4>
+
+<p>Hannes <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-11/msg00146.html">summarised the discussions</a> on the email thread so far.
+There are several scenarios depending on whether we have any control of dom0
+or not. For the cases where we don’t, we’ll have to come up with another way
+of getting entropy into the unikernel.  We could get entropy in via Xenstore
+or by using vchan. These are of equivalent difficulty to implement and Dave
+has been looking at them. Dave’s currently tidying up Xenstore library so it’s
+easier to write and is adding unit tests too. Will also be looking at the ring
+code too. Could use these libraries to make a Xen randomd. In general, there’s
+reluctance to use Xenstore as the solution since we’re not comfortable putting
+secret entropy through it — much better to use vchan.</p>
+
+<p>ThomasL did get TLS working on the cubieboard recently (as did Hannes at ICFP).</p>
+
+<h4 id="merging-ipv6-and-stackv4">Merging IPv6 and STACKV4</h4>
+
+<p><em>See also the <a href="http://openmirage.org/wiki/weekly-2014-11-12#IPv6patchset">notes from the last call</a>.</em></p>
+
+<p>Anil has been merging some of <a href="https://github.com/mirage/mirage/pull/319">Nic’s changes</a> into his trees.
+There has been a fair amount of renaming but for the most part, it shouldn’t
+be that difficult to update other code that uses the stack — things may simply
+need to be recompiled (and conduit makes parts of this easier).</p>
+
+<p>Would really like to be able to test the stack from Mac OSX. Anil is adding
+bridging support to tuntap (which is available in Yosemite). There’s no
+documentation to follow so it’s taken some hacking but it is now attaching to
+an interface and seems to work. Is wondering about building a Mirage fetcher
+over IPv6.</p>
+
+<p>In terms of next steps, we should be able to merge what Anil is doing now and
+then deploy on the mirage-www site!  Mort reminded everyone that we would also
+need to update Mirage skeleton to remove the STACK example and update any
+others (and perhaps a few pages on the website too).</p>
+
+<h4 id="conduit-lives">Conduit lives!</h4>
+
+<p>Conduit was released and Anil assures us that it’s awesome. People have been
+using it and are reporting issues that Anil is looking into. These seem to be
+related to SSL and he’ll deal with them.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p><em>See also the <a href="http://openmirage.org/wiki/weekly-2014-10-28#Miragetaskslistfornewcomers">notes from an earlier call</a>.</em></p>
+
+<p>We previously discussed the idea of a list of possible jobs/projects for
+newcomers to Mirage. Amir came up with a name for these (Pioneer Projects) and
+Anil started putting together a list, which you can see on the
+<a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">mirage-www wiki page</a>. If you’ve worked on an aspect of Mirage and
+can recognise a project that could go on this list, please do add it. Don’t
+worry about defining difficulty levels as we can examine that after we have a
+collection of things for people to browse through.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p><strong>Irmin Update</strong> - If anyone has feedback on the new API, ThomasG would
+grateful to hear it. He’s now thinking of encryption for Irmin so thoughts on
+that are also welcome. Encrypting the backend is of interest and should be
+easier with new API. It may be easier to evaluate the new API after trying to
+build a few command line tools (e.g. logging).</p>
+  </li>
+  <li>
+    <p>Using <strong>Irmin instead of crunch</strong> - Mort heard rumours that Irmin could be
+ready to use instead of Crunch.  Mort’s website is quite heavy as it contains
+a lot of PDFs he needs to serve. Using Irmin may be possible but ThomasG wants
+to get to a point where Irmin should just be able to clone a repo that
+contains the assets. Irmin could even watch the repo and if there are new
+events, then pull them in. There are a number of other things to complete
+before we can get to this point though. Those things are (1) clibs support in
+OPAM, (2) the git smart http protocol in <code class="highlighter-rouge">ocaml-git</code> and (3) TLS in
+<code class="highlighter-rouge">mirage-cohttp</code>.</p>
+  </li>
+  <li>
+    <p>Anil was going to <strong>modify crunch</strong> to get it to do git-clone if the
+directory doesn’t already exist. There weren’t any objections to this.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 10th December</strong> - Please refer
+to the <a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Overview of Mirage</title>
+  <meta name="description" content="If you’re familiar with the using the command line, The best way tolearn about MirageOS is to try out the installation instructions for yourself!">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//doc/overview-of-mirage.html">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Overview of Mirage</h1>
+  </header>
+
+  <div class="article-content">
+    <p>If you’re familiar with the using the command line, The best way to
+learn about MirageOS is to try out the <a href="/wiki/install">installation instructions</a> for yourself!</p>
+
+<h3 id="what-is-mirage-and-why-is-it-important">What is Mirage and why is it important?</h3>
+
+<div class="image-thumbnail-right">
+    <a href="/assets/img/nimbus-np3-smilde.jpg"><img src="/assets/resized/190/nimbus-np3-smilde.jpg" /></a>
+    <div class="image_caption"></div>
+</div>
+
+<p>Most applications that run in the cloud aren’t optimised to do so.
+They inherently carry assumptions about the underlying operating
+system with them, including vulnerabilities and bloat.
+Compartmentalisation of large servers into smaller <a href="http://en.wikipedia.org/wiki/Virtual_machine">virtual machines</a> has enabled
+many new businesses to get started and achieve scale. This has been
+great for new services but many of those virtual machines are
+single-purpose and yet they contain largely complete operating systems
+which themselves run applications like web-servers. This means a large
+part of the footprint is unused and unnecessary, which is both costly
+and a security risk (due to the larger attack surface).</p>
+
+<p>Mirage represents a new approach where only the necessary components
+of the OS are included and compiled along with the application into a
+<a href="https://en.wikipedia.org/wiki/Unikernel">unikernel</a>. This
+results in highly efficient and extremely lean
+<a href="http://en.wikipedia.org/wiki/Virtual_appliance">appliances</a>, with a
+much smaller attack surface.  These appliances can be deployed
+directly to the cloud and embedded devices, with the benefits of
+reduced costs and increased security and scalability.</p>
+
+<h3 id="how-does-mirageos-work">How does MirageOS work?</h3>
+
+<div class="image-thumbnail-left">
+    <a href="/assets/img/Xen-Panda-Ecosystem-1.png"><img src="/assets/resized/190/Xen-Panda-Ecosystem-1.png" /></a>
+    <div class="image_caption"></div>
+</div>
+
+<p>Mirage is a ‘library operating system’ for constructing secure,
+high-performance network applications across a variety of cloud
+computing and mobile platforms. It works by treating the deployment target
+(e.g. the <a href="http://www.xenproject.org/developers/teams/hypervisor.html">Xen</a>
+or <a href="https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine">KVM</a> hypervisors)
+as a stable hardware platform, allowing us to focus on
+high-performance protocol implementations without worrying about
+having to support the thousands of device drivers found in a
+traditional OS.</p>
+
+<p>Code can be developed in a high-level functional programming language
+(OCaml) on a desktop OS such as Linux or Mac OSX, and is then compiled
+into a fully-standalone, specialised unikernel. These unikernels run
+directly on Unix, or even more specialised on Xen or KVM hypervisor APIs.
+Since Xen or KVM powers most public clouds such as <a href="http://aws.amazon.com/ec2">Amazon EC2</a>,
+<a href="http://www.rackspace.com/cloud/">Rackspace Cloud</a>, and many others, Mirage lets
+your servers run more cheaply, securely and faster in any Xen based
+cloud or hosting service.</p>
+
+<p>MirageOS is based around the <a href="https://ocaml.org">OCaml language</a>, with
+syntax extensions and <a href="https://github.com/mirage">50+ libraries</a> which
+map directly to operating system constructs when being compiled for
+production deployment. As such, MirageOS includes clean-slate functional
+implementations of protocols ranging from TCP/IP, DNS, SSH, Openflow
+(switch/controller), HTTP, XMPP and Xen inter-VM transports.</p>
+
+<h3 id="where-will-mirageos-be-useful">Where will MirageOS be useful?</h3>
+
+<div class="image-thumbnail-right">
+    <a href="/assets/img/cumulous-cruisin.jpg"><img src="/assets/resized/190/cumulous-cruisin.jpg" /></a>
+    <div class="image_caption"></div>
+</div>
+
+<p>An example of a current MirageOS appliance is this website which is a
+completely self-hosted site, deployed on the public cloud and running
+directly on the Xen hypervisor (in this case, on Amazon EC2). Such
+appliances could be auto-configured and deployed directly to the
+public cloud (e.g. Rackspace or Amazon EC2) or pushed to embedded
+devices. There is also
+<a href="http://decks.openmirage.org">http://decks.openmirage.org</a>, where
+separate MirageOS appliances are being used to present slides for
+conferences.  These are both cases of how MirageOS is being used right
+now and below are examples of things we can do in the future.</p>
+
+<h4 id="self-scaling-architecture">Self-scaling architecture</h4>
+
+<p>We can create auto-scaling web-servers with very small footprints.
+These would be cheaper to run than current solutions due to the small
+size but they would also be highly elastic. If a sudden spike in
+traffic occurs, the web-servers can be configured to create and deploy
+copies of themselves to service the demand. This auto-scaling happens
+so quickly that an incoming connection can trigger the creation of new
+server and the <em>new server</em> can then handle that request before it
+times out (which is on the order of milliseconds). When the demand
+dies down again, these web-servers can automatically shut themselves
+down. Since these machines boot fast we can be more elastic, raising
+and lowering capacity to precisely meet demand and therefore only
+spending what we actually need when we really need it.</p>
+
+<h4 id="deployment-to-embedded-devices">Deployment to embedded devices</h4>
+
+<div class="image-thumbnail-right">
+    <a href="/assets/img/device-love.jpg"><img src="/assets/resized/190/device-love.jpg" /></a>
+    <div class="image_caption"></div>
+</div>
+
+<p>Using MirageOS, we can also create appliances that can run on embedded
+devices. Such appliances can be deployed into small devices that are
+scattered around your home, for example in plant pots to measure
+moisture levels to chemical sensors in your fridge, which tell you
+exactly what has gone off.  You could access the data from these
+sensors via a web-sever appliance, which is also deployed locally in
+your home on a device like a <a href="http://www.raspberrypi.org">Raspberry
+Pi</a>.  Installing additional applications
+into your Raspberry Pi appliance can be a a simple 1-click operation,
+allowing you to share your data or compare with others.  Creating a
+home-based network like this ensures you’re not affected by any
+upstream connectivity issues and that your data remains within your
+control.</p>
+
+<p>This same scenario can be deployed into a enterprise environment where
+sensors around a building can monitor environmental conditions, adjust
+lighting and many other things. When additional computation is
+required, more appliances can automatically be created on a cloud
+provider for the short duration that they’re needed.</p>
+
+<p>Overall, MirageOS provides substantial benefits in terms of increased
+efficiency and safety and is ideal for deploying to both the public
+cloud and embedded devices. Together with
+<a href="http://nymote.org/software/irmin">Irmin</a> and
+<a href="http://nymote.org/software/signpost">Signpost</a>, MirageOS forms a core
+piece of the Nymote/MISO toolstack to power the coming wave of <a href="http://en.wikipedia.org/wiki/Internet_of_Things">Internet of
+Things devices</a>.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

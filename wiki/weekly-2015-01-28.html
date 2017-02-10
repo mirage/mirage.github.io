@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-01-28</title>
+  <meta name="description" content="28th Jan 2014: OPAM 1.2, FOSDEM, new URL and 3.0 meta-planning">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-01-28">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-01-28</h1>
+  </header>
+
+  <div class="article-content">
+    <p>28th Jan 2014: OPAM 1.2, FOSDEM, new URL and 3.0 meta-planning</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Move to only OPAM 1.2</li>
+  <li>FOSDEM demo</li>
+  <li>TLS merge progress</li>
+  <li>Turning on mirage.io?</li>
+  <li>Planning for 3.0</li>
+</ul>
+
+<p>Attendees: 
+Amir Chaudhry (chair), David Kaloper, Thomas Leonard, Jon Ludlam,
+Hannes Mehnert, Richard Mortier, Dave Scott and Mindy Preston</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="opam-12-support-only">OPAM 1.2 support only</h4>
+
+<p>ThomasG submitted a patch for the <code class="highlighter-rouge">mirage</code> tool to enable the switch to
+OPAM 1.2 only. The patch should report an error and ask users to upgrade
+OPAM 1.2. This matters as the upstream distros are still on OPAM 1.1 (e.g
+Ubuntu).  we still need to decide what we want and it would be good to make
+the patch user controlled (e.g user can override it if they want).</p>
+
+<h4 id="fosdem-demo">FOSDEM demo</h4>
+
+<p>Amir is heading to FOSDEM this coming weekend and has planned a demo around
+serving a game from the cubieboard (via setting up a wifi access point).
+Having issues with the wifi bridge but not sure what the problem really is.
+Will need to get this working if there’s to be a demo.</p>
+
+<h4 id="tls-merge-progress">TLS Merge progress</h4>
+
+<p>This is waiting on DavidK, who has to review and merge TLS patches. Recently
+been playing with a TLS unikernel on Xen and working towards a paper. Will
+also be inviting people to break it soon.</p>
+
+<p>Still have the entropy story to communicate and are starting with xentropyd.
+Should be done in a few days with patch reviews.</p>
+
+<p>ThomasL has a few other changes to the FLOW interface that need to be dealt
+with (Error messages in a few places). There’s an issue on mirage-dev before
+there can be releases (<a href="https://github.com/mirage/mirage-dev/pull/52">mirage/mirage-dev#52</a>). Most components can be
+released with the updates, but some need to be done together (e.g. TLS both
+provides and uses the new interface). It would be possible to make all the
+updates decoupled if preferred (e.g. first updating TLS to provide the new
+interface, then releasing the new interface, then updating tls a second time
+to use the new API).
+There might also be more changes to libs/interfaces
+that might be breaking so better to do this now. For example, there is the
+<code class="highlighter-rouge">DEVICE.connect</code> change (<a href="https://github.com/mirage/mirage/pull/350">mirage/mirage#350</a>). Hannes mentioned that it not
+yet 1.0 so shouldn’t be too worried about breaking interfaces. no-crypto could
+also use a release and TLS release will have to wait for things like error
+reporting.</p>
+
+<h4 id="turning-on-mirageio">Turning on mirage.io?</h4>
+
+<p>Anil didn’t make it to the call. Will need to wait until he’s present before
+this can be discussed.</p>
+
+<h4 id="planning-for-30">Planning for 3.0</h4>
+
+<p>Amir proposed putting together a wiki page to collect all the issues and
+thoughts for the next major release. The intent is to put together a stable
+and visible plan so that we can better track progress, and make clearer
+decisions. At the moment, we have relevant issues scattered everywhere but no
+clear location by which we can chart progress.  Too much is inside people’s
+heads. Amir’s happy to curate this page by bringing it up once a month on the
+calls.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>ThomasL joining the Mirage core team and will be responsible for review and
+patches merging across libraries (he’s been doing this already).</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 11th February</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

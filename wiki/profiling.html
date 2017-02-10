@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Tracing and Profiling</title>
+  <meta name="description" content="When tracking down bugs or performance problems, or just trying to understand how something works, it is often useful to look at a trace of the execution of ...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/profiling">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Tracing and Profiling</h1>
+  </header>
+
+  <div class="article-content">
+    <p>When tracking down bugs or performance problems, or just trying to understand how something works, it is often useful to look at a trace of the execution of your unikernel.</p>
+
+<p>As a motivating example, we’ll track down a (real, but now fixed) bug in MirageOS’s TCP stack.</p>
+
+<p>Here’s a small program that demonstrates the problem:</p>
+
+<pre><code class="language-OCaml">let target_ip = Ipaddr.V4.of_string_exn "10.0.0.1"
+
+module Main (S: V1_LWT.STACKV4) = struct
+  let buffer = Io_page.get 1 |&gt; Io_page.to_cstruct
+
+  let start s =
+    let t = S.tcpv4 s in
+
+    match_lwt S.TCPV4.create_connection t (target_ip, 7001) with
+    | `Error _err -&gt; failwith "Connection to port 7001 failed"
+    | `Ok flow -&gt;
+    
+    let payload = Cstruct.sub buffer 0 1 in
+    Cstruct.set_char payload 0 '!';
+
+    match_lwt S.TCPV4.write flow payload with
+    | `Error _ | `Eof -&gt; assert false
+    | `Ok () -&gt;
+
+    S.TCPV4.close flow
+end
+</code></pre>
+
+<p>This unikernel opens a TCP connection to 10.0.0.1, sends a single “!” character, and then closes the connection.
+Most of the time it works, generating output similar to the following:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ARP: sending gratuitous from 10.0.0.2
+Manager: configuration done
+ARP: transmitting probe -&gt; 10.0.0.1
+ARP: updating 10.0.0.1 -&gt; fe:ff:ff:ff:ff:ff
+main returned 0
+</code></pre>
+</div>
+
+<p>Occasionally, however, it hangs after getting the ARP response and doesn’t send the data:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ARP: sending gratuitous from 10.0.0.2
+Manager: configuration done
+ARP: transmitting probe -&gt; 10.0.0.1
+ARP: updating 10.0.0.1 -&gt; fe:ff:ff:ff:ff:ff
+</code></pre>
+</div>
+
+<h4 id="enabling-tracing">Enabling tracing</h4>
+
+<p>To enable tracing, pass the optional <code class="highlighter-rouge">tracing</code> argument to the <code class="highlighter-rouge">register</code> function in <code class="highlighter-rouge">config.ml</code>.
+For example:</p>
+
+<pre><code class="language-OCaml">open Mirage
+
+let main = foreign "Unikernel.Main" (stackv4 @-&gt; job)
+let stack console = direct_stackv4_with_default_ipv4 console tap0
+
+let tracing = mprof_trace ~size:1000000 ()
+
+let () =
+  register "example" ~tracing [
+    main $ stack default_console;
+  ]
+</code></pre>
+
+<p>The size argument gives the size in bytes of the ring buffer to use.
+When you run <code class="highlighter-rouge">mirage configure</code>, you will probably be prompted to install a version of Lwt with tracing enabled; just run the <code class="highlighter-rouge">opam pin</code> command provided.
+This will automatically trigger a recompile of all the MirageOS libraries with tracing enabled.</p>
+
+<p>To view the trace data, use <a href="https://github.com/talex5/mirage-trace-viewer">mirage-trace-viewer</a>.
+If you don’t want to compile from source, there are <a href="http://talex5.github.io/mirage-trace-viewer/mtv.xml">pre-compiled binaries</a> for Linux-x86_64 and Linux-armv7l (e.g. for the Cubietruck).
+You can get them with 0install:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install zeroinstall-injector
+0install add mirage-trace-viewer http://talex5.github.io/mirage-trace-viewer/mtv.xml
+</code></pre>
+</div>
+
+<p>If you compiled your MirageOS program as a Unix process, the trace data will appear in a file called <code class="highlighter-rouge">trace.ctf</code> (you can view the trace while the process is still running).
+To view the trace using the GTK viewer, use:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mirage-trace-viewer trace.ctf
+</code></pre>
+</div>
+
+<p>If you don’t have GTK, you can use <code class="highlighter-rouge">mirage-trace-viewer --html=htdocs ...</code> to create an <code class="highlighter-rouge">htdocs</code> directory with a JavaScript viewer.</p>
+
+<p>The files can also be read by other CTF readers, such as <a href="http://www.efficios.com/babeltrace">babeltrace</a>, with the appropriate <a href="https://github.com/mirage/mirage-profile/blob/master/metadata">metadata</a> file.</p>
+
+<h4 id="tracing-xen-guests">Tracing Xen guests</h4>
+
+<p>To get the trace data from a Xen unikernel, run <code class="highlighter-rouge">mirage-trace-viewer -d NAME</code> as root.
+I use a wrapper script for this (<code class="highlighter-rouge">~/bin/sudo-mtv</code>):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="nb">exec </span>0launch -w sudo mirage-trace-viewer <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span>
+</code></pre>
+</div>
+
+<p>To dump the trace buffer from the Xen domain <code class="highlighter-rouge">example</code> to the file <code class="highlighter-rouge">trace.ctf</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo-mtv -d example -w trace.ctf
+</code></pre>
+</div>
+
+<p>To fetch trace data from a remote Xen host (e.g. a Cubietruck board) and view it on your laptop:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ssh mirage@cubietruck sudo-mtv -d example -w - | mirage-trace-viewer -
+</code></pre>
+</div>
+
+<p>Tip: If your Xen guest crashes before you can read the data, put these lines in your <code class="highlighter-rouge">.xl</code> file:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>on_crash = 'preserve'
+on_poweroff = 'preserve'
+</code></pre>
+</div>
+
+<h4 id="navigating-a-trace">Navigating a trace</h4>
+
+<p>Here’s the trace for a successful run (where the message was transmitted):</p>
+
+<div class="trace-viewer">
+<canvas tabindex="1" id="good" style="width: 100%; height:500px">
+<noscript>Sorry, you need to enable JavaScript to see this page.</noscript>
+</canvas>
+</div>
+<p><a href="/html/trace-viewer.html?trace=good">View full screen</a></p>
+
+<p>Use your mouse’s scroll wheel (or the buttons at the bottom) to zoom.</p>
+
+<p>Time runs left to right:</p>
+
+<ul>
+  <li>At the start (far left), the tracing system shares all the pages of its trace buffer with dom 0, allowing us to read the trace. The <code class="highlighter-rouge">gntref</code> counter (the red line) increases rapidly during this time.</li>
+  <li>Next, the tracing system stores the grant ref details in XenStore, followed immediately by the TCP stack getting the network details from XenStore.</li>
+  <li>The <code class="highlighter-rouge">gntref</code> metric then goes up again as the network code shares its buffer with dom0.</li>
+  <li>Then our test code runs, opening the TCP connection and sending the data.
+The <code class="highlighter-rouge">tcp-to-ip</code> counter goes up here (to 1), showing where the single-byte packet is passed from the TCP buffer to the IP layer for transmission.</li>
+</ul>
+
+<p>Horizontal black lines are Lwt threads. White regions indicate when the thread was running. Vertical black lines indicate threads creating new threads or merging with existing ones. Arrows show interactions between threads:</p>
+
+<ul>
+  <li>A green arrow from A to B means that A resolved sleeping thread B (e.g. with <code class="highlighter-rouge">Lwt.wakeup</code>).</li>
+  <li>A blue arrow from A to B means that B read the result of A.</li>
+  <li>A red arrow is similar, but for the case where the thread failed.</li>
+  <li>A yellow arrow from A to B means that A tried to read B but it wasn’t ready yet.
+In the common case where this is followed by a blue arrow, the yellow arrow isn’t shown.</li>
+  <li>An orange arrow from A to B means that A sent some other kind of message to B.</li>
+</ul>
+
+<p>Libraries can annotate threads with labels, which makes reading the diagrams much easier.
+If a thread doesn’t have a label, its unique thread ID is displayed instead.</p>
+
+<p>For more information about reading the visualisation, see the blog post <a href="http://roscidus.com/blog/blog/2014/10/27/visualising-an-asynchronous-monad/">Visualising an Asynchronous Monad</a>.</p>
+
+<h4 id="finding-the-bug">Finding the bug</h4>
+
+<p>To find the problem, we can compare a good trace and a bad trace:</p>
+
+<div class="trace-viewer">
+<canvas tabindex="2" id="good-detail" style="width: 100%; height:500px">No canvas support. </canvas>
+</div>
+<p><a href="/html/trace-viewer.html?trace=good-detail">View full screen</a></p>
+
+<p>Above: a trace from a successful run. Below: a trace from a failed run.</p>
+
+<div class="trace-viewer">
+<canvas tabindex="3" id="bad-detail" style="width: 100%; height:500px">No canvas support.</canvas>
+</div>
+<p><a href="/html/trace-viewer.html?trace=bad-detail">View full screen</a></p>
+
+<p>Normally, when a thread doesn’t do anything it is drawn only as a tiny stub in the display.
+To make the problem easier to spot, I modified the test program to call <code class="highlighter-rouge">MProf.Trace.should_resolve</code> on the program’s main thread, which adds a hint that this thread is important.
+The viewer sees that it didn’t resolve, and so draws it in red and extending to the far right of the display.</p>
+
+<p>Looking at the good trace, three important threads are created:</p>
+
+<ol>
+  <li>A “TCP connect” thread to track the TCP connection (if you can’t see it, click the menu button in the bottom left and search for <code class="highlighter-rouge">TCP connect</code> - it will highlight in yellow as you type.</li>
+  <li>An “ARP response” condition thread to get the MAC address from the target IP address.</li>
+  <li>A “ring.write” thread to track the ARP request being transmitted (you’ll have to zoom in to see this).</li>
+</ol>
+
+<p>Soon after creating these threads, the unikernel received an event on port-4, which is the network event channel.
+The <code class="highlighter-rouge">Netif</code> driver determined this was an ack that the ARP request had been sent, and resolved the <code class="highlighter-rouge">ring.write</code> thread, which then triggered the page of memory containing the request to be unshared.
+This then triggered the next step in the process, which was to start waiting for the “ARP response” condition to fire, creating an “ARP response” “task” thread.</p>
+
+<p>Another event then arrived on port-4, which was the ARP response notification.
+This resolved the “ARP response” thread, which allowed us to start the TCP connection (sending the SYN packet).
+Once the remote end had ack’d the SYN, the TCP connection was ready (the <code class="highlighter-rouge">TCP connect</code> thread ends) and we sent the data, increasing the <code class="highlighter-rouge">tcp-to-ip</code> counter.</p>
+
+<p>In the bad case:</p>
+
+<ul>
+  <li>The main thread (that we annotated with <code class="highlighter-rouge">MProf.Trace.should_resolve</code>) appears as a long red line with <code class="highlighter-rouge">should-resolve thread never resolved</code> at the end.</li>
+  <li>Looking at the start of this red thread, you can see a yellow arrow to a bind thread (indicating that the main thread was waiting for it).</li>
+  <li>Following the yellow arrows, you’ll eventually end up at a <code class="highlighter-rouge">try</code> thread waiting on <code class="highlighter-rouge">Wait for ARP response</code> (tip: to avoid losing track of where you are, you can double-click a thread to highlight it).</li>
+</ul>
+
+<p>Following the ARP response task thread backwards, we can see that the order of the events was different.
+In this case, the first event from the network is not the confirmation that the ARP request has been sent, but the notification of the ARP response. You can see that the network code now first notifies the “ARP response” condition (but nothing is waiting for it, so this is ignored). Then, confirmation of the request being sent arrives, ending the “ring.write” thread.
+This triggers us to start waiting for a notification from the “ARP response” condition, but this will never arrive because the event has already happened.</p>
+
+<p>Indeed, the bug is in this code in <code class="highlighter-rouge">arpv4.ml</code>:</p>
+
+<pre><code class="language-OCaml">let cond = MProf.Trace.named_condition "ARP response" in
+(* printf "ARP query: %s -&gt; [probe]\n%!" (Ipaddr.V4.to_string ip); *)
+Hashtbl.add t.cache ip (Incomplete cond);
+(* First request, so send a query packet *)
+output_probe t ip &gt;&gt;= fun () -&gt;
+Lwt_condition.wait cond
+</code></pre>
+
+<p>One solution here would be to call <code class="highlighter-rouge">Lwt_condition.wait</code> before waiting for the result of <code class="highlighter-rouge">output_probe</code>.
+However, a better solution (the one actually adopted) replaces the use of a condition with a simple wait thread.
+A wait thread can only be resolved once, so it doesn’t matter whether you check it before or after it gets its value.</p>
+
+<h4 id="collecting-more-information">Collecting more information</h4>
+
+<p>You might notice that many of the threads are unlabelled, as we haven’t fully instrumented all the MirageOS libraries.
+To add extra annotations, clone the appropriate library with Git, add some extra reporting, and use <code class="highlighter-rouge">opam pin</code> to build against your version.
+If you think your annotations would be generally useful, please send a pull request.</p>
+
+<p>In general, any code that uses <code class="highlighter-rouge">Lwt.wait</code>, <code class="highlighter-rouge">Lwt.task</code>, <code class="highlighter-rouge">Lwt_condition.create</code>, or <code class="highlighter-rouge">Lwt_mvar.create</code> should be changed to use the corresponding labelled version in <a href="https://github.com/mirage/mirage-profile">mirage-profile</a> (e.g. <code class="highlighter-rouge">MProf.Trace.named_wait</code>, etc).
+When Lwt is compiled without tracing support, these labels will be optimised out and have no runtime cost.</p>
+
+<script type="text/javascript" src="/js/profile-examples.js"></script>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

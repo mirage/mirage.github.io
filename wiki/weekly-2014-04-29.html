@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-04-29</title>
+  <meta name="description" content="29th April 2014: GSoC, Irminsule and Mirage Tutorial">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-04-29">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-04-29</h1>
+  </header>
+
+  <div class="article-content">
+    <p>29th April 2014: GSoC, Irminsule and Mirage Tutorial</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>GSoC/OPW</li>
+  <li>OCaml-Conduit</li>
+  <li>Vchan</li>
+  <li>Irminsule status</li>
+  <li>ARM</li>
+  <li>Trove and Libraries</li>
+  <li>Releases workflow</li>
+  <li>Mirage tutorial day
+    <ul>
+      <li>Using Codio</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Jonathan Ludlam, 
+Anil Madhavapeddy, Richard Mortier, David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="gsocopw">GSoC/OPW</h4>
+
+<p>Dave is mentor for the <a href="http://www.google-melange.com/gsoc/project/details/google/gsoc2014/moonlightdrive/5741031244955648">Mirage Cloud API project</a> stuff and working
+with <a href="http://1000hippos.wordpress.com">Jyotsna Prakash</a>. The project is to develop Mirage OCaml bindings
+for the EC2 and Rackspace cloud APIs and an example Mirage application that
+uses the API.  Mort is mentor for the <a href="https://wiki.gnome.org/OutreachProgramForWomen/2014/MayAugust#Xen_Project">OPW project</a> and working with
+<a href="http://www.somerandomidiot.com">Mindy Preston</a> on improvements to Mirage, such as (1) support for
+booting unikernels easily on EC2, Rackspace and OpenStack Clouds; (2)
+protocol bisimulations against existing Mirage protocol implementations; and
+(3) adding IPv6 support into mirage-net and a few others.</p>
+
+<p>Dave and Mort will make intros about these new people to the list and Anil
+is writing a blog post about all the new people who’ll be working on Mirage
+over the the summer.</p>
+
+<h4 id="conduit">Conduit</h4>
+
+<p><a href="https://opam.ocaml.org/packages/conduit/conduit.0.5.0/">ocaml-conduit</a> seems to be working well enough but until ctypes is
+released we won’t have stub generation and SSL won’t work reliably.</p>
+
+<h4 id="vchan">vchan</h4>
+
+<p>Jon is working on it and at the moment it doesn’t quite link. Some
+discussion over what the problems may be.  Jon will look over this and try
+again. Actually sent a <a href="https://github.com/mirage/ocaml-vchan/pull/8">pull request</a> while still on the call.</p>
+
+<h4 id="irminsule">Irminsule</h4>
+
+<p>Added support for views. These are temporary stores with lazy reads and
+in-memory writes; they can be used to convert back and forth an OCaml value
+into a store, or to have a fast staging area without the need to commit
+every operation to the store. Values can be blobs or subtrees.</p>
+
+<p>Lots of improvements to reading/writing and also worked on server and client
+side integration. Sometimes you want to give more control to user. Trying to
+implement transactions too.</p>
+
+<p>Irminsule is getting ready for more users now. Dave can use Thomas’ new code
+to replace some of his own and deal with some of the obvious problems in
+xenstore. Anil will try it with his IRC plans.</p>
+
+<p>Should also move the Irminsule repo to Mirage org on GitHub.</p>
+
+<h4 id="arm">ARM</h4>
+
+<p>Lots of discussion have taken place on the mailing list. Anil is stuck with
+image generation and get things on/off the devices. Impressive that ping
+works though!  Anil will make a FAT SD-card script.</p>
+
+<p>Mort mentioned that Chris (in Nottingham) has 3 <a href="http://cubieboard.org/2013/10/30/cubieboard3-cubietruck-is-all-ready/">Cubietrucks</a> on their way
+to him (these have wifi built in) and will need new uboot thing.</p>
+
+<h4 id="trove-and-libraries">Trove and Libraries</h4>
+
+<p>Trove is currently a bit rough but nice to have it there. It’s a half
+finished as there are a lot of things that are not included. Whoever is next
+to release, please take notes as you go. Can use these to help document the
+process.</p>
+
+<p>Need to sort out licensing for the libraries. Utility libraries that make
+sense for Mirage could be ‘upstreamed’ to Mirage. Benefits would be that any
+Mirage testing would include these.</p>
+
+<p>Licenses for Mirage libraries should be ISC/BSD. Reasons for this include
+the need for static compilation and the way that unikernels may be deployed
+(containing necessary keys). Should also be wary of potential concerns from
+future collaborators (e.g license compatibility).</p>
+
+<h4 id="releases-workflow">Releases workflow</h4>
+
+<p>Anil tried out Docker with Mirage and it worked very well. Experience is
+very similar to Travis, where you point Docker at your repo, it detects the
+Dockerfile and does the rest.</p>
+
+<h4 id="mirage-tutorial-day">Mirage Tutorial day</h4>
+
+<p>Venue will be Computer Lab but figuring out a date is proving tricky. We
+also need to consider the content.</p>
+
+<p>Some discussion over how we expect this to be delivered, e.g slides and
+talks along with code examples or purely online as documented tutorials.
+Mort has suggestions and will defer to the mailing list for now to see what
+people may be interested in.</p>
+
+<p>NB: Earlier discussions about this took place on <a href="weekly-2014-04-01#Miragetutorialday">2014-04-01</a> and
+<a href="weekly-2014-03-18#Miragetutorialday">2014-03-18</a>.</p>
+
+<p><strong>Using Codio</strong></p>
+
+<p>Amir tried <a href="https://codio.com">Codio</a> today and hit an issue related to aspcud (see the
+<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-04/msg00095.html">mailing list thread</a>). There are now two issues open on the Codio bug
+tracker about including aspcud as part of the opam install (<a href="https://github.com/codio/boxparts/pull/83#issuecomment-41681329">#83</a>) and
+also to update their opam packages (<a href="https://github.com/codio/boxparts/issues/105">#105</a>). These should be fixed by
+Friday. In the meantime a manual upgrade process and installing a few
+libraries piecemeal (e.g optcomp first) should work. It does take a while
+though.</p>
+
+<h4 id="aob">AoB</h4>
+
+<p>Wiki page for collecting agenda items is now up. See it at:
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">https://github.com/mirage/mirage-www/wiki</a></p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

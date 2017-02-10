@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The road to a developer preview at OSCON 2013</title>
+  <meta name="description" content="There’s been a crazy stream of activity since the start of the year, but the most important news is that we have a release target for an integrated developer...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//the-road-to-a-dev-release">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">The road to a developer preview at OSCON 2013</h1>
+    <p class="article_meta"><time datetime="2013-05-20T00:00:00+00:00" itemprop="datePublished">May 20, 2013</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>There’s been a crazy stream of activity since the start of the year, but the most important news is that we have a release target for an integrated developer preview of the Mirage stack: a talk at <a href="http://www.oscon.com/oscon2013/public/schedule/detail/28956">O’Reilly OSCon</a> in July!  Do turn up there and find <a href="http://dave.recoil.org">Dave Scott</a> and <a href="http://anil.recoil.org">Anil Madhavapeddy</a> showing off interactive demonstrations.</p>
+
+<p>Meanwhile, another significant announcement has been that Xen is <a href="http://www.linuxfoundation.org/news-media/announcements/2013/04/xen-become-linux-foundation-collaborative-project">joining the Linux Foundation</a> as a collaborative project.  This is great news for Mirage: as a library operating system, we can operate just as easily under other hypervisors, and even on bare-metal devices such as the <a href="http://raspberrypi.org">Raspberry Pi</a>.  We’re very much looking forward to getting the Xen-based developer release done, and interacting with the wider Linux community (and FreeBSD, for that matter, thanks to Gabor Pali’s <a href="https://github.com/pgj/mirage-kfreebsd">kFreeBSD</a> backend).</p>
+
+<p>Here’s some other significant news from the past few months:</p>
+
+<ul>
+  <li>
+    <p><a href="http://www.ocamlpro.com/blog/2013/03/14/opam-1.0.0.html">OPAM 1.0 was released</a>, giving Mirage a solid package manager for handling the many libraries required to glue an application together.  <a href="https://github.com/vbmithr">Vincent Bernardoff</a> joined the team at Citrix and has been building a Mirage build-frontend called <a href="https://github.com/mirage/mirari">Mirari</a> to hide much of the system complexity from a user who isn’t too familiar with either Xen or OCaml.</p>
+  </li>
+  <li>
+    <p>A new group called the <a href="http://ocaml.io">OCaml Labs</a> has started up in the <a href="http://www.cl.cam.ac.uk">Cambridge Computer Laboratory</a>, and is working on improving the OCaml toolchain and platform.  This gives Mirage a big boost, as we can re-use several of the documentation, build and test improvements in our own releases.  You can read up on the group’s activities via the <a href="http://ocaml.io/news">monthly updates</a>, or browse through the various <a href="http://ocaml.io/tasks">projects</a>.  One of the more important projects is the <a href="http://www.cl.cam.ac.uk/projects/ocamllabs/tasks/platform.html#OCamlot">OCamlot</a> continuous build infrastructure, which will also be testing Mirage kernels as one of the supported backends.</p>
+  </li>
+  <li>
+    <p>As we head into release mode, we’ve started <a href="/wiki/tag/overview/meetings">weekly meetings</a> to coordinate all the activities.  We’re keeping notes as we go along, so you should be able to skim the notes and <a href="https://lists.cam.ac.uk/pipermail/cl-mirage/">mailing list archives</a> to get a feel for the overall activities.  Anil is maintaining a <a href="/wiki/dev-preview-checklist">release checklist</a> for the summer developer preview.</p>
+  </li>
+  <li>
+    <p>Anil (along with Yaron Minsky and Jason Hickey) is finishing up an O’Reilly book on <a href="http://realworldocaml.org">Real World OCaml</a>, which will be a useful guide to using OCaml for systems and network programming. If you’d like to review an early copy, please get in touch.  The final book is anticipated to be released towards the end of the year, with a <a href="http://shop.oreilly.com/category/roughcuts.do">Rough Cut</a> at the end of the summer.</p>
+  </li>
+  <li>
+    <p>The core system was described in an <a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf">ASPLOS 2013</a> paper, which should help you understand the background behind library operating systems. Some of the Mirage libraries are also currently being integrated into the next-generation <a href="http://blogs.citrix.com/2012/05/17/introducing-windsor-a-new-xen-based-virtualization-architecture/">Windsor</a> release of the Xen Cloud Platform, which means that several of the libraries will be used in production and hence move beyond research-quality code.</p>
+  </li>
+</ul>
+
+<p>In the next few months, the installation notes and getting started guides will
+all be revamped to match the reality of the new tooling, so expect some flux
+there.   If you want to take an early try of Mirage beforehand, don’t forget to
+hop on the <code class="highlighter-rouge">#mirage</code> IRC channel on Freenode and ping us with questions
+directly.  We will also be migrating some of the project infrastructure to be fully
+self-hosted on Mirage and Xen, and placing some of the services onto the new <a href="http://xenproject.org">xenproject.org</a> infrastructure.</p>
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

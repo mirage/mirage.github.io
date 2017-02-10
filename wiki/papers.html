@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Publications</title>
+  <meta name="description" content="&lt;!DOCTYPE html&gt;This page lists any publications, technical reports and related work to MirageOS. If you know of any work that should be listed here, pl...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/papers">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Publications</h1>
+  </header>
+
+  <div class="article-content">
+    <p>&lt;!DOCTYPE html&gt;</p>
+<p>This page lists any publications, technical reports and related work to MirageOS. If you know of any work that should be listed here, please <a href="/about">contact</a> us.</p>
+<hr />
+<h4>Unikernels: Rise of the Virtual Library Operating System   <a name="cacm"></a><a href="http://queue.acm.org/detail.cfm?id=2566628"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy and David Scott</i><br />In <a href="http://cacm.acm.org">Communications of the ACM</a>, January 2014.</p>
+<blockquote>What if all the software layers in a virtual appliance were compiled within the same safe, high-level language framework?</blockquote>
+<h4>Real World OCaml: functional programming for the masses   <a name="rwo"></a><a href="https://realworldocaml.org"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy, Yaron Minsky and Jason Hickey</i><br />Published by O'Reilly Associates, 510 pages, Nov 2013.</p>
+<blockquote>This fast-moving tutorial introduces you to OCaml, an industrial-strength programming language designed for expressiveness, safety, and speed. Through the book’s many examples, you’ll quickly learn how OCaml stands out as a tool for writing fast, succinct, and readable systems code.
+
+Real World OCaml takes you through the concepts of the language at a brisk pace, and then helps you explore the tools and techniques that make OCaml an effective and practical tool. In the book’s third section, you’ll delve deep into the details of the compiler toolchain and OCaml’s simple and efficient runtime system.</blockquote>
+<h4>Unikernels: library operating systems for the cloud   <a name="asplos"></a><a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf"><i class="fa fa-cloud-download"></i></a><a href="http://portal.acm.org/citation.cfm?id=2451116.2451167"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy, Richard Mortier, Charalampos Rotsos, David Scott, Balraj Singh, Thomas Gazagnaire, Steven Smith, Steven Hand and Jon Crowcroft</i><br />Proceedings of the 18th International Conference on Architectural Support for Programming Languages and Operating Systems<a href="http://asplos13.rice.edu/">&gt;ASPLOS '13</a>, April, 2013.</p>
+<blockquote>We present &lt;em&gt;unikernels&lt;/em&gt;, a new approach to deploying cloud services via applications written in high-level source code. Unikernels are single-purpose appliances that are compile-time specialised into standalone kernels, and sealed against modification when deployed to a cloud platform. In return they offer significant reduction in image sizes, improved efficiency and security, and should reduce operational costs. Our MirageOS prototype compiles OCaml code into unikernels that run on commodity clouds and offer an order of magnitude reduction in code size without significant performance penalty. The architecture combines static type-safety with a single address-space layout that can be made immutable via a hypervisor extension. MirageOS contributes a suite of type-safe protocol libraries, and our results demonstrate that the hypervisor is a platform that overcomes the hardware compatibility issues that have made past library operating systems impractical to deploy in the real-world.</blockquote>
+<h4>Cost, Performance &amp; Flexibility in OpenFlow: Pick Three   <a name="openflow"></a><a href="http://www.cs.nott.ac.uk/~rmm/papers/pdf/iccsdn12-mirageof.pdf"><i class="fa fa-cloud-download"></i></a></h4>
+<p><i>Richard Mortier, Charalampos Rotsos, Anil Madhavapeddy, Balraj Singh and Andrew Moore</i><br />Proceedings of IEEE ICC Software Defined Networking workshop, June 2012.</p>
+<blockquote></blockquote>
+<h4>Unclouded Vision   <a name="droplets"></a><a href="http://www.cs.nott.ac.uk/~rmm/papers/pdf/icdcn11-droplets.pdf"><i class="fa fa-cloud-download"></i></a></h4>
+<p><i>Jon Crowcroft, Anil Madhavapeddy, Malte Schwarzkopf, Theo Hong and Richard Mortier</i><br />Proceedings of 12th International Conference on Distributed Computing and  Networking <a href="http://icdcn2012.comp.polyu.edu.hk/">&gt;ICDCN '11</a>, January 2011. Invited paper.</p>
+<blockquote></blockquote>
+<h4>Turning down the LAMP: Software Specialisation for the Cloud   <a name="hotcloud"></a><a href="http://anil.recoil.org/papers/2010-hotcloud-lamp.pdf"><i class="fa fa-cloud-download"></i></a><a href="http://portal.acm.org/citation.cfm?id=1863114"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy, Richard Mortier, Ripduman Sohan, Thomas Gazagnaire, Steven Hand, Tim Deegan, Derek McAuley and Jon Crowcroft</i><br />2nd USENIX Workshop on Hot Topics in Cloud Computing <a href="http://www.usenix.org/events/hotcloud10/">HotCloud '10</a>, June 2010.</p>
+<blockquote>This paper positions work on the Xen backend for MirageOS. It is a decent summary of the idea, although some details such as the filesystem extension are likely to be significantly different in the first release.</blockquote>
+<h4>Using Dust Clouds to Enhance Anonymous Communication   <a name="dustclouds"></a><a href="http://www.cs.nott.ac.uk/~rmm/papers/pdf/iwsp10-dustclouds.pdf"><i class="fa fa-cloud-download"></i></a></h4>
+<p><i>Richard Mortier, Anil Madhavapeddy, Theo Hong, Derek Murray and Malte Schwarzkopf</i><br />Proceedings of the 18th International Workshop on Security Protocols (IWSP), April 2010</p>
+<blockquote></blockquote>
+<h4>Multiscale not Multicore: Efficient Heterogeneous Cloud Computing   <a name="visions"></a><a href="http://anil.recoil.org/papers/2010-bcs-visions.pdf"><i class="fa fa-cloud-download"></i></a><a href="http://www.bcs.org/server.php?show=nav.11980"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy, Richard Mortier, Jon Crowcroft and Steven Hand</i><br />ACM/BCS <a href="http://www.bcs.org/server.php?show=nav.11980">Visions of Computer Science</a>, April 2010</p>
+<blockquote>This is a vision paper that lays out the broader background to the project, including some of the problem areas we are tackling in social networking and scientific computing. The first half is a good introduction to the area, but read the later <a href="#hotcloud">HotCloud</a> paper instead of the technical second half.</blockquote>
+<h4>Statically-typed value persistence for ML   <a name="wgt"></a><a href="http://anil.recoil.org/papers/2010-dyntype-wgt.pdf"><i class="fa fa-cloud-download"></i></a><a href="http://prezi.com/qjkrijlacqiq/mirage/"><i class="fa fa-desktop"></i></a></h4>
+<p><i>Thomas Gazagnaire and Anil Madhavapeddy</i><br /><a href="http://wgt2010.elte.hu/">Workshop on Generative Technologies</a>, April 2010</p>
+<blockquote>This paper defines the <a href="http://github.com/mirage/dyntype">dyntype</a> dynamic typing extension we developed for OCaml, and the SQL mapper that converts ML values directly into SQL calls. The approach is useful as it is purely meta-programming instead of compiler patching, and thus much easier to integrate with other OCaml code.</blockquote>
+<h4>Combining Static Model Checking with Dynamic Enforcement using the Statecall Policy Language   <a name="icfem"></a><a href="http://anil.recoil.org/papers/2009-icfem-spl.pdf"><i class="fa fa-cloud-download"></i></a></h4>
+<p><i>Anil Madhavapeddy</i><br />International Conference on Formal Engineering Methods <a href="http://icfem09.inf.puc-rio.br/ICFEM.html">ICFEM</a>, December 2009.</p>
+<blockquote>A small domain-specific language which compiles to both PROMELA (for static model checking) and OCaml (for dynamic enforcement) of state machines. This paper defines the DSL and an example against an <a href="http://github.com/avsm/melange/tree/master/apps/sshd">SSH server</a> written in pure OCaml.</blockquote>
+<h4>Melange: Towards a &quot;functional&quot; Internet   <a name="eurosys"></a><a href="http://anil.recoil.org/papers/2007-eurosys-melange.pdf"><i class="fa fa-cloud-download"></i></a><a href="http://portal.acm.org/citation.cfm?id=1272996.1273009"><i class="fa fa-external-link-square"></i></a></h4>
+<p><i>Anil Madhavapeddy, Alex Ho, Tim Deegan, David Scott and Ripduman Sohan</i><br /><a href="http://www.gsd.inesc-id.pt/conference/EuroSys2007/">&gt;EuroSys 2007</a>, March 2007.</p>
+<blockquote>The original paper that formed the basis of MirageOS. We define <a href="http://github.com/avsm/mpl">MPL</a>, a DSL to express bi-directional packet descriptions and compile them into efficient, type-safe OCaml code. Performance is tested for DNS and SSH servers written in OCaml versus their C counterparts (BIND and OpenSSH</blockquote>
+<h2>Related Work</h2>
+<h4>The Main Name System   <a name="mainname"></a><a href="http://www.tjd.phlegethon.org/words/thesis.pdf"><i class="fa fa-cloud-download"></i></a></h4>
+<p><i>Tim Deegan</i><br />PhD Thesis, University of Cambridge, 2006.</p>
+<blockquote>This thesis describes the Main Name System, an approach to centralising  DNS for improved reliability. The source  code for the MirageOS DNS library is based directly off the data structures described in this thesis.</blockquote>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

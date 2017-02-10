@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-06-03</title>
+  <meta name="description" content="3rd Jun 2015: TLS releases, TCP bug-squishing and best-practice docs">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-06-03">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-06-03</h1>
+  </header>
+
+  <div class="article-content">
+    <p>3rd Jun 2015: TLS releases, TCP bug-squishing and best-practice docs</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>TLS release status</li>
+  <li>TCP debugging, profiling and stats</li>
+  <li>Documentation best practice</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Matthew Gray, David Kaloper, Masoud Koleini,
+Thomas Leonard, Len Maxwell, Hannes Mehnert, Richard Mortier, Dave Scott,
+Magnus Skjegstad and Mindy Preston</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<p><strong>mirge-skeleton</strong> — A few people have commented on the list that
+<a href="https://github.com/mirage/mirage-skeleton">mirage-skeleton</a> has been broken for them.  In addition, there’s
+occasionally confusion about what they should or could do with the content of
+the repo. Whether what they see there is considered ‘best practice’, just
+happens to be there for testing or are snippets for people to use elsewhere.</p>
+
+<p>We believe some of these issues have been fixed via the list but it’s worth
+highlighting when/why this happens.  It seems we’ve set up the <code class="highlighter-rouge">master</code> branch
+of mirage-skeleton to work when using the <a href="https://github.com/mirage/mirage-dev">mirage-dev</a> remote (an
+<a href="https://opam.ocaml.org/doc/Usage.html#opamrepo">opam repository</a> where we stage our releases and work in progress).
+That means the examples are currently meant to be working with the upcoming
+releases rather than the packages available in the official repository.
+Anyone who doesn’t expect this is liable to see breakages and probably be
+confused as to why.</p>
+
+<p>One approach to mitigate this would be to maintain two branches, <code class="highlighter-rouge">master</code> and
+<code class="highlighter-rouge">mirage-dev</code>, which would track with the packages in the main opam repo and
+mirage-dev repo, respectively.  This would add a step to the release process,
+which would involve merging relevant changes from one branch to the other
+Another approach was suggested, which involves clarifying what it means to
+have a ‘version’ of MirageOS (a particular set of libraries).</p>
+
+<p>Regarding the question of what mirage-skeleton is for, we suggested that
+adding some more information to the repo’s README would be helpful.</p>
+
+<p>It was proposed that we continue this discussion either on the mailing list or
+on an issue on the mirage-skeleton repository.  That would allow anyone else
+to get involved and comment before we make any firm decisions.</p>
+
+<h4 id="tls-release-planning">TLS release planning</h4>
+
+<p>We’re gearing up to a release of MirageOS v2.5, which includes support for TLS.
+While working on this, we uncovered some bugs elsewhere in the stack (TCP) and
+have been working to resolve them (now being tracked in
+<a href="https://github.com/mirage/mirage/issues/409">mirage/mirage#409</a>).</p>
+
+<p>We originally had a fixed date for the news release — to go with the software
+release — but because of the remaining issues, we’re not comfortable making
+announcements until we’re sure the code-base is ready. To relieve some of time
+pressure and assure a high-quality release, we decided to decouple the
+different elements as much as possible. Practically speaking, this means we
+will first get the issues resolved (releasing libraries as usual), then get
+associated blog posts written, and finally have a news announcement (there’s
+more info in Amir’s <a href="https://github.com/mirage/mirage/issues/409#issuecomment-108438612">comment on #409</a>).</p>
+
+<p>A point was raised that we should try and avoid this occurring again, whether
+that means more testing, or a different process.  We asked one of the people
+present on the call (who shall remain nameless), how his very large and well
+established company handles things to avoids such release issues … after a
+brief pause, the response was “No comment!”.  So it seems we’re no worse than
+elsewhere but it would be nice to be better.</p>
+
+<h4 id="tcp-debugging-profiling-and-stats">TCP debugging, profiling and stats</h4>
+
+<p>Lots of people have been trying to debug the TCP stack. ThomasG put together a
+stats branch with extra debug output, which was very useful.  However, it
+slows things down enough that it hides one of the race conditions that ThomasL
+had uncovered — ThomasL has as issue with TLS on the Cubieboard where it
+doesn’t serve a file.</p>
+
+<p>ThomasL has continued to make improvements to debugging tools and Mindy was
+very happy about that!  These tools will go into the Lwt tracing branch.</p>
+
+<p>It was suggested that one of the effort towards a 3.0 should be improvement of
+the developer tools around MirageOS, including tracing. This is already one of
+the elements we’ve been thinking of while discussing logging but it’s worth
+calling out explicitly.  It seems our approach is already a few steps ahead of
+what other systems provide so it’s worth drawing attention to.  Our friend in
+the BigCo did confirm that they’re better than the tools he currently uses.</p>
+
+<p>In addition to the above work, Hannes has been working on recoding pcap
+traces, which is based on Mindy’s earlier work. Did point out that TCP needs
+more hooks to enable this.</p>
+
+<h4 id="documentation-best-practice">Documentation best practice</h4>
+
+<p>Dave has been looking at libraries he’s been in invovled with and noticed that
+the documentation could be much improved.  Dave was hoping that we could come
+up with ‘best practice’ information for how to do docs for code — whether that
+includes ocamldoc, gh-pages or whatever else. There are also thoughts for how
+to create tutorials for users, which he’d like to do for certain libs e.g.
+how-tos for vchan, client/server etc.  <a href="https://github.com/andrewray/iocaml">IOCaml notebooks</a> seem ideal
+for this and people who’ve used them rave about them.</p>
+
+<p>After some discussion, we thought it might be good to put together a wiki page
+with pointers to examples of good practice.  We could use this as a guide to
+raise the quality bar on all libs.  Examples to point to could be vchan for
+the code coverage, cmdliner for docs, etc.</p>
+
+<p>Amir points out that OCaml Labs is looking at improving documentation
+generation and that there should be some useful tooling out soon (cf.
+<a href="https://opam.ocaml.org/blog/codoc-0-2-0-released/">codoc</a>).  It would be good to move this discussion to the mailing list so
+that others can comment and highlight approaches (edit: see the thread on
+“<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-06/msg00017.html">API documentation best practices</a>”).</p>
+
+<p>There were even thoughts that we could construct unikernels, running entirely
+in the browser and that you can interact with via automatically generated
+IOCaml notebooks, which would allow people to experiment with the API and talk
+across browser tabs … but perhaps not just yet.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>The next call is scheduled for <strong>Wednesday, 17th June</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

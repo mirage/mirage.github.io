@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Installation</title>
+  <meta name="description" content="MirageOS consists of a set of OCaml libraries that link with a runtime to form either a standalone Xen operating system or a normal UNIX binary. These librar...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/install">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Installation</h1>
+  </header>
+
+  <div class="article-content">
+    <p>MirageOS consists of a set of OCaml libraries that link with a runtime to form either a standalone Xen operating system or a normal UNIX binary. These libraries are managed via the <a href="https://opam.ocaml.org">OPAM</a> tool. After describing MirageOS’s system requirements, we will introduce the basics of OPAM and setting up for MirageOS.</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>MirageOS has been tested on ArchLinux, Debian Wheezy/Jessie, Ubuntu 14.04/16.10, CentOS 6/7 and MacOS X 10.10+. To compile the Xen backend, you <em>must</em> have a 64-bit Linux host. 32-bit is not supported at this time.</p>
+
+<h3 id="macos-x">MacOS X</h3>
+
+<ul>
+  <li><strong>10.10</strong>: No special requirements beyond Homebrew or MacPorts to get OCaml.</li>
+  <li><strong>10.9 or lower</strong>: You will also need the <a href="http://tuntaposx.sourceforge.net/">tuntap</a> kernel module if you want to use the MirageOS network stack from userspace.  Note that we do not test older versions of OSX beyond 10.10.</li>
+</ul>
+
+<p>If you are using Homebrew, run</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>brew install opam
+opam init
+opam install mirage
+</code></pre>
+</div>
+
+<h3 id="ubuntu">Ubuntu</h3>
+
+<h4 id="ubuntu-1604-xenial-or-higher">Ubuntu 16.04 (Xenial) or higher</h4>
+
+<p>This has the latest packages required in the base distribution, so just run:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get update
+sudo apt-get install opam
+opam init
+opam install mirage
+</code></pre>
+</div>
+
+<h4 id="ubuntu-1510-vivid-or-lower">Ubuntu 15.10 (Vivid) or lower</h4>
+
+<p>The version of OPAM in older Ubuntus is not high enough to run Mirage (which requires OPAM 1.2.2 or higher), so you will need to add a custom PPA for the latest packages:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo add-apt-repository ppa:avsm/ppa
+sudo apt-get update
+sudo apt-get install ocaml ocaml-native-compilers camlp4-extra opam
+opam init
+opam install mirage
+</code></pre>
+</div>
+
+<p>Also note that the <code class="highlighter-rouge">mirage</code> configuration and deployment tool relies on the <code class="highlighter-rouge">xl</code> Xen toolstack to run Xen virtual machines.  Older Ubuntus may use the <code class="highlighter-rouge">xm</code> toolstack, so you will need to change it.</p>
+
+<h3 id="debian">Debian</h3>
+
+<h4 id="debian-stable-jessie">Debian Stable (Jessie)</h4>
+
+<p>Debian Jessie only packages OPAM 1.2.0, but Mirage needs OPAM 1.2.2 or higher.  You can use <a href="http://0install.net">0install</a> to get the right version of OPAM:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get update
+sudo apt-get install ca-certificates curl 0install-core --no-install-recommends -y
+0install add opam http://tools.ocaml.org/opam.xml
+opam init
+opam install mirage
+</code></pre>
+</div>
+
+<h4 id="debian-testing-stretch-or-unstable-sid">Debian Testing (Stretch) or Unstable (Sid)</h4>
+
+<p>These distributions include everything you need to run Mirage in the base distribution, so just do:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get update
+sudo apt-get install ocaml ocaml-native-compilers camlp4-extra opam
+opam init
+opam install mirage
+</code></pre>
+</div>
+
+<h2 id="mirageos-package-management-with-opam">MirageOS Package Management with OPAM</h2>
+
+<p>We use <a href="https://opam.ocaml.org">OPAM</a> to manage OCaml compiler and library installations. It tracks library versions across upgrades and will recompile dependencies automatically if they get out of date. Please refer to OPAM <a href="https://opam.ocaml.org">documentation</a> if you want to know more, but we will cover the basics to get you started here. There is a <a href="http://opam.ocaml.org/doc/Install.html">Quick Install Guide</a> if the above instructions don’t cover your operating system.</p>
+
+<p>Note that you require <strong>OPAM 1.2.2 or greater</strong> to use with MirageOS. Some distribution packages provide earlier versions and must be updated; check with</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ opam --version ## response should be at least 1.2.2 viz.
+1.2.2
+</code></pre>
+</div>
+
+<p>All the OPAM state is held in the <code class="highlighter-rouge">.opam</code> directory in your home directory, including compiler installations. You should never need to switch to a root user to install packages. Package listings are obtained through <code class="highlighter-rouge">remote</code> sources, which defaults to the contents of <a href="https://github.com/ocaml/opam-repository">github.com/ocaml/opam-repository</a>.</p>
+
+<p>After installation, <code class="highlighter-rouge">opam update -u</code> refreshes the package list and recompiles packages to the latest versions.  You should run this regularly to get the latest packages.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ opam init
+# list of your remotes, which should include opam.ocaml.org
+$ opam remote
+</code></pre>
+</div>
+
+<p>Next, make sure you have at least <strong>OCaml 4.02.3 or higher</strong> as your active compiler. This is generally the case on MacOS X, though Debian only has it in the <em>testing</em> distribution at present. But don’t worry: if your compiler is out of date, just run <code class="highlighter-rouge">opam switch</code> to have it locally install the right version for you.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ocaml -version
+# if it is not 4.02.3 or higher, then run this
+$ opam switch 4.02.3
+</code></pre>
+</div>
+
+<p>Once you’ve got the right version, set up your shell environment to point to the current compiler switch.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ eval `opam config env`
+# add the above line to your startup shell profile
+</code></pre>
+</div>
+
+<p>This updates the variables in your shell to match the current OPAM installation, mainly by altering your system <code class="highlighter-rouge">PATH</code>. You can see the shell fragment by running <code class="highlighter-rouge">opam config env</code> at any time. If you add the <code class="highlighter-rouge">eval</code> line to your login shell (usually <code class="highlighter-rouge">~/.bash_profile</code>), it will automatically import the correct PATH on every subsequent login.</p>
+
+<p>Check that the base packages are installed correctly:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ opam list
+Installed packages for system:
+base-bigarray         base  Bigarray library distributed with the OCaml compiler
+base-threads          base  Threads library distributed with the OCaml compiler
+base-unix             base  Unix library distributed with the OCaml compiler
+[ possibly other installed packages ]
+</code></pre>
+</div>
+
+<p>Finally, install the MirageOS command-line tool.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ opam install mirage
+$ mirage --help
+</code></pre>
+</div>
+
+<p>This will install <a href="https://github.com/mirage/mirage">Mirage</a>!
+If you’re upgrading from an older beta installation of MirageOS, then be sure that you have at least 2.9.0.  You can verify this by checking that the version number in the manual page from <code class="highlighter-rouge">mirage --help</code> is at least 2.9.0 (as of the time of writing this page).</p>
+
+<p>That’s it. You now have everything required to start developing MirageOS unikernels that will run either as POSIX processes or as Xen VMs using the MirageOS network stack. Next, why not try <a href="/wiki/hello-world">building a MirageOS <em>hello world</em></a>?</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

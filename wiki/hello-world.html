@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Hello MirageOS World</title>
+  <meta name="description" content="First make sure you have followed the installation instructionsto get a working MirageOS installation. The examples below are in themirage-skeleton repositor...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/hello-world">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Hello MirageOS World</h1>
+  </header>
+
+  <div class="article-content">
+    <p>First make sure you have followed the <a href="/wiki/install">installation instructions</a>
+to get a working MirageOS installation. The examples below are in the
+<a href="http://github.com/mirage/mirage-skeleton">mirage-skeleton</a> repository. Begin by
+cloning and changing directory to it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ git clone git://github.com/mirage/mirage-skeleton.git
+$ cd mirage-skeleton
+</code></pre>
+</div>
+
+<h3 id="step-1-hello-world">Step 1: Hello World!</h3>
+
+<p>As a first step, let’s build and run the MirageOS “Hello World” unikernel – this
+will print <code class="highlighter-rouge">hello\nworld\n</code> 4 times before terminating:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>hello
+world
+hello
+world
+hello
+world
+hello
+world
+</code></pre>
+</div>
+
+<p>First, let’s look at the code:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="o">$</span> <span class="n">cat</span> <span class="n">console</span><span class="o">/</span><span class="n">unikernel</span><span class="p">.</span><span class="n">ml</span>
+<span class="k">open</span> <span class="nn">Lwt</span><span class="p">.</span><span class="nc">Infix</span>
+
+<span class="k">module</span> <span class="nc">Main</span> <span class="p">(</span><span class="nc">C</span><span class="p">:</span> <span class="nn">V1_LWT</span><span class="p">.</span><span class="nc">CONSOLE</span><span class="p">)</span> <span class="p">=</span> <span class="k">struct</span>
+
+  <span class="k">let</span> <span class="n">start</span> <span class="n">c</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="k">rec</span> <span class="n">loop</span> <span class="p">=</span> <span class="k">function</span>
+      <span class="p">|</span> <span class="mi">0</span> <span class="p">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return_unit</span>
+      <span class="p">|</span> <span class="n">n</span> <span class="p">-&gt;</span>
+        <span class="nn">C</span><span class="p">.</span><span class="n">log_s</span> <span class="n">c</span> <span class="s2">"hello"</span> <span class="o">&gt;&gt;=</span> <span class="k">fun</span> <span class="bp">()</span> <span class="p">-&gt;</span>
+        <span class="nn">OS</span><span class="p">.</span><span class="nn">Time</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">1</span><span class="p">.</span><span class="mi">0</span> <span class="o">&gt;&gt;=</span> <span class="k">fun</span> <span class="bp">()</span> <span class="p">-&gt;</span>
+        <span class="nn">C</span><span class="p">.</span><span class="n">log_s</span> <span class="n">c</span> <span class="s2">"world"</span> <span class="o">&gt;&gt;=</span> <span class="k">fun</span> <span class="bp">()</span> <span class="p">-&gt;</span>
+        <span class="n">loop</span> <span class="p">(</span><span class="n">n</span><span class="p">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">in</span>
+    <span class="n">loop</span> <span class="mi">4</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p><strong>Note</strong>: If you aren’t familiar with the Lwt library (and the <code class="highlighter-rouge">&gt;&gt;=</code> operator it provides),
+you may want to read at least the start of the <a href="tutorial-lwt">Lwt tutorial</a> first.</p>
+
+<p>To veteran OCaml programmers among you, this might look a little odd: we have a
+<code class="highlighter-rouge">Main</code> module parameterised by another module (<code class="highlighter-rouge">C</code>, of type <code class="highlighter-rouge">CONSOLE</code>) that
+contains a method <code class="highlighter-rouge">start</code> taking a single parameter <code class="highlighter-rouge">c</code> (an instance of a
+<code class="highlighter-rouge">CONSOLE</code>). This is the basic structure required to make this a MirageOS
+unikernel rather than a standard OCaml POSIX application.</p>
+
+<p>The concrete implementation of <code class="highlighter-rouge">CONSOLE</code> will be supplied at compile-time,
+depending on the target that you are compiling for. This configuration is stored
+in <code class="highlighter-rouge">config.ml</code>, which is very simple for our first application.</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="o">$</span> <span class="n">cat</span> <span class="n">console</span><span class="o">/</span><span class="n">config</span><span class="p">.</span><span class="n">ml</span>
+<span class="k">open</span> <span class="nc">Mirage</span>
+
+<span class="k">let</span> <span class="n">main</span> <span class="p">=</span>
+  <span class="n">foreign</span> <span class="s2">"Unikernel.Main"</span> <span class="p">(</span><span class="n">console</span> <span class="o">@-&gt;</span> <span class="n">job</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="bp">()</span> <span class="p">=</span>
+  <span class="n">register</span> <span class="s2">"console"</span> <span class="p">[</span><span class="n">main</span> <span class="o">$</span> <span class="n">default_console</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>The configuration file is a normal OCaml module that calls <code class="highlighter-rouge">register</code> to create
+one or more jobs, each of which represent a process (with a start/stop
+lifecycle). Each job most likely depends on some device drivers; all the
+available device drivers are defined in the <code class="highlighter-rouge">Mirage</code> module (see
+<a href="http://mirage.github.io/mirage/">here</a>).</p>
+
+<p>In this case, the <code class="highlighter-rouge">main</code> variable declares that the entry point of the process
+is the <code class="highlighter-rouge">Main</code> module from the file <code class="highlighter-rouge">unikernel.ml</code>. The <code class="highlighter-rouge">@-&gt;</code> combinator is used
+to add a device driver to the list of functor arguments in the job definition
+(see <code class="highlighter-rouge">unikernel.ml</code>), and the final value of using this combinator should always
+be a <code class="highlighter-rouge">job</code> if you intend to register it.</p>
+
+<p>Notice that we refer to the module name as a string here, instead of directly as
+an OCaml value. The <code class="highlighter-rouge">mirage</code> command-line tool evaluates this configuration file
+at build-time and outputs a <code class="highlighter-rouge">main.ml</code> that has the concrete values filled in for
+you, with the exact modules varying by which backend you selected (e.g. Unix or
+Xen).</p>
+
+<p>MirageOS mirrors the Xen model on UNIX as far as possible: your application is
+built as a unikernel which needs to be instantiated and run whether on UNIX or
+on Xen. When your unikernel is run, it starts much as a VM on Xen does – and so
+must be passed references to devices such as the console, network interfaces and
+block devices on startup.</p>
+
+<p>In this case, this simple <code class="highlighter-rouge">hello world</code> example requires just a console for
+output, so we register a single <code class="highlighter-rouge">Job</code> consisting of the <code class="highlighter-rouge">Hello.Main</code> module
+(and, implicitly its <code class="highlighter-rouge">start</code> function) and passing it a single reference to a
+console.</p>
+
+<p>You can find the module signatures of all the device drivers (such as <code class="highlighter-rouge">CONSOLE</code>)
+in the <a href="https://github.com/mirage/mirage/tree/master/types"><code class="highlighter-rouge">types/</code></a> directory
+of the main MirageOS repository. Since you’ll find yourself referring back to
+these quite often when building MirageOS applications, it’s worth bookmarking
+the <a href="http://mirage.github.io">documentation</a> for this module.</p>
+
+<h4 id="building-a-unix-binary">Building a Unix binary</h4>
+
+<p>We invoke all this by configuring, building and finally running the resulting
+unikernel under Unix first.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd console
+$ mirage configure -t unix
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">mirage configure</code> generates a <code class="highlighter-rouge">Makefile</code> with all the build rules included from
+evaluating the configuration file, and a <code class="highlighter-rouge">main.ml</code> that represents the entry
+point of your unikernel. The <code class="highlighter-rouge">configure</code> step should ensure all external OPAM
+dependencies are installed, but in case not, execute <code class="highlighter-rouge">make depend</code> to check and
+install if any are missing.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ make
+</code></pre>
+</div>
+
+<p>This builds a UNIX binary called <code class="highlighter-rouge">mir-console</code> that contains the simple console
+application.  If you are on a multicore machine and want to do parallel builds,
+<code class="highlighter-rouge">export OPAMJOBS=4</code> (or some other value equal to the number of cores) will do
+the trick.</p>
+
+<p>Finally to run your application, as it is a standard Unix binary, simply run it
+directly and observe the exciting console commands that our <code class="highlighter-rouge">for</code> loop is
+generating:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ./mir-console
+</code></pre>
+</div>
+
+<p><br /></p>
+<div class="panel callout">
+  <i class="fa fa-info fa-3x pull-left"> </i>
+  <p>
+    Note that when you execute <code>mirage configure -t xen</code>, the target
+    unikernel's <code>target.xl</code> and other auto-generated configuration
+    files are regenerated, overwriting any modifications you may have made. If
+    you edit any of these, we suggest renaming and/or committing them to source
+    control to avoid it being overwritten subsequently.
+  </p>
+</div>
+
+<h4 id="building-a-xen-unikernel">Building a Xen unikernel</h4>
+
+<p>If you are on a 64-bit Linux system able to build Xen images, simply change
+<code class="highlighter-rouge">-t unix</code> for <code class="highlighter-rouge">-t xen</code> to build a Xen VM:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mirage configure -t xen
+$ make
+</code></pre>
+</div>
+
+<p><em>Everything</em> else remains the same! The <code class="highlighter-rouge">main.ml</code> and <code class="highlighter-rouge">Makefile</code> generated
+differ significantly, but since the source code of your application was
+parameterised over the <code class="highlighter-rouge">CONSOLE</code> type, it doesn’t matter– you do not need to
+make any changes for your code to run when linked against the Xen console driver
+instead of Unix.</p>
+
+<p>When you build the Xen version, you’ll have a <code class="highlighter-rouge">mir-console.xen</code> unikernel that
+can be booted as a standalone kernel. You will also see two generated files
+named <code class="highlighter-rouge">console.xl</code> and <code class="highlighter-rouge">console.xl.in</code> in the current directory. The
+<code class="highlighter-rouge">console.xl</code> file is a Xen configuration file with sensible defaults for
+the VM configuration options, intended for quickly trying the unikernel on
+the build machine. The file <code class="highlighter-rouge">console.xl.in</code> has all the configuration options
+necessary for the VM to boot but has all the references to resources on the
+deployment host replaced by substitutable variables. The <code class="highlighter-rouge">console.xl.in</code> is
+intended for production use; while <code class="highlighter-rouge">console.xl</code> is intended for development
+and test.</p>
+
+<p>The <code class="highlighter-rouge">console.xl</code> will look something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Generated by Mirage (Tue, 14 Jul 2015 11:17:40 GMT).
+
+name = 'console'
+kernel = '/home/vagrant/mirage-skeleton/console/mir-console.xen'
+builder = 'linux'
+memory = 256
+on_crash = 'preserve'
+
+disk = [  ]
+
+# if your system uses openvswitch then either edit /etc/xen/xl.conf and set
+#     vif.default.script="vif-openvswitch"
+# or add "script=vif-openvswitch," before the "bridge=" below:
+vif = [ 'bridge=xenbr0' ]
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">xl</code> replaced <code class="highlighter-rouge">xm</code> as the default in Xen 4.2, with <code class="highlighter-rouge">xm</code> being removed completely
+in Xen 4.5. If you find that you’re running the <code class="highlighter-rouge">xend</code> daemon, then you should
+use the <code class="highlighter-rouge">xm</code> command. Edit this to customise the VM name, memory or the network
+bridge and then run it:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>sudo xl create -c console.xl
+Parsing config from console.xl
+MirageOS booting....
+Initialising timer interface
+Initialising console ... <span class="k">done</span>.
+hello
+world
+hello
+world
+hello
+world
+hello
+world
+<span class="err">$</span>
+</code></pre>
+</div>
+
+<p>As you can see, after some initial boot messages have been displayed as Xen
+boots the VM, you see the same output on the Xen console as you did on the UNIX
+version you ran earlier. If you need more help, or would like to see how to boot
+your Xen VM on Amazon’s EC2, <a href="/wiki/xen-boot">click here</a>. Finally if you are
+using an ARM processor, such as the CubieBoard, you should follow extra
+ARM-specific documentation found
+<a href="http://openmirage.org/blog/introducing-xen-minios-arm">here</a>.</p>
+
+<h3 id="step-2-getting-a-block-device">Step 2: Getting a block device</h3>
+
+<p>Most useful unikernels will need to obtain data from the outside world, so we’ll
+explain this subsystem next.</p>
+
+<h4 id="sector-addressible-block-devices">Sector-addressible block devices</h4>
+
+<p>The <a href="https://github.com/mirage/mirage-skeleton/tree/master/block">block/</a>
+directory in <code class="highlighter-rouge">mirage-skeleton</code> contains an example of attaching a raw block
+device to your unikernel. The
+<a href="https://github.com/mirage/mirage/blob/1.1.0/types/V1.mli#L134">V1.BLOCK</a>
+interface signature contains the operations that are possible on a block device:
+primarily reading and writing aligned buffers to a 64-bit offset within the
+device.</p>
+
+<p>On Unix, the development workflow to handle block devices is by mapping them
+onto local files. The <code class="highlighter-rouge">config.ml</code> for the block example looks like this:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Mirage</span>
+
+<span class="k">let</span> <span class="n">main</span> <span class="p">=</span> <span class="n">foreign</span> <span class="s2">"Unikernel.Main"</span> <span class="p">(</span><span class="n">console</span> <span class="o">@-&gt;</span> <span class="n">block</span> <span class="o">@-&gt;</span> <span class="n">job</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="n">img</span> <span class="p">=</span>
+  <span class="n">if_impl</span> <span class="nn">Key</span><span class="p">.</span><span class="n">is_xen</span>
+    <span class="p">(</span><span class="n">block_of_file</span> <span class="s2">"xvda1"</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">block_of_file</span> <span class="s2">"disk.img"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="bp">()</span> <span class="p">=</span>
+  <span class="n">register</span> <span class="s2">"block_test"</span> <span class="p">[</span><span class="n">main</span> <span class="o">$</span> <span class="n">default_console</span> <span class="o">$</span> <span class="n">img</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">main</code> binding looks much like the earlier console example, except for the
+addition of a <code class="highlighter-rouge">block</code> device in the list. When we register the job, we supply a
+block device from a local file via <code class="highlighter-rouge">block_of_file</code>.</p>
+
+<p><br /></p>
+<div class="panel callout">
+  <i class="fa fa-info fa-3x pull-left"> </i>
+  <p>
+    As an aside, if you have your editor configured with OCaml mode, you should
+    be able to see the inferred types for some of the variables in the
+    configuration file. The <code>@-&gt;</code> and <code>$</code> combinators are
+    designed such that any mismatches in the declared device driver types and
+    the concrete registered implementations will result in a type error at
+    configuration time.
+  </p>
+</div>
+
+<p>Build this on Unix in the same way as the console example.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd block
+$ mirage configure -t unix
+$ make
+$ ./generate_disk_img.sh
+$ ./mir-block_test
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">generate_disk_img.sh</code> script just calls <code class="highlighter-rouge">dd</code> to create an empty file that
+will act as our block device. Once it runs, <code class="highlighter-rouge">mir-block-test</code> will write a series
+of patterns to the block device and read them back to check that they are the
+same (the logic for this is in <code class="highlighter-rouge">unikernel.ml</code> within the <code class="highlighter-rouge">Block_test</code> module).</p>
+
+<p>The Xen version works the same way. First build the code:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mirage configure -t xen
+$ make
+$ ./generate_disk_img.sh # only required if not executed as above
+</code></pre>
+</div>
+
+<p>This will output a Xen config file called <code class="highlighter-rouge">block_test.xl</code>. It will look
+approximately like this (note the additional <code class="highlighter-rouge">disk</code> definition that was
+generated automatically by Mirage):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Generated by Mirage (Mon, 20 Jul 2015 12:23:24 GMT).
+
+name = 'block_test'
+kernel = '/Users/djs/djs55/mirage-skeleton/block/mir-block_test.xen'
+builder = 'linux'
+memory = 256
+on_crash = 'preserve'
+
+disk = [ 'format=raw, vdev=xvdb, access=rw, target=/Users/djs/djs55/mirage-skeleton/block/disk.img' ]
+</code></pre>
+</div>
+
+<p>Now you just need to boot the VM as before, and you should see the same output
+(after the VM boot preamble) – but now MirageOS is linked against the Xen
+<a href="https://github.com/mirage/mirage-block-xen">block device driver</a> and is mapping
+the unikernel’s block requests directly through to it, rather than relying on
+the host OS (the Linux or FreeBSD kernel):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[root@st20 block]# xl create -c block_test.xl
+Parsing config from block_test.xl
+MirageOS booting....
+Initialising timer interface
+Initialising console ... done.
+2016-05-20 13:13.27: INF [blkfront] Blkfront.connect 51728: interpreting 51728 as a xen virtual disk bus slot number
+2016-05-20 13:13.27: INF [blkfront] Blkfront.connect 51728 -&gt; 51728
+2016-05-20 13:13.27: INF [blkfront] Blkfront.plug id=51728
+2016-05-20 13:13.27: INF [blkfront] Blkback can only use a single-page ring
+2016-05-20 13:13.27: INF [blkfront] Negotiated a single-page ring
+2016-05-20 13:13.27: INF [blkfront] Blkfront.alloc ring Blkif.51728 header_size = 64; index slot size = 112; number of entries = 32
+2016-05-20 13:13.27: INF [blkfront] Blkfront info: sector_size=512 sectors=4194304 max_indirect_segments=256
+sectors = 524288
+read_write=true
+sector_size=4096
+writing 1 sectors at 0
+writing 1 sectors at 524287
+writing 2 sectors at 0
+writing 2 sectors at 524286
+writing 12 sectors at 0
+writing 12 sectors at 524276
+writing 1 sectors at 524288
+writing 12 sectors at 524277
+reading 1 sectors at 524288
+reading 12 sectors at 524277
+Test sequence finished
+Total tests started: 10
+Total tests passed:  10
+Total tests failed:  0
+port 4 still bound!
+$
+</code></pre>
+</div>
+
+<p>On ARM, when <code class="highlighter-rouge">qemu</code> is not available, it is better to do it through <code class="highlighter-rouge">losetup</code> so
+that you can access the ‘disk’:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo losetup -f ../block/disk.img
+$ sudo losetup -a
+</code></pre>
+</div>
+
+<p>Then edit the <code class="highlighter-rouge">block_test.xl</code> configuration so that the <code class="highlighter-rouge">disk</code> line reads as
+follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>disk = [ 'format=raw, vdev=xvdb, access=rw, target=/dev/loop0' ]
+</code></pre>
+</div>
+
+<h3 id="step-3-keyvalue-stores">Step 3: Key/value stores</h3>
+
+<p>The earlier block device example shows how very low-level access can work. Now
+let’s move up to a more familiar abstraction: a key/value store that can
+retrieve buffers from string keys. This is essential for many common uses such
+as retrieving configuration data or website HTML and images.</p>
+
+<p>The
+<a href="https://github.com/mirage/mirage-skeleton/tree/master/kv_ro_crunch">kv_ro_crunch/</a>
+directory in <code class="highlighter-rouge">mirage-skeleton</code> contains the simplest key/value store example.
+The subdirectory <code class="highlighter-rouge">t/</code> contains a couple of data files that the unikernel uses.
+Our example <code class="highlighter-rouge">unikernel.ml</code> reads in the data from one file and compares to the
+other file, printing out <code class="highlighter-rouge">YES</code> if the values match, and <code class="highlighter-rouge">NO</code> otherwise.</p>
+
+<p>The <code class="highlighter-rouge">config.ml</code> should look familiar after the earlier block and console
+examples:</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Mirage</span>
+
+<span class="k">let</span> <span class="n">main</span> <span class="p">=</span>
+  <span class="n">foreign</span> <span class="s2">"Unikernel.Main"</span> <span class="p">(</span><span class="n">console</span> <span class="o">@-&gt;</span> <span class="n">kv_ro</span> <span class="o">@-&gt;</span> <span class="n">kv_ro</span> <span class="o">@-&gt;</span> <span class="n">job</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="n">disk1</span> <span class="p">=</span> <span class="n">crunch</span> <span class="s2">"t"</span>
+<span class="k">let</span> <span class="n">disk2</span> <span class="p">=</span> <span class="n">crunch</span> <span class="s2">"t"</span>
+
+<span class="k">let</span> <span class="bp">()</span> <span class="p">=</span>
+  <span class="n">register</span> <span class="s2">"kv_ro"</span> <span class="p">[</span><span class="n">main</span> <span class="o">$</span> <span class="n">default_console</span> <span class="o">$</span> <span class="n">disk1</span> <span class="o">$</span> <span class="n">disk2</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>We construct the <code class="highlighter-rouge">kv_ro</code> devices (<code class="highlighter-rouge">disk1</code> and <code class="highlighter-rouge">disk2</code>) by using the <code class="highlighter-rouge">crunch</code>
+function. This takes a single directory as its argument, and converts that
+entire directory into a static ML file that can respond with the file contents
+directly. This removes the need to have an external block device entirely and is
+very convenient indeed for small files.</p>
+
+<p>Build the example and run it in the usual way under either Unix or Xen. Because
+this no longer needs an external block device, you can run it under Xen without
+having to edit the <code class="highlighter-rouge">xl</code> configuration file at all. You can read the generated ML
+file by looking at the <code class="highlighter-rouge">static1.ml</code> file in your build tree.</p>
+
+<p>Unix:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd </span>kv_ro_crunch
+<span class="gp">$ </span>mirage configure -t unix
+<span class="gp">$ </span>make
+<span class="gp">$ </span>less static1.ml <span class="c"># the generated filesystem</span>
+<span class="gp">$ </span>./mir-kv_ro
+</code></pre>
+</div>
+
+<p>Xen:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mirage configure -t xen
+<span class="gp">$ </span>make
+<span class="gp">$ </span>sudo xl create -c kv_ro.xl
+Parsing config from kv_ro.xl
+MirageOS booting....
+Initialising timer interface
+Initialising console ... <span class="k">done</span>.
+YES!
+YES!
+YES!
+YES!
+YES!
+YES!
+YES!
+YES!
+YES!
+YES!
+</code></pre>
+</div>
+
+<p>Of course, this scheme doesn’t really scale up to large websites, and we often
+need a more elaborate configuration for larger datasets depending on how we are
+deploying our unikernels (i.e. for development or production). Switch to the
+<a href="https://github.com/mirage/mirage-skeleton/tree/master/kv_ro">kv_ro/</a> directory,
+which has exactly the same example as before, but with several new configuration
+options: it can generate a block device that contains a FAT filesystem that
+mirror the directory contents, or (when running under Unix) simply proxy calls
+dynamically to the underlying filesystem.</p>
+
+<p>Since the <code class="highlighter-rouge">config.ml</code> file is normal OCaml that is executed at build time, all
+of this selection logic is simple enough.</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Mirage</span>
+
+<span class="k">let</span> <span class="n">disk</span> <span class="p">=</span> <span class="n">generic_kv_ro</span> <span class="s2">"t"</span>
+
+<span class="k">let</span> <span class="n">main</span> <span class="p">=</span>
+  <span class="n">foreign</span> <span class="s2">"Unikernel.Main"</span> <span class="p">(</span><span class="n">console</span> <span class="o">@-&gt;</span> <span class="n">kv_ro</span> <span class="o">@-&gt;</span> <span class="n">kv_ro</span> <span class="o">@-&gt;</span> <span class="n">job</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="bp">()</span> <span class="p">=</span>
+  <span class="n">register</span> <span class="s2">"kv_ro"</span> <span class="p">[</span><span class="n">main</span> <span class="o">$</span> <span class="n">default_console</span> <span class="o">$</span> <span class="n">disk</span> <span class="o">$</span> <span class="n">disk</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>This example is controlled by setting the <code class="highlighter-rouge">FS</code> environment variable at build
+time. If you set it to <code class="highlighter-rouge">fat</code>, then the configuration tool will generate the
+appropriate settings for external filesystem access.</p>
+
+<p>On OSX:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mirage configure -t unix --kv_ro fat
+<span class="gp">$ </span>./make-fat1-image.sh
+<span class="gp">$ </span>file fat1.img
+fat1.img: x86 boot sector, code offset 0x0, OEM-ID <span class="s2">"ocamlfat"</span>,
+sectors/cluster 4, FAT  1, root entries 512, Media descriptor 0xf8,
+sectors/FAT 1, sectors 49 <span class="o">(</span>volumes &gt; 32 MB<span class="o">)</span> , dos &lt; 4.0 BootSector <span class="o">(</span>0x0<span class="o">)</span>
+</code></pre>
+</div>
+
+<p>or, on Linux:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mirage configure -t unix --kv_ro fat
+<span class="gp">$ </span>./make-fat1-image.sh
+<span class="gp">$ </span>file fat1.img
+fat1.img: x86 boot sector
+</code></pre>
+</div>
+
+<p>However, notice that the definition of <code class="highlighter-rouge">disk</code> now checks to see if the build is
+happening on Unix or Xen when crunch mode is requested. If the build is Xen,
+then a statically linked filesystem is used. On Unix however, the overhead of
+building this can be removed by simply passing through to the underlying
+filesystem, which is done via the <code class="highlighter-rouge">direct_kv_ro</code> implementation.</p>
+
+<p>You should now be seeing the power of the MirageOS configuration tool: we have
+built several applications that use fairly complex concepts such as filesystems
+and block devices that are independent of the implementations (by virtue of our
+application logic being a functor), and then are able to assemble several
+combinations of unikernels via relatively simple configuration files.</p>
+
+<h3 id="step-4-networking">Step 4: Networking</h3>
+
+<p>Block devices don’t require a huge amount of configuration, but now we move onto
+networking, which has far more knobs attached. There are several ways that we
+might want to configure our networking:</p>
+
+<ul>
+  <li>On Unix, it’s convenient to use the standard kernel socket API for developing
+higher level protocols (such as
+<a href="http://github.com/mirage/ocaml-cohttp">HTTP</a>). These run over TCP or UDP and
+so sockets work just fine.</li>
+  <li>When we want finer control over the network stack, or simply to test the OCaml
+networking subsystem, we can use a userspace device facility such as the
+common Unix <a href="http://en.wikipedia.org/wiki/TUN/TAP">tuntap</a> to parse Ethernet
+frames from userspace. This requires additional configuration to assign IP
+addresses, and possibly configure a network bridge to let the unikernel talk
+to the outside world.</li>
+  <li>Once the unikernel works under Unix with the direct
+<a href="https://github.com/mirage/mirage-tcpip">OCaml TCP/IP stack</a>, recompiling it
+under Xen is just a matter of linking in the
+<a href="https://github.com/mirage/mirage-net-xen">Xen netfront</a> driver to provide the
+Ethernet frames directly to the unikernel.</li>
+</ul>
+
+<p>All of this can be manipulated via the <code class="highlighter-rouge">config.ml</code> file through standard OCaml
+code as before; we use the <code class="highlighter-rouge">NET</code> environment variable in the example below. The
+example below is config.ml from the
+<a href="https://github.com/mirage/mirage-skeleton/tree/master/stackv4">stackv4/</a>
+directory in <code class="highlighter-rouge">mirage-skeleton</code>.</p>
+
+<div class="language-ocaml highlighter-rouge"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Mirage</span>
+
+<span class="k">let</span> <span class="n">handler</span> <span class="p">=</span> <span class="n">foreign</span> <span class="s2">"Unikernel.Main"</span> <span class="p">(</span><span class="n">console</span> <span class="o">@-&gt;</span> <span class="n">stackv4</span> <span class="o">@-&gt;</span> <span class="n">job</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="n">stack</span> <span class="p">=</span> <span class="n">generic_stackv4</span> <span class="n">default_console</span> <span class="n">tap0</span>
+
+<span class="k">let</span> <span class="bp">()</span> <span class="p">=</span>
+  <span class="n">register</span> <span class="s2">"stackv4"</span> <span class="p">[</span><span class="n">handler</span> <span class="o">$</span> <span class="n">default_console</span> <span class="o">$</span> <span class="n">stack</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>This configuration shows how composable the network stack subsystem is: the
+application can be configured at compile-time to either listen on a socket port
+(using the Linux kernel) <em>or</em> use tuntap directly – the application code
+remains the same. The definition of <code class="highlighter-rouge">main</code> just adds a new <code class="highlighter-rouge">stackv4</code> device
+driver.</p>
+
+<p>The <code class="highlighter-rouge">net</code> handler checks to see if it’s building for a socket or direct network
+stack. Crucially, both the socket and direct network stacks have a very similar
+modular API which you can see in
+<a href="https://github.com/mirage/mirage/blob/1.1.0/types/V1.mli#L512">mirage/types/V1.mli</a>.
+This lets your applications be parameterized across either backend.</p>
+
+<p>We then define the <code class="highlighter-rouge">dhcp</code> variable to configure the network stack to either use
+DHCP or using the “default” IPv4 address (for convenience, MirageOS assigns a
+default of <code class="highlighter-rouge">10.0.0.2</code> in this case; this is of course overridden for production
+deployments). The definition of <code class="highlighter-rouge">stack</code> then uses <code class="highlighter-rouge">dhcp</code> and <code class="highlighter-rouge">net</code> accordingly
+to set up the networking stack.</p>
+
+<p><br /></p>
+<div class="panel callout">
+  <i class="fa fa-info fa-3x pull-left"> </i>
+  <p>
+    You will have noticed by this stage that <code>mirage configure</code>
+    invokes OPAM to install any libraries that it needs. If your application
+    needs some extra packages, you can use the optional <code>~packages</code>
+    and <code>~libraries</code> arguments to <code>foreign</code> to add the
+    extra OPAM packages and ocamlfind libraries. For example, you could modify
+    the code above to add an <a href="https://github.com/mirage/mirage-http">HTTP library</a>.
+  </p>
+</div>
+
+<h4 id="unix--socket-networking">Unix / Socket networking</h4>
+
+<p>Let’s get the network stack compiling using the standard Unix sockets APIs
+first.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd </span>stackv4
+<span class="gp">$ </span>mirage configure -t unix --net socket
+<span class="gp">$ </span>make
+<span class="gp">$ </span>sudo ./mir-stackv4
+Manager: connect
+Manager: configuring
+Manager: socket config currently ignored <span class="o">(</span>TODO<span class="o">)</span>
+IP address: 0.0.0.0
+
+</code></pre>
+</div>
+
+<p>This Unix application is now listening simultaneously on 53/UDP and 8080/TCP,
+and will print to the console information about data received. Let’s try, using
+the commonly available <em>netcat</em> <code class="highlighter-rouge">nc(1)</code> utility. From a different console
+execute:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ echo -n hello udp world | nc -unw1 127.0.0.1 53
+[ 1 sec delay ]
+$ echo -n hello tcp world | nc -nw1 127.0.0.1 8080
+</code></pre>
+</div>
+
+<p>On the first console you should now see (each line in red, green and finally
+yellow respectively if your console supports it):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>UDP 127.0.0.1.59406 &gt; 0.0.0.0.53: "hello udp world"
+TCP 127.0.0.1.50997 &gt; _.8080
+read: 15 "hello tcp world"
+</code></pre>
+</div>
+
+<h4 id="unix--mirageos-stack-with-dhcp">Unix / MirageOS Stack with DHCP</h4>
+
+<p>Next, let’s try using the direct MirageOS network stack. On a pre-Yosemite Mac,
+be sure to install the <a href="http://tuntaposx.sourceforge.net/">tuntap</a> kernel module
+before trying this.</p>
+
+<p>Assuming you’ve got a DHCP server running:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd </span>stackv4
+<span class="gp">$ </span>mirage configure -t unix --dhcp <span class="nb">true</span> --net direct
+<span class="gp">$ </span>make
+<span class="gp">$ </span>sudo ./mir-stackv4
+Netif: connect unknown
+Manager: connect
+Manager: configuring
+DHCP: start discovery
+
+Sending DHCP broadcast <span class="o">(</span>length 552<span class="o">)</span>
+DHCP: start discovery
+
+Sending DHCP broadcast <span class="o">(</span>length 552<span class="o">)</span>
+DHCP response:
+input ciaddr 0.0.0.0 yiaddr 192.168.64.5
+siaddr 192.168.64.1 giaddr 0.0.0.0
+chaddr f2edd241cf3200000000000000000000 sname greyjay.mac.cl.cam.ac.uk file
+DHCP: offer received: 192.168.64.5
+DHCP options: Offer : DNS servers<span class="o">(</span>192.168.64.1<span class="o">)</span>, Routers<span class="o">(</span>192.168.64.1<span class="o">)</span>, Subnet mask<span class="o">(</span>255.255.255.0<span class="o">)</span>, Lease <span class="nb">time</span><span class="o">(</span>85536<span class="o">)</span>, Server identifer<span class="o">(</span>192.168.64.1<span class="o">)</span>
+Sending DHCP broadcast <span class="o">(</span>length 552<span class="o">)</span>
+DHCP response:
+input ciaddr 0.0.0.0 yiaddr 192.168.64.5
+siaddr 192.168.64.1 giaddr 0.0.0.0
+chaddr f2edd241cf3200000000000000000000 sname greyjay.mac.cl.cam.ac.uk file
+DHCP: offer received
+IPv4: 192.168.64.5
+Netmask: 255.255.255.0
+Gateways: <span class="o">[</span>192.168.64.1]
+ARP: sending gratuitous from 192.168.64.5
+DHCP offer received and bound to 192.168.64.5 nm 255.255.255.0 gw <span class="o">[</span>192.168.64.1]
+Manager: configuration <span class="k">done
+</span>IP address: 192.168.64.5
+
+</code></pre>
+</div>
+
+<p>The application starts up, issues a DHCP request and (eventually) receives a
+response allocating an address – in this case, <code class="highlighter-rouge">192.168.64.5</code>. Using that
+address we can then trigger the application logic with some network input from
+<code class="highlighter-rouge">nc(1)</code> in a separate terminal as before:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ echo -n hello udp world | nc -unw1 192.168.64.5 53
+$ echo -n hello tcp world | nc -nw1 192.168.64.5 8080
+</code></pre>
+</div>
+
+<p>The original terminal reports the ARP transactions invoked by the stack, and
+then reports the input received over UDP and TCP as previously:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ARP responding to: who-has 192.168.64.5?
+UDP 192.168.64.1.61367 &gt; 192.168.64.5.53: "hello udp world"
+ARP: transmitting probe -&gt; 192.168.64.1
+ARP: updating 192.168.64.1 -&gt; 12:dd:b1:3a:68:64
+TCP 192.168.64.1.51631 &gt; _.8080
+read: 15 "hello tcp world"
+</code></pre>
+</div>
+
+<h4 id="unix--mirageos-stack-with-static-ip-addresses">Unix / MirageOS Stack with static IP addresses</h4>
+
+<p><strong>N.B.</strong> <em>This is described below on Linux for Ubuntu 14.04. It was known to
+work on pre-Yosemite Mac OSX, but has not been tested on Yosemite where the new
+<code class="highlighter-rouge">vmnet</code> framework replaces <code class="highlighter-rouge">tuntap</code>.</em></p>
+
+<p>By default, if we do not use DHCP with a <code class="highlighter-rouge">direct</code> network stack, Mirage will
+configure the stack to use the <code class="highlighter-rouge">tap0</code> interface with an address of <code class="highlighter-rouge">10.0.0.2</code>.
+Verify that you have an existing <code class="highlighter-rouge">tap0</code> interface by reviewing <code class="highlighter-rouge">$ sudo ip
+link show</code>; if you do not, load the tuntap kernel module (<code class="highlighter-rouge">$ sudo modprobe tun</code>)
+and create a <code class="highlighter-rouge">tap0</code> interface owned by root (<code class="highlighter-rouge">$ sudo tunctl</code>). Bring <code class="highlighter-rouge">tap0</code> up
+using <code class="highlighter-rouge">$ sudo ifconfig tap0 10.0.0.1 up</code>, then:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd </span>stackv4
+<span class="gp">$ </span>mirage configure -t unix --dhcp <span class="nb">false</span> --net direct
+<span class="gp">$ </span>make
+<span class="gp">$ </span>sudo ./mir-stackv4
+Netif: plugging into tap0 with mac c2:9d:56:19:d7:2c
+Netif: connect tap0
+Manager: connect
+Manager: configuring
+Manager: Interface to 10.0.0.2 nm 255.255.255.0 gw <span class="o">[</span>10.0.0.1]
+
+ARP: sending gratuitous from 10.0.0.2
+Manager: configuration <span class="k">done
+</span>IP address: 10.0.0.2
+</code></pre>
+</div>
+
+<p>Now you should be able to ping the unikernel’s interface:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>ping 10.0.0.2
+PING 10.0.0.2 <span class="o">(</span>10.0.0.2<span class="o">)</span> 56<span class="o">(</span>84<span class="o">)</span> bytes of data.
+64 bytes from 10.0.0.2: <span class="nv">icmp_seq</span><span class="o">=</span>1 <span class="nv">ttl</span><span class="o">=</span>38 <span class="nb">time</span><span class="o">=</span>0.527 ms
+64 bytes from 10.0.0.2: <span class="nv">icmp_seq</span><span class="o">=</span>2 <span class="nv">ttl</span><span class="o">=</span>38 <span class="nb">time</span><span class="o">=</span>0.367 ms
+64 bytes from 10.0.0.2: <span class="nv">icmp_seq</span><span class="o">=</span>3 <span class="nv">ttl</span><span class="o">=</span>38 <span class="nb">time</span><span class="o">=</span>0.291 ms
+^C
+--- 10.0.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, <span class="nb">time </span>2005ms
+rtt min/avg/max/mdev <span class="o">=</span> 0.291/0.395/0.527/0.098 ms
+</code></pre>
+</div>
+
+<p>You will see the ARP request being handled in the unikernel’s terminal:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ARP responding to: who-has 10.0.0.2?
+ARP: transmitting probe -&gt; 10.0.0.1
+ARP: updating 10.0.0.1 -&gt; 6a:a8:fe:89:3c:67
+</code></pre>
+</div>
+
+<p>Finally, you can then execute the same <code class="highlighter-rouge">nc(1)</code> commands as before (modulo the
+target IP address of course!) to interact with the running unikernel:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ echo -n hello udp world | nc -unw1 10.0.0.2 53
+$ echo -n hello tcp world | nc -nw1 10.0.0.2 8080
+</code></pre>
+</div>
+
+<p>And you will see the same output in the unikernel’s terminal:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ARP responding to: who-has 10.0.0.2?
+UDP 10.0.0.1.58784 &gt; 10.0.0.2.53: "hello udp world"
+ARP: transmitting probe -&gt; 10.0.0.1
+ARP: updating 10.0.0.1 -&gt; ee:85:43:d5:d9:4d
+TCP 10.0.0.1.47329 &gt; _.8080
+read: 15 "hello tcp world"
+ARP: timeout 10.0.0.1
+</code></pre>
+</div>
+
+<p>(The last line will be displayed after a delay dependent on the ARP timeout
+setting.)</p>
+
+<h4 id="xen">Xen</h4>
+
+<p>At this point, recompiling a Xen unikernel is pretty straightforward. The
+configuration file already disables the socket-based job if a Xen compilation is
+detected, leaving just the OCaml TCP/IP stack.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mirage configure -t xen --dhcp true
+$ make
+</code></pre>
+</div>
+
+<p>You will need to configure an appropriate Xen
+<a href="http://wiki.xen.org/wiki/Xen_Networking">network bridge</a> to connect to this.
+The <code class="highlighter-rouge">mirage configure</code> command will guess the name of the bridge or openvswitch
+to use based on the configuration of the build host. The generated <code class="highlighter-rouge">stackv4.xl</code>
+will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Generated by Mirage (Tue, 11 Aug 2015 21:05:57 GMT).
+
+name = 'stackv4'
+kernel = '/root/djs55/mirage-skeleton/stackv4/mir-stackv4.xen'
+builder = 'linux'
+memory = 256
+on_crash = 'preserve'
+
+disk = [  ]
+
+# if your system uses openvswitch then either edit /etc/xen/xl.conf and set
+#     vif.default.script="vif-openvswitch"
+# or add "script=vif-openvswitch," before the "bridge=" below:
+vif = [ 'bridge=xenbr0' ]
+</code></pre>
+</div>
+
+<p>This tells Xen to bring up the virtual network interface and add it to the
+<code class="highlighter-rouge">xenbr0</code> bridge. Depending on the dom0 interface configuration, usually
+specified in <code class="highlighter-rouge">/etc/network/interfaces</code>, this will be brought up with a static IP
+address or with a DHCP address. For example, in the Mirage Ubuntu 14.04
+<a href="https://github.com/mirage/mirage-vagrant-vms/">Vagrant VM</a>, the following lines
+are uncommented:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>(network-script network-bridge)
+(vif-script vif-bridge)
+</code></pre>
+</div>
+
+<p>And the bridge interface is configured in <code class="highlighter-rouge">/etc/network/interfaces</code> as:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>auto xenbr0
+iface xenbr0 inet dhcp
+  bridge_ports eth0
+</code></pre>
+</div>
+
+<p>Finally, you can manually inspect the generated <code class="highlighter-rouge">main.ml</code> file to see what’s
+happening under the hood with the functor applications.</p>
+
+<p>Now that we’ve covered the basics of configuration, block devices and
+networking, let’s get the real MirageOS website up and running with a
+<a href="/wiki/mirage-www">networked application</a>.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2016-03-02</title>
+  <meta name="description" content="2nd Mar 2016: Decision to drop 4.01, 2.7 released, Hackathon and CI.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2016-03-02">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2016-03-02</h1>
+  </header>
+
+  <div class="article-content">
+    <p>2nd Mar 2016: Decision to drop 4.01, 2.7 released, Hackathon and CI.</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Quality and Test</li>
+  <li>MirageOS 2.7 released!</li>
+  <li>MirageOS Hackathon next week!</li>
+  <li>GSoC / Xen</li>
+  <li>Basic CI</li>
+  <li>Pinned packages</li>
+</ul>
+
+<p>Attendees:
+Amir, Gemma, Dan Williams, talex5, mindy, Drup, ThomasG, Mort, Hannes
+DavidK, SeanG, Anil, Chris ?, Daniel.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="quality-and-test">Quality and Test</h4>
+
+<ul>
+  <li>Anil working it. Got extra users now. Tests for 4.03.0 are running.</li>
+  <li>Folks should switch to <code class="highlighter-rouge">-ppx</code> extensions instead (anyone using camlp4 should
+switch)</li>
+  <li>Discussion and decision that we should move to 4.02 support only (i.e. drop
+support for 4.01). No strong objections to this in the last few weeks.</li>
+  <li><code class="highlighter-rouge">camlp4toppx</code> works really well. Rudi wrote a good blog post on this. Anil
+found some bugs so does it manually.</li>
+  <li>Need to jump over at some point to ppx :) Need to do it together.</li>
+  <li>If we had virtual packages it would have been easier to transition. Tedious
+to go through every single package. TG: sometimes you have new depopts?
+AM: Will take a look properly and figure it out. Virtual packages seem the way
+to go, but no clean answer right now.</li>
+  <li><code class="highlighter-rouge">cstruct</code> is one of the first packages that we need a pure version of (i.e.
+not camlp4). It has many reverse dependencies. To build, it doesn’t require
+camlp4.</li>
+  <li>Some comments about tyxml.</li>
+</ul>
+
+<h4 id="mirageos-27-released">MirageOS 2.7 released!</h4>
+
+<ul>
+  <li>Yay for release! Thanks everyone!</li>
+  <li>TG: Have seen an issue with the block devices. If you look at <code class="highlighter-rouge">mirage-www</code>
+we notice block device issues. <code class="highlighter-rouge">mirage-www</code> needs only one but mounts 5.</li>
+  <li>Gabriel thinks he knows why and will comment on the issue.</li>
+</ul>
+
+<h4 id="mirageos-hackathon">MirageOS Hackathon</h4>
+
+<ul>
+  <li>Hannes has booked flights. All seems to be fine!</li>
+  <li>Food at breakfast, 2pm and evening! All sorted.</li>
+  <li>Could possibly have people joining remotely, maybe folks from Cambridge.</li>
+  <li>How many people interested in that and is it possible to do that?
+    <ul>
+      <li>There’s internet at the venue and someone could do that (won’t be Hannes).</li>
+      <li>Benefit is it’s in the same time zone as the UK.</li>
+    </ul>
+  </li>
+  <li>Will use the IRC channel for comms if people want to join remotely.
+If anyone can transport books to Morocco, please tell Hannes :)</li>
+</ul>
+
+<h4 id="gsoc--xen">GSoC / Xen</h4>
+
+<ul>
+  <li>Xen Project not part of GSoC this year. 2nd year in a row that Xen isn’t
+selected. Many other orgs didn’t get selected either.</li>
+  <li>SG: Clojure org not selected either  and they have been for several years.
+Seems like Google just narrowing their organisation inclusion criteria.</li>
+  <li>Suggestion about applying as unikernel.org. AC will take a look at
+requirements.</li>
+  <li>Suggestion to look into ESA summer of code.</li>
+  <li>We’re still part of Outreachy though.</li>
+</ul>
+
+<h4 id="basic-ci">Basic CI</h4>
+
+<ul>
+  <li>SeanG was surprised that when we went to deploy, he hit the <code class="highlighter-rouge">bootvar</code> issue
+when deploying to public cloud. Having some basic test harness would be good.</li>
+  <li>Looking at setting up a unikernel workshop at the OCaml meetups and having a
+CI set up would be great for this. Sean can take a crack at getting this up
+and running.</li>
+  <li>SeanG’s tests needs to be running on EC2 to test things. As we move into
+more real world production it’ll be an issue.</li>
+  <li>Need to have test set ups working for all major cloud providers. Current
+testing is mostly compilation and units tests (e.g. <code class="highlighter-rouge">mirage-skeleton</code>). Should
+also be testing <code class="highlighter-rouge">bootvars</code> to see if it can handle arbitrary things.</li>
+  <li>We’re missing an end-to-end solution.</li>
+  <li>Spiros has EC2 bindings so Mindy will plan a blog post. SG: Mindy’s scripts
+were really useful in getting started — thank you for those.</li>
+</ul>
+
+<h4 id="pinned-packages">Pinned packages</h4>
+
+<ul>
+  <li>SG: Wants to deploy unikernel-based service at his company. Need to have a
+consistent dev environment to share with others. Has manual instructions to
+pin packages (frustrating). People should make releases (but even then,
+doesn’t deal with the problem of versions.).  Maybe functoria can be used to
+define things?</li>
+  <li>AM: Maybe have mirage output a manifest and that’s consumed by opam (instead
+of baking opam into Mirage). Then we can use container infrastructure. Trying
+to control everything from config.ml is difficult.</li>
+  <li>Containers make OPAM much easier. Right environment with everything
+precompiled. Easy for app to build on top of the container rather than
+controlling everything via config.ml</li>
+  <li>Can also create your own remotes with packages. It’s a pain but it does work
+and only requires one instruction.</li>
+  <li>These days we should not really call opam from within mirage :)  Would make
+it easier to run mirage in a deployment pipeline. Would also make sense to
+remove the depexts.</li>
+  <li>Most of this possible but not well integrated yet. Would like to get a
+config.ml to dockerfile thing.</li>
+  <li>Need better cross-platform support.</li>
+  <li>SG: Unclear about how mirage creates a makefile.</li>
+  <li>DBuenzli: cross compilation for 1.3 in opam? Louis has a lot of stuff to
+work on for opam internals. Windows has made good progress too. If anyone has
+time to look at windows stuff, that would be useful too.</li>
+</ul>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Are video calls useful to people? Thoughts that calls are not useful without
+previous notes. Amir thinks calls are useful as long as people contribute to
+an agenda. Can try an IRC meeting during the Hackathon.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>16th March</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

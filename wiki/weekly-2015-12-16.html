@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-12-16</title>
+  <meta name="description" content="16th December 2015: Conduit, Unikernel Events and end of 2015!">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-12-16">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-12-16</h1>
+  </header>
+
+  <div class="article-content">
+    <p>16th December 2015: Conduit, Unikernel Events and end of 2015!</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>vchan and conduit</li>
+  <li>Unikernel Events
+    <ul>
+      <li>CIF16 (CfP closes 19 Dec, event is in Pasadena CA on 22 Jan)</li>
+      <li>Hello World party</li>
+      <li>Hackathon</li>
+    </ul>
+  </li>
+  <li>Blog posts
+    <ul>
+      <li>Status updates (unikernel.org, Charrua, end-of-year)</li>
+    </ul>
+  </li>
+  <li>Pioneer Projects
+    <ul>
+      <li>review of list (1 star projects esp)</li>
+      <li>outreachy (progress so far)</li>
+    </ul>
+  </li>
+  <li>Last call of 2015!</li>
+</ul>
+
+<p>Attendees:
+Amir Chaudhry (chair), Thomas Leonard, Jon Ludlam, Mindy Preston, Dave Scott, 
+Dan Williams, Jeremy Yallop, Wassim.</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="vchan-and-conduit">vchan and conduit</h4>
+
+<ul>
+  <li>JonL not had a chance to look at vchan. Hopefully will have more time soon.</li>
+  <li>It comes up during the logging discussions and etc.</li>
+  <li>Mindy has used conduit, but can’t really answer q’s for others. Reminder
+that <code class="highlighter-rouge">Conduit</code> is a an abstraction over networking things, including <code class="highlighter-rouge">vchan</code>.</li>
+</ul>
+
+<h4 id="functoria">Functoria</h4>
+
+<ul>
+  <li>Jeremy submitted a patch and Thomas merged.</li>
+  <li>JonL made it work this time (possible that last time was due to older
+MiniOS). Had to pin <code class="highlighter-rouge">mirage-xen-bootvar</code> repo as released version didn’t work.</li>
+  <li>Magnus has been looking after that. Has merged all patches submitted and
+will check if we need a release. Mindy and JonL will then try.</li>
+  <li>Drup’s patch is important to look at.  That was also merged last night.
+Folks should try Functoria master branch.</li>
+</ul>
+
+<h4 id="unikernel-events">Unikernel Events</h4>
+
+<p><strong>Cloud Innovator Forum</strong> — Submitted three proposals. Some would rather be at
+dev/winter but will submit anyway.  Jeremy can help prep something. Dan will
+submit a talk to CIF16.</p>
+
+<p><strong>Unikernel install party</strong> — Some folks would like this. Who’s going to lead?
+Needs a date (Feb 22nd?). Mindy can help but not be responsible for
+organisation.</p>
+
+<p><strong>MirageOS hackathon</strong> — Seems there are a bunch of ppl interested.</p>
+
+<h4 id="blog-posts">Blog posts</h4>
+
+<p><strong>MirageOS end-of-year review</strong> — Status update.  Jeremy made a list of things
+to look at.  If someone from community with an outsider perspective would like
+to help with this, that would be great. Our understanding is that Anil will
+write this.</p>
+
+<p><strong>Unikernel.org post</strong> - Ok to merge?</p>
+
+<p><strong>Charrua post</strong> - Will merge this post tomorrow. Mort to check things work.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p><strong>1 star projects</strong> — Should review the list.  Email list to ask for more
+projects. Maybe add time-rating.</p>
+
+<p><strong>Outreachy</strong> — One student will be working on NTP. Should invite them to join
+the calls.</p>
+
+<h4 id="last-call-of-2015">Last call of 2015!</h4>
+
+<p>Happy holidays!</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>TL been adding netback support. Messing with Dave’s and it’s working and can
+send packets. Looking at Mindy’s NAT lib - soon to make firewall for QubesOS!</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>NEXT YEAR!</strong> Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

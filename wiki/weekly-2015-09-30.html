@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-09-30</title>
+  <meta name="description" content="30th September 2015: Functoria, Irmin plans, numbering and Pioneers">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-09-30">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-09-30</h1>
+  </header>
+
+  <div class="article-content">
+    <p>30th September 2015: Functoria, Irmin plans, numbering and Pioneers</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Functoria</li>
+  <li>Irmin roadmap</li>
+  <li>Version numbering</li>
+  <li>Pioneer Projects</li>
+</ul>
+
+<p>Attendees:
+Reynir Björnsson, Daniel Bünzli, Amir Chaudhry (chair), Justin Cormack,
+Thomas Gazagnaire, David Kaloper, Thomas Leonard, Anil Madhavapeddy,
+Mindy Preston, Dave Scott, Magnus Skjegstad, Guybrush Threepwood and
+Jim Tittlser</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="functoria">Functoria</h4>
+
+<p><em>See <a href="https://github.com/mirage/mirage/pull/441">mirage/mirage#441</a></em></p>
+
+<p>There’s been work towards a new EDSL that’s captured in a library called
+Functoria.  We discussed this last time and it needed rebasing due to an
+earlier <code class="highlighter-rouge">.xl</code> patch being merged.</p>
+
+<p>Things have been cleaned up with the patch but it seems there have been some
+issues with Travis, which someone needs to take a closer look at.  Someone
+also needs to review and test the patch (Anil will do this, feedback from
+others also welcome). The examples should also be checked over.</p>
+
+<p>One thing we know is still missing as there’s an opportunity to retain the
+shorthand flags we have for <code class="highlighter-rouge">--xen</code> and <code class="highlighter-rouge">--unix</code> as part of the configure step.
+ThomasG’s not had a chance to look at that yet but would be great to keep them
+if we can.  There’s also been some work on related tools we use (cmdliner), to
+add support for environment variables (<a href="https://github.com/dbuenzli/cmdliner/commit/e82fd02842719167c3a04fc7ed0edf9a8036203c">dbuenzli/cmdliner@e82fd02</a>).</p>
+
+<p>Aside from the code review, there’s already a draft blog post prepared (Amir
+will review), as well as a note for the <a href="https://mirage.io/wiki/breaking-changes">breaking changes</a> page of
+the website (a few things may change for some people).</p>
+
+<p>Getting the IPV6 support in was also blocked on the configuration step too.
+Once we’ve completed the releases around Functoria, we can work on getting an
+IPV6 site up!</p>
+
+<h4 id="irmin-roadmap">Irmin roadmap</h4>
+
+<p>There are a number of things we can be doing with Irmin so there’s a question
+of how we decide what exactly what we should work on next. It seems people
+have lists of things they’d like to get done but pulling these into a clearer
+plan would be helpful.</p>
+
+<p>ThomasL can compile Irmin to Javascript and then call it from Javascript.
+It’s a bit ugly but can be done and talks more about ‘repos’ and ‘branches’
+rather than ‘stores’.  This might be something to make more consistent within
+Irmin.  Would also like to get rid of <code class="highlighter-rouge">create</code> and clean up the webserver.
+Built an <a href="https://github.com/talex5/irmin-www">Irmin-based webserver</a> but is currently missing the
+ability to ‘push to the server’ and ‘pull from the server’.
+You can see the Irmin JS bindings at <a href="https://github.com/talex5/irmin-js">talex5/irmin-js</a>.
+ThomasL is still new to Javascript so would be very happy to hear from anyone
+who can show him a better syntax for the examples. There’s an attempt at:
+<a href="https://github.com/talex5/irmin-js/blob/master/examples/tests.js">https://github.com/talex5/irmin-js/blob/master/examples/tests.js</a></p>
+
+<p>ThomasG is currently focused on upstreaming patches from work that Mounir did
+earlier this year (chunking and encryption).  This is going well and involves
+some minimal changes to the API.  The main change is a new link store (where
+you can store links between keys).</p>
+
+<p>There are also improvements to be made on the REST API — which kind of isn’t
+at the moment! It would be great if someone would be able to take look at that.
+For now, the only users of this are the Go bindings.  Given this, perhaps we
+can look at other REST implementations, then (re)write the bindings with the
+API we’d like and then modify Irmin.</p>
+
+<p>ThomasL also noticed a lot of memory usage while working with <code class="highlighter-rouge">ocaml-git</code> and
+wondered what might be going on.  Amir mentioned that we’d seen this before
+during work on ‘cosmetrics’ and Christophe filed issues with test cases (e.g.
+<a href="https://github.com/mirage/irmin/issues/263">mirage/irmin#263</a> and <a href="https://github.com/mirage/ocaml-git/issues/125">mirage/ocaml-git#125</a>). Any assistance with these
+would be appreciated!</p>
+
+<p>Although all the above are useful things to work on, the most important thing
+to solve is the garbage collection, because it hasn’t been worked on yet. At
+the moment it’s enough to shell out to <code class="highlighter-rouge">git gc</code> but we need to take care about
+locking and following the Git model properly.</p>
+
+<p>In the short term, ThomasG is making a 0.9.10 release now with some changes
+and is happy to let ThomasL improve the API beyond that.  The next release
+will have no 1st class modules so a few things will break, including <a href="https://github.com/mirage/jitsu">Jitsu</a>.
+ThomasG will talk to people affected by such changes and support any
+transitions (this a good reason to add relevant projects to the
+<a href="https://github.com/mirage/irmin/blob/master/README.md#use-cases">list of Irmin users</a>. ThomasG then knows who’s stuff he might be
+breaking ☺ )</p>
+
+<h4 id="version-numbering">Version numbering</h4>
+
+<p>After the last call, we started a discussion on aspects of release numbering
+(see the <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-09/msg00021.html">thread</a>). It seems this is a difficult problem to discuss by
+email as we can’t try to solve the general problem.</p>
+
+<p>This discussion came about as we will soon release functoria and a new <code class="highlighter-rouge">mirage</code>
+tool which will introduce a few incompatible changes. Hence we also thought
+about how we bump version numbers of certain libraries.</p>
+
+<p>Related to this is the question of what it means to have a ‘version’ of
+MirageOS, which occasionally crops up. This is complicated by the fact that
+were talking about a <a href="https://en.wikipedia.org/wiki/Unikernel">library OS</a> and the libraries necessarily have
+their own versions — and people can pick and choose what they need for their
+own purposes.  It may be stating the obvious but MirageOS is more than the
+<code class="highlighter-rouge">mirage</code> tool itself, even though this is what people may interact with the
+most (e.g. it’s natural to think of trying <code class="highlighter-rouge">mirage --version</code> to find out what
+you have installed). Having said this, when we’ve released a collection of new
+things with new functionality we still label them as ‘<a href="https://mirage.io/blog/announcing-mirage10">MirageOS v1.0</a>’,
+‘<a href="https://mirage.io/blog/announcing-mirage-20-release">MirageOS v2.0</a>’ and ‘<a href="https://mirage.io/blog/announcing-mirage-25-release">MirageOS v2.5</a>’ in news announcements and
+this (broadly) maps to the version of the <code class="highlighter-rouge">mirage</code> tool at the time.</p>
+
+<p>Daniel pointed out that we can think of this in two aspects.  The first aspect
+is the API that developers will program against and the second is the tooling
+around the API.  When the the tooling changes, then although some things are
+affected, it’s limited to those parts that make use of that tooling.  In this
+case, the effects on the <code class="highlighter-rouge">config.ml</code> files is something that affects the
+tooling, so isn’t a ‘major’ change.  A change in the API would have a wider
+impact.</p>
+
+<p>This also led to some discussion about how we think of API versions and even
+whether we should be having one opam package per module type. We still need to
+think more about these things though.</p>
+
+<p>In the meantime, one suggestion was to adjust the output of <code class="highlighter-rouge">mirage --version</code>
+so that it produces more information about what’s installed (perhaps something
+similar to <code class="highlighter-rouge">opam config report</code>).  That would be useful to manage the
+expectations between the <code class="highlighter-rouge">mirage</code> tool itself and what we talk about in news
+announcements. Whatever changes we make need to be thought about, since this
+output should be readable programatically.</p>
+
+<p>In any case, we should take care to continue to communicate
+<a href="https://mirage.io/wiki/breaking-changes">breaking changes</a> clearly as well as putting out
+<a href="https://mirage.io/releases/">release notes</a>.</p>
+
+<!--
+Since we were discussing numbering, Amir was really hoping to insert a joke
+about off-by-one errors — but that didn't happen. So he left this HTML comment
+here as lamentation :-P
+-->
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p>MirageOS is taking part in <a href="https://wiki.gnome.org/Outreachy/2015/DecemberMarch#Participating_Organizations">Outreachy</a> this year, via Xen Project.  A number
+of people have already been in touch (which is great!) and we’ve reviewed our
+<a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">project list</a> already.  If anyone is interested in a project, please
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">email the list</a> and let us know!</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Anil is trying to do more automated builds around mirage/mirage and using
+CISO to build on pushes.  Hopefully can retire is-mirage-broken when this is
+done.</p>
+  </li>
+  <li>
+    <p>Dave has been working on the <code class="highlighter-rouge">xl</code> files stuff and has a small roadmap
+(<a href="https://github.com/mirage/mirage/issues/443">mirage/mirage#443</a>) with a few issues in it.  Will go through this in the
+background over time and slowly improve the deployment steps.</p>
+  </li>
+  <li>
+    <p>The OpenBSD port is nearly complete but it needs a release of <code class="highlighter-rouge">nocrypto</code> to
+be able to finish it off. DavidK will look at this and release when ready.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 14th October</strong>. Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

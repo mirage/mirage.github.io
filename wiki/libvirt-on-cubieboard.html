@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Libvirt On Cubieboard</title>
+  <meta name="description" content="Bringing up the board">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/libvirt-on-cubieboard">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Libvirt On Cubieboard</h1>
+  </header>
+
+  <div class="article-content">
+    <h4 id="bringing-up-the-board">Bringing up the board</h4>
+
+<ol>
+  <li>
+    <p>Download and unpack the image for your board.</p>
+
+    <p><a href="http://blobs.openmirage.org/cubieboard2-xen-iso.tar.bz2">For the cubieboard2</a></p>
+
+    <p><a href="http://blobs.openmirage.org/cubietruck-xen-iso.tar.bz2">For the cubietruck</a></p>
+  </li>
+  <li>
+    <p>Copy to the SDcard, e.g.</p>
+
+    <p><code class="highlighter-rouge">dd if=cubie.img of=/dev/mmcblk0</code></p>
+  </li>
+  <li>
+    <p>Boot the device. It should get an IP address by DHCP.</p>
+  </li>
+  <li>
+    <p>The device announces a .local name using mDNS, so you should be able to ssh to $BOARD.local</p>
+
+    <p><code class="highlighter-rouge">
+ ssh mirage@cubieboard2.local.
+</code></p>
+  </li>
+  <li>
+    <p>To change hostname of the cubieboard:</p>
+
+    <p>edit /etc/hosts</p>
+
+    <p><code class="highlighter-rouge">
+ 127.0.1.1       newname
+</code></p>
+
+    <p>edit /etc/hostname</p>
+
+    <p><code class="highlighter-rouge">
+ newname
+</code></p>
+  </li>
+  <li>
+    <p>To change the cubieboard to get a static ip address:</p>
+
+    <p>edit /etc/network/interfaces and update with:</p>
+
+    <p>```
+ auto lo
+ iface lo inet loopback</p>
+
+    <p>auto eth0
+ iface eth0 inet manual
+   up ip link set eth0 up</p>
+
+    <p>auto br0
+ iface br0 inet static
+   bridge_ports eth0
+   address 192.168.1.11
+   broadcast 192.168.1.255
+   netmask 255.255.255.0
+   gateway 192.168.1.254
+ ```</p>
+  </li>
+  <li>
+    <p>reboot</p>
+  </li>
+</ol>
+
+<h4 id="ssh">SSH</h4>
+
+<p>To set up ssh:</p>
+
+<ol>
+  <li>
+    <p><code class="highlighter-rouge">ssh mirage@192.168.1.11</code> (password: mirage)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">ssh-keygen</code></p>
+  </li>
+  <li>
+    <p>logout (ctrl-d)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">scp ~/.ssh/id_rsa.pub mirage@192.168.1.11:.ssh/authorized_keys</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">ssh mirage@192.168.1.11</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">chmod 700 ~/.ssh</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">chmod 600 ~/.ssh/authorized_keys</code></p>
+  </li>
+</ol>
+
+<h4 id="mirageos">MirageOS</h4>
+
+<p>You should now have a working Xen host (“xl list” to list current VMs, “lvcreate”
+to create guest disks).</p>
+
+<p>To install the ARM version of mirage:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>opam init
+opam install mirage
+</code></pre>
+</div>
+
+<p>You should now be able to follow the rest of the MirageOS tutorial.</p>
+
+<h4 id="libvirt">Libvirt</h4>
+
+<ol>
+  <li>
+    <p>To install libvirt (the precompiled version doesn’t contain the drivers for xen):</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install uuid-dev libxml2-dev libdevmapper-dev libpciaccess-dev \
+libnl-dev libxen-dev libgnutls-dev
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Download a release tarball from libvirt.org (I used 1.2.6). Download to local
+machine, decompress</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>scp libvirt-1.2.6.tar mirage@cubieboard2:
+ssh mirage@cubieboard2
+tar xf libvirt-1.2.6.tar
+rm libvirt-1.2.6.tar
+cd libvirt-1.2.6
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Configure:</p>
+
+    <p><code class="highlighter-rouge">
+ ./configure --prefix=/usr --localstatedir=/var  --sysconfdir=/etc --with-xen \
+ --with-qemu=no --with-gnutls --with-uml=no --with-openvz=no --with-vmware=no \
+ --with-phyp=no --with-xenapi=no --with-libxl=yes --with-vbox=no --with-lxc=no \
+ --with-esx=no  --with-hyperv=no --with-parallels=no --with-init-script=upstart
+</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">make</code></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">sudo make install</code></p>
+  </li>
+  <li>
+    <p>Create a ‘libvirt’ group if one doesn’t already exist</p>
+
+    <p><code class="highlighter-rouge">sudo addgroup libvirt</code></p>
+  </li>
+  <li>
+    <p>Add the two scripts (below, if they don’t already exist) to 
+/etc/init.d/libvirt-bin and /etc/default/libvirt-bin</p>
+  </li>
+  <li>
+    <p>Ensure that /etc/default/libvirt-bin has ‘-l’ to libvirtd_opts</p>
+  </li>
+  <li>
+    <p>Follow the instructions in http://wiki.libvirt.org/page/TLSSetup in install 
+tls on the cubieboards and admin machine</p>
+
+    <ul>
+      <li>Use the libvirt group instead of qemu as the owner of /etc/pki/libvirt/</li>
+    </ul>
+  </li>
+  <li>
+    <p>System init scripts:</p>
+
+    <p>```
+ cd /etc/rc5.d
+ sudo ln -s ../init.d/libvirt-bin S22libvirt-bin</p>
+
+    <p>cd /etc/rc6.d
+ sudo ln -s ../init.d/libvirt-bin K19libvirt-bin
+ sudo update-rc.d libvirt-bin defaults
+ sudo service libvirt-bin start
+ ```</p>
+  </li>
+  <li>
+    <p>Reboot the board</p>
+  </li>
+  <li>
+    <p>From the admin machine, edit /etc/hosts and add the cubieboard addresses and
+names so that (a) the names are resolvable and (b) matches the name on the certificates, e.g.</p>
+
+    <p><code class="highlighter-rouge">192.168.1.10 cubieboard2</code></p>
+  </li>
+  <li>
+    <p>Test that the admin machine can talk to the cubieboard:</p>
+
+    <p><code class="highlighter-rouge">sudo virsh -c xen://cubieboard2/system hostname</code></p>
+
+    <p>and you should get ‘cubieboard2’ returned, if not, ssh to the cubieboard 
+and check/restart the daemon (sudo service libvirt-bin start)</p>
+  </li>
+</ol>
+
+<p>To set up the admin machine to ensure another user (instead of root) can run virsh commands:</p>
+
+<p>On the admin machine:</p>
+
+<ol>
+  <li>
+    <p>Add the user to the libvirt group (on older releases of libvirt, this group 
+ is sometimes ‘libvirtd’)</p>
+  </li>
+  <li>
+    <p>Ensure that the clientcert.pem and clientkey.pem in /etc/pki/libvirt belong 
+ to the libvirt group, e.g.:</p>
+
+    <p><code class="highlighter-rouge">
+ sudo chgrp libvirt /etc/pki/libvirt/clientcert.pem
+ sudo chmod 440 /etc/pki/libvirt/clientcert.pem
+ sudo chgrp libvirt /etc/pki/libvirt/private/clientkey.pem
+ sudo chmod 440 /etc/pki/libvirt/private/clientkey.pem
+</code></p>
+  </li>
+  <li>
+    <p>Edit /etc/libvirt/libvirtd.conf and ensure unix_sock_group, unix_sock_ro_perms, 
+ unix_sock_rw_perms are uncommented, allowing users in the libvirt(d) group to use tls, i.e.</p>
+
+    <p><code class="highlighter-rouge">
+ unix_sock_group = "libvirt"
+ unix_sock_ro_perms = "0777"
+ unix_sock_rw_perms = "0770"
+</code></p>
+  </li>
+</ol>
+
+<p>On the cubieboard:</p>
+
+<ol>
+  <li>
+    <p>ssh into the cubieboard and create a user which matches the ‘admin’ user ( - ‘nick’ in my case),</p>
+
+    <p><code class="highlighter-rouge">sudo adduser 'username'</code></p>
+  </li>
+  <li>
+    <p>Add the admin user to the libvirt group</p>
+
+    <p><code class="highlighter-rouge">sudo adduser 'username' libvirt</code></p>
+  </li>
+  <li>
+    <p>Reboot</p>
+  </li>
+</ol>
+
+<p>The cubieboard should now be accessible remotely from a non-root account.</p>
+
+<p>Clone the mirage example mirage-skeleton/xen/static_website+ip</p>
+
+<p>Compile the example (this currently needs to be built on a cubieboard), and then 
+edit www.xl. Change the ipaddress, gateway etc. to suit, and then run the 
+virsh ‘domxml-from-native’ translator to get the libvirt xml file</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>virsh -c xen:/// domxml-from-native xen-xm www.xl &gt; www.xml
+virsh -c xen://cubie0/system create www.xml
+</code></pre>
+</div>
+
+<p><strong>/etc/default/libvirt-bin</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Defaults for libvirt-bin initscript (/etc/init.d/libvirt-bin)
+# This is a POSIX shell fragment
+
+# Start libvirtd to handle qemu/kvm:
+start_libvirtd="yes"
+
+# options passed to libvirtd, add "-l" to listen on tcp
+libvirtd_opts="-d -l"
+
+# pass in location of kerberos keytab
+#export KRB5_KTNAME=/etc/libvirt/libvirt.keytab
+</code></pre>
+</div>
+
+<p><strong>/etc/init.d/libvirt-bin</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+<span class="c">#</span>
+<span class="c"># Init script for libvirtd</span>
+<span class="c">#</span>
+<span class="c"># (c) 2007 Guido Guenther &lt;agx@sigxcpu.org&gt;</span>
+<span class="c"># based on the skeletons that comes with dh_make</span>
+<span class="c">#</span>
+<span class="c">### BEGIN INIT INFO</span>
+<span class="c"># Provides:          libvirt-bin libvirtd</span>
+<span class="c"># Required-Start:    $network $local_fs $remote_fs $syslog</span>
+<span class="c"># Required-Stop:     $local_fs $remote_fs $syslog</span>
+<span class="c"># Should-Start:      hal avahi cgconfig</span>
+<span class="c"># Should-Stop:       hal avahi cgconfig</span>
+<span class="c"># Default-Start:     2 3 4 5</span>
+<span class="c"># Default-Stop:      0 1 6</span>
+<span class="c"># Short-Description: libvirt management daemon</span>
+<span class="c">### END INIT INFO</span>
+
+<span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+<span class="nv">DAEMON</span><span class="o">=</span>/usr/sbin/libvirtd
+<span class="nv">NAME</span><span class="o">=</span>libvirtd
+<span class="nv">DESC</span><span class="o">=</span><span class="s2">"libvirt management daemon"</span>
+<span class="nb">export </span>PATH
+
+<span class="nb">test</span> -x <span class="nv">$DAEMON</span> <span class="o">||</span> <span class="nb">exit </span>0
+. /lib/lsb/init-functions
+
+<span class="nv">PIDFILE</span><span class="o">=</span>/var/run/<span class="nv">$NAME</span>.pid
+<span class="nv">DODTIME</span><span class="o">=</span>1                   <span class="c"># Time to wait for the server to die, in seconds</span>
+
+<span class="c"># Include libvirtd defaults if available</span>
+<span class="k">if</span> <span class="o">[</span> -f /etc/default/libvirt-bin <span class="o">]</span> ; <span class="k">then</span>
+	. /etc/default/libvirt-bin
+<span class="k">fi
+
+</span>check_start_libvirtd_option<span class="o">()</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">[</span> ! <span class="s2">"</span><span class="nv">$start_libvirtd</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"yes"</span> <span class="o">]</span>; <span class="k">then
+    </span>log_warning_msg <span class="s2">"Not starting libvirt management daemon libvirtd, disabled via /etc/default/libvirt-bin"</span>
+    <span class="k">return </span>1
+  <span class="k">else
+    return </span>0
+  <span class="k">fi</span>
+<span class="o">}</span>
+
+running_pid<span class="o">()</span>
+<span class="o">{</span>
+    <span class="c"># Check if a given process pid's cmdline matches a given name</span>
+    <span class="nv">pid</span><span class="o">=</span><span class="nv">$1</span>
+    <span class="nv">name</span><span class="o">=</span><span class="nv">$2</span>
+    <span class="o">[</span> -z <span class="s2">"</span><span class="nv">$pid</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>1 
+    <span class="o">[</span> ! -d /proc/<span class="nv">$pid</span> <span class="o">]</span> <span class="o">&amp;&amp;</span>  <span class="k">return </span>1
+    <span class="nv">cmd</span><span class="o">=</span><span class="sb">`</span>cat /proc/<span class="nv">$pid</span>/cmdline | tr <span class="s2">"</span><span class="se">\0</span><span class="s2">00"</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>|head -n 1 |cut -d : -f 1<span class="sb">`</span>
+    <span class="c"># Is this the expected child?</span>
+    <span class="o">[</span> <span class="s2">"</span><span class="nv">$cmd</span><span class="s2">"</span> !<span class="o">=</span> <span class="s2">"</span><span class="nv">$name</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span>  <span class="k">return </span>1
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+running<span class="o">()</span>
+<span class="o">{</span>
+<span class="c"># Check if the process is running looking at /proc</span>
+<span class="c"># (works for all users)</span>
+    <span class="c"># No pidfile, probably no daemon present</span>
+    <span class="o">[</span> ! -f <span class="s2">"</span><span class="nv">$PIDFILE</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>1
+    <span class="c"># Obtain the pid and check it against the binary name</span>
+    <span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>cat <span class="nv">$PIDFILE</span><span class="sb">`</span>
+    running_pid <span class="nv">$pid</span> <span class="nv">$DAEMON</span> <span class="o">||</span> <span class="k">return </span>1
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+force_stop<span class="o">()</span> <span class="o">{</span>
+<span class="c"># Forcefully kill the process</span>
+    <span class="o">[</span> ! -f <span class="s2">"</span><span class="nv">$PIDFILE</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return
+    if </span>running ; <span class="k">then
+        </span><span class="nb">kill</span> -15 <span class="nv">$pid</span>
+        <span class="c"># Is it really dead?</span>
+        <span class="o">[</span> -n <span class="s2">"</span><span class="nv">$DODTIME</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> sleep <span class="s2">"</span><span class="nv">$DODTIME</span><span class="s2">"</span>s
+        <span class="k">if </span>running ; <span class="k">then
+            </span><span class="nb">kill</span> -9 <span class="nv">$pid</span>
+            <span class="o">[</span> -n <span class="s2">"</span><span class="nv">$DODTIME</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> sleep <span class="s2">"</span><span class="nv">$DODTIME</span><span class="s2">"</span>s
+            <span class="k">if </span>running ; <span class="k">then
+                </span><span class="nb">echo</span> <span class="s2">"Cannot kill </span><span class="nv">$LABEL</span><span class="s2"> (pid=</span><span class="nv">$pid</span><span class="s2">)!"</span>
+                <span class="nb">exit </span>1
+            <span class="k">fi
+        fi
+    fi
+    </span>rm -f <span class="nv">$PIDFILE</span>
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> <span class="k">in
+  </span>start<span class="p">)</span>
+	<span class="k">if </span>check_start_libvirtd_option; <span class="k">then
+		</span>log_daemon_msg <span class="s2">"Starting </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span>
+        	<span class="k">if </span>running ;  <span class="k">then
+            		</span>log_progress_msg <span class="s2">"already running"</span>
+            		log_end_msg 0
+            		<span class="nb">exit </span>0
+        	<span class="k">fi
+		</span>rm -f /var/run/libvirtd.pid
+		start-stop-daemon --start --quiet --pidfile <span class="nv">$PIDFILE</span> <span class="se">\</span>
+			--exec <span class="nv">$DAEMON</span> -- <span class="nv">$libvirtd_opts</span>
+		<span class="k">if </span>running; <span class="k">then
+			</span>log_end_msg 0
+		<span class="k">else
+			</span>log_end_msg 1
+		<span class="k">fi
+	fi</span>
+	<span class="p">;;</span>
+  stop<span class="p">)</span>
+	log_daemon_msg <span class="s2">"Stopping </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span>
+	<span class="k">if</span> ! running ;  <span class="k">then
+           	</span>log_progress_msg <span class="s2">"not running"</span>
+            	log_end_msg 0
+            	<span class="nb">exit </span>0
+       	<span class="k">fi
+	</span>start-stop-daemon --stop --quiet --pidfile <span class="nv">$PIDFILE</span> <span class="se">\</span>
+		--exec <span class="nv">$DAEMON</span>
+	log_end_msg 0
+	<span class="p">;;</span>
+  force-stop<span class="p">)</span>
+	log_daemon_msg <span class="s2">"Forcefully stopping </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span>
+	force_stop
+	<span class="k">if</span> ! running; <span class="k">then
+		</span>log_end_msg 0
+	<span class="k">else
+		</span>log_end_msg 1
+	<span class="k">fi</span>
+	<span class="p">;;</span>
+  restart<span class="p">)</span>
+	<span class="k">if </span>check_start_libvirtd_option; <span class="k">then
+		</span>log_daemon_msg <span class="s2">"Restarting </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$DAEMON</span><span class="s2">"</span>
+		start-stop-daemon --oknodo --stop --quiet --pidfile <span class="se">\</span>
+			/var/run/<span class="nv">$NAME</span>.pid --exec <span class="nv">$DAEMON</span>
+		<span class="o">[</span> -n <span class="s2">"</span><span class="nv">$DODTIME</span><span class="s2">"</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> sleep <span class="nv">$DODTIME</span>
+		start-stop-daemon --start --quiet --pidfile <span class="se">\</span>
+			/var/run/<span class="nv">$NAME</span>.pid --exec <span class="nv">$DAEMON</span> -- <span class="nv">$libvirtd_opts</span>
+		<span class="k">if </span>running; <span class="k">then
+			</span>log_end_msg 0
+		<span class="k">else
+			</span>log_end_msg 1
+		<span class="k">fi
+	fi</span>
+	<span class="p">;;</span>
+  reload|force-reload<span class="p">)</span>
+  	<span class="k">if </span>running; <span class="k">then
+            </span>log_daemon_msg <span class="s2">"Reloading configuration of </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span>
+	    start-stop-daemon --stop --signal 1 --quiet --pidfile <span class="se">\</span>
+	             /var/run/<span class="nv">$NAME</span>.pid --exec <span class="nv">$DAEMON</span>
+	    log_end_msg 0
+	<span class="k">else
+            </span>log_warning_msg <span class="s2">"libvirtd not running, doing nothing."</span>
+	<span class="k">fi</span>
+	<span class="p">;;</span>
+  status<span class="p">)</span>
+        log_daemon_msg <span class="s2">"Checking status of </span><span class="nv">$DESC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span>
+        <span class="k">if </span>running ;  <span class="k">then
+            </span>log_progress_msg <span class="s2">"running"</span>
+            log_end_msg 0
+        <span class="k">else
+            </span>log_progress_msg <span class="s2">"not running"</span>
+            log_end_msg 1
+            <span class="k">if</span> <span class="o">[</span> -f <span class="s2">"</span><span class="nv">$PIDFILE</span><span class="s2">"</span> <span class="o">]</span> ; <span class="k">then
+                </span><span class="nb">exit </span>1
+            <span class="k">else
+                </span><span class="nb">exit </span>3
+            <span class="k">fi
+	fi</span>
+    <span class="p">;;</span>
+  <span class="k">*</span><span class="p">)</span>
+	<span class="nv">N</span><span class="o">=</span>/etc/init.d/libvirt-bin
+	<span class="nb">echo</span> <span class="s2">"Usage: </span><span class="nv">$N</span><span class="s2"> {start|stop|restart|reload|force-reload|status|force-stop}"</span> &gt;&amp;2
+	<span class="nb">exit </span>1
+	<span class="p">;;</span>
+<span class="k">esac</span>
+
+<span class="nb">exit </span>0
+
+</code></pre>
+</div>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Developer Preview 1.0 Checklist</title>
+  <meta name="description" content="Scenarios">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/dev-preview-checklist">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Developer Preview 1.0 Checklist</h1>
+  </header>
+
+  <div class="article-content">
+    <h2 id="scenarios">Scenarios</h2>
+
+<p>Three scenarios need to work:</p>
+
+<ul>
+  <li>
+    <p>Stub-domains for Xenstore and Xenconsoled. Device drivers (mainly netfront and blkfront) should compile on both Xen and Linux to let us swap between front-ends and back-ends as either stub-domain or dom0.</p>
+  </li>
+  <li>
+    <p>Self-hosting website and DNS server (this one!).</p>
+  </li>
+  <li>
+    <p>Proof concept of distributed system (ideally can be demo’d for OSCON). Current thinking is something like OCamlot or Signpost. This would be a nice “Hello world!” demo as it requires actors and a persistent job queue. For example, i.e spawning new VMs in response to load, as evidenced by self-scaling web-server.</p>
+  </li>
+</ul>
+
+<h2 id="repositories">Repositories</h2>
+
+<p>All of these repositories need to be code-reviewed and run over with ocamldoc.  Purge the TODO hacks when you go over them, or explicitly pull them out into a top-level TODO file.
+We need to close out this thread on a standard <a href="https://lists.cam.ac.uk/pipermail/cl-mirage/2013-March/msg00099.html">repository format</a> for all these things.</p>
+
+<p>Core Unix/Xen libraries:
+* <em>shared-memory-ring</em>: Builds shared memory-based point-to-point communication protocols. Is reasonably mature and can be released. Can be used outside of Xen, need to benchmark vs c. 4.01.0dev ocaml improves perf with bigarray builtins. Implements the Xen ABI, but needs examples in-tree. (Owner: djs). For 1.0.
+* <em>ocaml-xenstore</em>: Repo layout is confusing. Client and server in here, as well as Lwt bindings. Does build as stub domain and unix kernel. How can this stay in sync with xen-unstable? (Owner: djs). For 1.0.
+* <em>ocaml-fd-send-recv</em>: UNIX only and trivial. Released and stable. For 1.0. (Owner: djs/vb)
+* <em>ocaml-vchan</em>: Vchan communication channel between VMs.  Provides a socket-like interface between VMs.  For 1.0 (Owner: djs).  Post 2.0: vsock?
+* <em>ocaml-qmp</em>: QEMU message-passing protocol to command a running qemu. Not for 1.0, really for advanced use (Owner: djs).
+* <em>ocaml-gntshare</em>: Interface to mapping pages across Xen VMs. In ocaml-xen-lowlevel-libs, in good state, part of upstream xen-unstable and needs synching. (Owner: djs)
+* <em>ocaml-xen-block-driver</em>: Successfully moved out, and works in Xen. It once worked in userspace. (Owner: djs/jonludlam). For 1.0.
+* <em>ocaml-xen-net-driver</em>: Can be moved out, and works in Xen. It once worked in userspace. (Owner: djs/jonludlam). For 1.0.
+* <em>xenbigarray</em>: OPAM switch hack to eliminate unix dependency. shouldnt be externally visible. (Owner: anil). For 1.0.</p>
+
+<p>Core MirageOS libraries and tools:
+* <em>mirage-platform</em>:
+* <em>ocaml-cstruct</em>:
+* <em>mirari</em>:
+* <em>opam-repo-dev</em>:
+* <em>dyntype</em>:
+* <em>ocaml-re</em>: stable, done
+* <em>opam</em>:
+* <em>cross-ref ocamldoc</em>: leo</p>
+
+<p>Storage libraries:
+* <em>mirage-fs</em>: FAT not working as depends on Bitstring. Post 1.0, break out FAT into separate library. VB expressed interest in FAT.
+* <em>orm</em>: Post 1.0, needs sqlite bindings
+* <em>ocaml-crunch</em>: Works.
+* <em>libvhd</em>: ?? Jon, suitable for block driver use?
+* <em>ocaml-iscsi</em>: Doesnt exist, but djs really wants it.
+* <em>cagit</em>: Needs a file system (Owner: tg).
+* <em>irmin</em>: tg, not for 1.0
+* <em>arakoon</em>: In-memory-only patch, Arakoon already functorised across the storage layer. For 1.0? to investigate</p>
+
+<p>RPC/coordination:
+* <em>rpc-light</em>: Works well, but slow and no wire protocol defined. Vb mentioned Thrift. Also have bin_io? No versioning story. Needs obuild help. (Owner: tg)
+* <em>ocaml-actor</em>: non existent!
+* <em>ocaml-fable</em>: on avsm repo only
+* <em>message-switch</em>:
+* <em>ocamlmq</em>: to investigate.
+* <em>logger</em>: need a vchan-based logger and CLI to access from other domain</p>
+
+<p>Protocols:
+* <em>ocaml-dns</em>:
+* <em>mirage-net</em>:
+* <em>ocaml-pcap</em>:
+* <em>ocaml-openflow</em>:
+* <em>ocaml-xmpp</em>: ermine repos, lwt, need porting to mirage-net</p>
+
+<p>Security:
+* <em>mirage-cryptokit</em>:
+* <em>ocaml-crypto-keys</em>:
+* <em>stud</em>: need ssl binding for fable
+* <em>ocaml-ssh</em>: still in mpl-land, not too hard to port</p>
+
+<p>Webby libraries:
+* <em>ocaml-cohttp</em>:
+* <em>ocaml-cow</em>:
+* <em>ocaml-uri</em>:
+* <em>ocaml-spdy</em>: out of date, not for 1.0</p>
+
+<p>Cloud interfaces:
+* <em>aws</em>: ec2 bindings, need porting to cohttp
+* <em>ocaml-libvirt</em>: dave upstreaming
+* <em>xenopsd</em>: convenient single-host daemon for ubuntu-unstable.</p>
+
+<p>Testing:
+* Ocamlot
+* <a href="https://lists.cam.ac.uk/pipermail/cl-mirage/2013-February/msg00042.html">Pathos</a> testing?</p>
+
+<p>Tutorials and examples:
+* <em>mirage-skeleton</em>:
+* <em>mirage-tutorial</em>: out-of-date
+* <em>mirage-www</em>: extract wiki/blog into library, make it not suck</p>
+
+<h2 id="misc">Misc</h2>
+
+<ul>
+  <li>Integrate <code class="highlighter-rouge">ocaml-tuntap</code> into <code class="highlighter-rouge">mirage-platform</code> to remove tun hacks [vincent]</li>
+  <li><code class="highlighter-rouge">mirari run</code> as a stateful process working with libvirt and EC2.</li>
+  <li>cohttp/ssl releases [anil]</li>
+  <li>obuild instead of oasis for core libraries for better cross-compilation/portability/speed</li>
+  <li>Jenga? [dave]</li>
+</ul>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

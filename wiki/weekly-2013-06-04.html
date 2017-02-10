@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2013-06-04</title>
+  <meta name="description" content="6th June 2013: EC2, shared ring performance and outreach">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2013-06-04">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2013-06-04</h1>
+  </header>
+
+  <div class="article-content">
+    <p>6th June 2013: EC2, shared ring performance and outreach</p>
+
+<p><em>Attendees:</em> Jonathan Ludlam, Vincent Bernardoff, Dave Scott, Anil Madhavapeddy, Amir Chaudhry, Mike McClurg</p>
+
+<h3 id="mirari">Mirari</h3>
+
+<p>Excellent progress on Mirari from Vincent, who will have patches available soon for merging.</p>
+
+<p>Anil: main last change we need to make is to stop Mirari from requiring OPAM
+switch.  This is because it forces you to compile a new compiler (takes a long
+time) just to build a Xen kernel.  Instead, we can use the OPAM constraint
+solver to do the selection of packages rather than environment variables.</p>
+
+<p>All agreed (Thomas is on vacation but agreed this would work earlier on a cl-mirage
+mail thread).  This should be the last breaking change in the build infrastructure
+before the release, so we’ll aim to integrate by next week.</p>
+
+<h3 id="testing-and-ec2-integration">Testing and EC2 integration</h3>
+
+<p>Vincent: There is no automatic way to set up a free EC2 for Mirage with micro.
+You have to do it by hand each time you want to upload a kernel.</p>
+
+<p>Anil: We also need reliable shutdown hooks for EC2, or risk spending lots of cash by mistake!</p>
+
+<p>Balraj has been playing with performance to optimise the network stack.  Some
+questions about perf and Xen: there doesn’t appear to be a perf-xen mode
+although there is a perf-kvm mode.  OCaml 4.1-trunk has really good CFI stubs
+that make using perf almost pleasant.</p>
+
+<p>nil: Tom Ridge is just starting work on building a verified filesystem in
+OCaml, so we had a meeting about that with Thomas Gazagnaire last week.  Very
+exciting work, as it should be easy to hook into Mirage.</p>
+
+<p>Some discussion of the RPC mechanism for Vincent’s testing infrastructure.  Consensus
+is that instead of using Xenstore as an RPC mechanism, we should use an explicit
+libvchan communication channel instead.  This would let us build command-line
+tools for vchan that make it easier to manipulate the kernel.</p>
+
+<p>Balraj also raised the question of TCP and intended behaviour of the ring
+interface with fragmentation.  His tests run very small packets (below TCP
+minimum size) and deadlock if the ring doesn’t have enough free slots.
+Dave/Anil think that we need to lock the shared rings to queue up producers (so
+that we dont end up with out-of-order packets on the wire) and also provide a
+new function to request a reservation of multiple contiguous ring slots.  Dave
+will look into this further.</p>
+
+<h3 id="outreach">Outreach</h3>
+
+<p>Anil: Preparing for the release in July, we need to think about what blog posts
+people would be interested in.</p>
+
+<p>Anil: A really good blog post for Dave would be how to build a userspace block
+device in pure OCaml that provides storage to VMs.  For a memory device, we
+could pretty much build this from the OCaml toplevel in dom0.</p>
+
+<p>Jon: I like the idea of getting people to do screen-casts.</p>
+
+<p>Anil: Aim for one high quality blog post from everyone every two months.
+Should be able to get a post up every two weeks then.  Every post should think
+about its target (level of Xen familiarity, etc).  Lars from Xen.org could
+advise on this.</p>
+
+<h3 id="merging-to-trunk">Merging to trunk</h3>
+
+<p>Vincent: Can someone look at Unix back-end and code-review the shift
+to multiple processes for UNIX.</p>
+
+<p>Anil: on the queue for this week, and will definitely have it merged by
+next week’s meeting. This will very likely break trunk for a little while
+since I’ll do the OPAM rearrangement at the same time.</p>
+
+<h3 id="ssl-libraries">SSL libraries</h3>
+
+<p>Anil: Now that ctypes is released, we should look at SSL alternative bindings again.
+Prashanth pointed out axTLS, which is a BSD licensed alternative to MatrixSSL and
+therefore worth looking into more (but it’s API isn’t quite as agnostic to sockets
+as MatrixSSL, sadly, but should still work fine as sockets can be nonblocking in
+the axTLS world).</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

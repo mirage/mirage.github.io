@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-12-10</title>
+  <meta name="description" content="10th Dec 2014: Entropy, Tracing docs, OSX backend, IPv6 and Projects">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-12-10">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-12-10</h1>
+  </header>
+
+  <div class="article-content">
+    <p>10th Dec 2014: Entropy, Tracing docs, OSX backend, IPv6 and Projects</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Entropy progress</li>
+  <li>Tracing progress</li>
+  <li>Xen C stub compilation progress</li>
+  <li>MacOSX vmnet support</li>
+  <li>IPv6 Merging</li>
+  <li>Pioneer Projects</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Masoud Koleini,
+Thomas Leonard, Anil Madhavapeddy, Hannes Mehnert, Dave Scott,
+Magnus Skjegstad and Carlos</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="entropy-for-miragetls">Entropy for Mirage/TLS</h4>
+
+<p>Dave has been working on this. Essentially we need a daemon on dom0 to provide
+a small amount of entropy. This is at the top of his list and it will be done
+before Hannes gives a talk on the 27th (at <a href="https://events.ccc.de/congress/2014/Fahrplan/events/6443.html">CCC</a>).</p>
+
+<p>Once we have entropy device in Mirage, it is fed into the Fortuna part of
+<code class="highlighter-rouge">nocrypto</code> and then we get random numbers. What it doesn’t expose is the
+random device. We also have possibility to get entropy from multiple sources.
+Things are in place for that already so perhaps we should deal with each of
+these as separate issues.</p>
+
+<p>On a related note, Anil merged Hannes patches and cohttp on Unix and it all
+works without a hitch. Doesn’t do server certificate verification. Is
+implementing trust on first use for the XMPP client. There are issues related
+to both these points on the <a href="https://github.com/mirage/ocaml-conduit/issues">conduit library repo</a>.</p>
+
+<h4 id="xen-c-stub-compilation">Xen C stub compilation</h4>
+
+<p>Mirage will now only link C-stubs on Xen if you explicitly mark it in OCaml
+meta file. A number of releases have happened and we’re now ready to package
+up the TLS things.</p>
+
+<p>Need to fork zarith and gmp libraries and thinking that we’ll need to install
+dummy ocamlfind packages for TLS libraries to use. That might involve adding
+depext things to the mirage tool. Will have to feel our way through this to
+figure out the best approach.</p>
+
+<h4 id="tracing-progress">Tracing Progress</h4>
+
+<p>Lots of things have been merged. A number of libraries now depend on
+<code class="highlighter-rouge">mirage-profile</code>, so it can be used in code without having to add an
+additional dependency. This way you can get profiling from libraries out of
+the box. Will soon be working on documentation for the website to explain how
+to use it all. In the meantime we should work work on getting the lwt patched
+upstreamed.</p>
+
+<h4 id="macosx-vmnet-support">MacOSX vmnet support</h4>
+
+<p>Anil was working on using the vmnet support that’s available (but undocumented)
+on Mac OSX Yosemite (see the <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-12/msg00004.html">mailing list thread</a>). Anil is
+still poking thorough traces to find various interfaces. We also think it does
+IPv6 but not quite sure.  As a result, two new libraries have been released,
+<a href="https://github.com/mirage/ocaml-vmnet">ocaml-vmnet</a> and <a href="https://github.com/mirage/mirage-net-macosx">mirage-net-macosx</a>.  It would be good to get feedback
+from others on their use of this and there have been no reported problems at
+all so far.  Recently released Mirage 2.1.1 will default to Unix network stack
+on Macs prior to Yosemite.</p>
+
+<h4 id="merging-ipv6">Merging IPv6</h4>
+
+<p>Nic is currently in Argentina but would like to merge this asap.  Will
+probably see some breakages can fix them up as things change. These will be a
+sequence of small changes but hopefully wouldn’t affect too many people. Anil
+will look at these and may be able to merge this in the next couple of weeks.</p>
+
+<p>If anyone has access to IPv6 networks it would be great to hear feedback and
+reports.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p>We could do with expanding the number of <a href="https://github.com/mirage/mirage-www/wiki/Pioneer-Projects">Pioneer Projects</a> we have
+listed. Even if people have simple ideas, it would be useful to get them added
+to the wiki page.  We especially need the ‘1-star’ projects, which can help
+onboard newcomers. Amir may add some tasks that cross over from ocaml.org
+(such as a pure OCaml implementation of Planet). Please do add what you can!</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Masoud and Carlos joined the call and they’re working on an <strong>Openflow</strong>
+implementation (1.3 and 1.4). Currently fixing things before adding more
+functionality.  At the moment there’s an openflow switch but would also like
+an openflow controller.</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 14th January</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+  <li>
+    <p><strong>Happy Holidays to all!</strong></p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

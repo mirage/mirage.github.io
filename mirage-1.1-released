@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MirageOS 1.1.0: the eat-your-own-dogfood release</title>
+  <meta name="description" content="We’ve just released MirageOS 1.1.0 into OPAM.  Once thelive site updates, you should be able to run opam update -u and get the latestversion.  This release i...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//mirage-1.1-released">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="article_header">
+    <h1 class="article_title" itemprop="name headline">MirageOS 1.1.0: the eat-your-own-dogfood release</h1>
+    <p class="article_meta"><time datetime="2014-02-11T00:00:00+00:00" itemprop="datePublished">Feb 11, 2014</time></p>
+  </header>
+
+  <div class="article-content" itemprop="articleBody">
+    <p>We’ve just released <a href="https://github.com/ocaml/opam-repository/pull/1655">MirageOS 1.1.0</a> into OPAM.  Once the
+live site updates, you should be able to run <code class="highlighter-rouge">opam update -u</code> and get the latest
+version.  This release is the “<a href="http://en.wikipedia.org/wiki/Eating_your_own_dog_food">eat our own
+dogfood</a>” release; as I
+mentioned earlier in January, a number of the MirageOS developers have decided to
+shift our own personal homepages onto MirageOS.  There’s nothing better than
+using our own tools to find all the little annoyances and shortcomings, and so
+MirageOS 1.1.0 contains some significant usability and structural improvements
+for building unikernels.</p>
+
+<h4 id="functional-combinators-to-build-device-drivers">Functional combinators to build device drivers</h4>
+
+<p>MirageOS separates the
+application logic from the concrete backend in use by writing the application
+as an <a href="https://realworldocaml.org/v1/en/html/functors.html">OCaml functor</a>
+that is parameterized over module types that represent the device driver
+signature.  All of the module types used in MirageOS can be browsed in <a href="https://github.com/mirage/mirage/blob/1.1.0/types/V1.mli">one
+source file</a>.</p>
+
+<p>In MirageOS 1.1.0, <a href="http://gazagnaire.org/">Thomas Gazagnaire</a> implemented a
+a <a href="https://github.com/mirage/mirage/blob/1.1.0/lib/mirage.mli#L28">combinator library</a>
+that makes it easy to separate the definition of application logic from the details
+of the device drivers that actually execute the code (be it a Unix binary or a
+dedicated Xen kernel).  It lets us write code of this form
+(taken from <a href="https://github.com/mirage/mirage-skeleton/tree/master/block">mirage-skeleton/block</a>):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>let () =
+  let main = foreign "Unikernel.Block_test" (console @-&gt; block @-&gt; job) in
+  let img = block_of_file "disk.img" in
+  register "block_test" [main $ default_console $ img]
+</code></pre>
+</div>
+
+<p>In this configuration fragment, our unikernel is defined as a functor over a
+console and a block device by using <code class="highlighter-rouge">console @-&gt; block @-&gt; job</code>.  We then
+define a concrete version of this job by applying the functor (using the <code class="highlighter-rouge">$</code>
+combinator) to a default console and a file-backed disk image.</p>
+
+<p>The combinator approach lets us express complex assemblies of device driver
+graphs by writing normal OCaml code, and the <code class="highlighter-rouge">mirage</code> command line tool
+parses this at build-time and generates a <code class="highlighter-rouge">main.ml</code> file that has all the
+functors applied to the right device drivers. Any mismatches in module signatures
+will result in a build error, thus helping to spot nonsensical combinations
+(such as using a Unix network socket in a Xen unikernel).</p>
+
+<p>This new feature is walked through in the <a href="/docs/hello-world">tutorial</a>, which
+now walks you through several skeleton examples to explain all the different
+deployment scenarios.  It’s also followed by the <a href="/docs/mirage-www">website tutorial</a>
+that explains how this website works, and how our <a href="/docs/deploying-via-ci">Travis autodeployment</a>
+throws the result onto the public Internet.</p>
+
+<p>Who will win the race to get our website up and running first?  Sadly for Anil,
+<a href="http://www.cs.nott.ac.uk/~rmm/">Mort</a> is currently <a href="https://github.com/mor1/mort-www">in the
+lead</a> with an all-singing, all-dancing shiny
+new website.  Will he finish in the lead though? Stay tuned!</p>
+
+<h4 id="less-magic-in-the-build">Less magic in the build</h4>
+
+<p>Something that’s more behind-the-scenes, but important for easier development,
+is a simplication in how we build libraries.  In MirageOS 1.0, we had several
+packages that couldn’t be simultaneously installed, as they had to be compiled 
+in just the right order to ensure dependencies.</p>
+
+<p>With MirageOS 1.1.0, this is all a thing of the past.  All the libraries can
+be installed fully in parallel, including the network stack.  The 1.1.0
+<a href="https://github.com/mirage/mirage-tcpip">TCP/IP stack</a> is now built in the
+style of the venerable <a href="http://www.cs.cmu.edu/~fox/foxnet.html">FoxNet</a> network
+stack, and is parameterized across its network dependencies.  This means
+that once can quickly assemble a custom network stack from modular components,
+such as this little fragment below from <a href="https://github.com/mirage/mirage-skeleton/blob/master/ethifv4/unikernel.ml">mirage-skeleton/ethifv4/</a>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module Main (C: CONSOLE) (N: NETWORK) = struct
+
+  module E = Ethif.Make(N)
+  module I = Ipv4.Make(E)
+  module U = Udpv4.Make(I)
+  module T = Tcpv4.Flow.Make(I)(OS.Time)(Clock)(Random)
+  module D = Dhcp_clientv4.Make(C)(OS.Time)(Random)(E)(I)(U)
+  
+</code></pre>
+</div>
+
+<p>This functor stack starts with a <code class="highlighter-rouge">NETWORK</code> (i.e. Ethernet) device, and then applies
+functors until it ends up with a UDPv4, TCPv4 and DHCPv4 client.  See the <a href="https://github.com/mirage/mirage-skeleton/blob/master/ethifv4/unikernel.ml">full
+file</a>
+to see how the rest of the logic works, but this serves to illustrate how
+MirageOS makes it possible to build custom network stacks out of modular
+components.  The functors also make it easier to embed the network stack in
+non-MirageOS applications, and the <code class="highlighter-rouge">tcpip</code> OPAM package installs pre-applied Unix
+versions for your toplevel convenience.</p>
+
+<p>To show just how powerful the functor approach is, the same stack can also
+be mapped onto a version that uses kernel sockets simply by abstracting the
+lower-level components into an equivalent that uses the Unix kernel to provide
+the same functionality.  We explain how to swap between these variants in
+the <a href="/wiki/hello-world">tutorials</a>.</p>
+
+<h4 id="lots-of-library-releases">Lots of library releases</h4>
+
+<p>While doing the 1.1.0 release in January, we’ve also released quite a few libraries
+into <a href="https://opam.ocaml.org">OPAM</a>.  Here are some of the highlights.</p>
+
+<p>Low-level libraries:</p>
+
+<ul>
+  <li><a href="https://github.com/samoht/ocaml-mstruct/">mstruct</a> is a streaming layer for handling lists of memory buffers with a simpler read/write interface.</li>
+  <li><a href="https://github.com/xapi-project/nbd/">nbd</a> is an implementation of the <a href="http://en.wikipedia.org/wiki/Network_block_device">Network Block Device</a> protocol for block drivers.</li>
+</ul>
+
+<p>Networking and web libraries:</p>
+
+<ul>
+  <li><a href="https://github.com/mirage/ocaml-ipaddr">ipaddr</a> now has IPv6 parsing support thanks to <a href="https://github.com/hhugo/">Hugo Heuzard</a> and David Sheets.  This is probably the hardest bit of adding IPv6 support to our network stack!</li>
+  <li><a href="https://github.com/mirage/cowabloga">cowabloga</a> is slowly emerging as a library to handle the details of rendering Zurb Foundation websites.  It’s still in active development, but being used for a few of our <a href="https://github.com/mor1/mort-www">personal websites</a> as well as this website.</li>
+  <li><a href="https://github.com/avsm/ocaml-cohttp">cohttp</a> has had several releases thanks to external contributions, particular from <a href="https://github.com/rgrinberg">Rudy Grinberg</a> who added s-expression support and several <a href="https://github.com/avsm/ocaml-cohttp/blob/master/CHANGES">other improvements</a>.</li>
+  <li><a href="https://github.com/avsm/ocaml-uri">uri</a> features performance improvements and the elimination of Scanf (considered <a href="http://www.lexifi.com/blog/note-about-performance-printf-and-format">rather slow</a> by OCaml standards).</li>
+  <li><a href="https://github.com/mirage/ocaml-cow">cow</a> continues its impossible push to make coding HTML and CSS a pleasant experience, with better support for Markdown now.</li>
+  <li>The <a href="https://github.com/avsm/ocaml-github">github</a> bindings are now also in use as part of an experiment to make <a href="http://gallium.inria.fr/blog/patch-review-on-github/">upstream OCaml development</a> easier for newcomers, thanks to Gabriel Scherer.</li>
+</ul>
+
+<p><a href="http://dave.recoil.org">Dave Scott</a> led the splitting up of several low-level Xen libraries as part of the build simplication.  These now compile on both Xen (using the direct hypercall interface) and Unix (using the dom0 <code class="highlighter-rouge">/dev</code> devices) where possible.
+* <a href="https://github.com/xapi-project/ocaml-evtchn">xen-evtchn</a> for the event notification mechanism. There are a couple of wiki posts that explain how <a href="/wiki/xen-events">event channels</a> and <a href="/wiki/xen-suspend">suspend/resume</a> work in MirageOS/Xen guests.
+* <a href="https://github.com/xapi-project/ocaml-gnt">xen-gnt</a> for the grant table mechanism that controls inter-process memory.
+* The <a href="https://github.com/mirage/io-page">io-page</a> library no longer needs Unix and Xen variants, as the interface has been standardized to work in both.</p>
+
+<p>All of Dave’s hacking on Xen device drivers is showcased in this <a href="http://openmirage.org/wiki/xen-synthesize-virtual-disk">xen-disk wiki post</a> that 
+explains how you can synthesize your own virtual disk backends using MirageOS.  Xen uses a <a href="https://www.usenix.org/legacy/event/usenix05/tech/general/full_papers/short_papers/warfield/warfield.pdf">split device</a> model,
+and now MirageOS lets us build <em>backend</em> device drivers that service VMs as well as the frontends!</p>
+
+<p>Last, but not least, <a href="http://gazagnaire.org">Thomas Gazagnaire</a> has been building a brand new storage system for MirageOS guests that uses git-style branches under the hood to help coordinate clusters of unikernels.  We’ll talk about how this works in a future update, but there are some cool libraries and prototypes available on OPAM for the curious.</p>
+
+<ul>
+  <li><a href="https://github.com/samoht/ocaml-lazy-trie/">lazy-trie</a> is a lazy version of the Trie data structure, useful for exposing Git graphs.</li>
+  <li><a href="https://github.com/samoht/ocaml-git">git</a> is a now-fairly complete implementation of the Git protocol in pure OCaml, which can interoperate with normal Git servers via the <code class="highlighter-rouge">ogit</code> command-line tool that it installs.</li>
+  <li><a href="https://github.com/mirage/irmin">irmin</a> is the main library that abstracts Git DAGs into an OCaml programming API.  The homepage has <a href="https://github.com/mirage/irmin/wiki/Getting-Started">instructions</a> on how to play with the command-line frontend to experiment with the database.</li>
+  <li><a href="https://github.com/samoht/git2fat">git2fat</a> converts a Git checkout into a FAT block image, useful when bundling up unikernels.</li>
+</ul>
+
+<p>We’d also like to thank several conference organizers for giving us the opportunity to demonstrate MirageOS.  The talk video from <a href="http://www.infoq.com/presentations/mirage-os">QCon SF</a> is now live, and we also had a <em>great</em> time at <a href="http://fosdem.org">FOSDEM</a> recently (summarized by Amir <a href="http://nymote.org/blog/2014/fosdem-summary/">here</a>). 
+So lots of activities, and no doubt little bugs lurking in places (particularly around installation).  As always, please do let us know of any problem by <a href="https://github.com/mirage/mirage/issues">reporting bugs</a>, or feel free to <a href="/community">contact us</a> via our e-mail lists or IRC.  Next stop: our unikernel homepages!</p>
+
+
+  </div>
+
+  <div class="article-related">Related Posts</div>
+  <ul>
+   
+     <li><a href="/irmin-0.12">Irmin 0.12 with portable filesystem watching released</a></li>
+   
+     <li><a href="/2016-summer-hackathon-roundup">MirageOS Summer 2016 Hackathon roundup</a></li>
+   
+     <li><a href="/2016-summer-hackathon">MirageOS Summer 2016 Hackathon announcement, and talk roundup</a></li>
+   
+     <li><a href="/2016-spring-hackathon">MirageOS Spring 2016 Hackathon!</a></li>
+   
+     <li><a href="/MSA00">MirageOS security advisory 00: mirage-net-xen</a></li>
+   
+     <li><a href="/releases/2016/02/29/introducing-functoria.html">Introducing Functoria</a></li>
+   
+     <li><a href="/introducing-solo5">Run Mirage Unikernels on KVM/QEMU with Solo5</a></li>
+   
+     <li><a href="/hackathon-marrakech2016">MirageOS hackathon</a></li>
+   
+     <li><a href="/introducing-charrua-dhcp">Introducing Charrua — a DHCP implementation</a></li>
+   
+     <li><a href="/unikernel-org">Unikernel.org</a></li>
+   
+  </ul>
+
+  <footer class="article-footer">
+
+  <section class="share">
+  <a class="share-link" href="" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    Twitter
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    Facebook
+  </a>
+  <a class="share-link" href="" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;">
+    Google+
+  </a> 
+</section>
+
+
+  <hr/>
+
+  
+<section class="author">
+  <div class="authorimage box" style="background: url(/assets/img/.png)"></div>
+  <div class="authorinfo box">
+    <p>Author | <a href=""></a></p>
+    <p class="bio"></p>
+  </div>
+</section>
+
+
+  </footer>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

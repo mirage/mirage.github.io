@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-05-27</title>
+  <meta name="description" content="27th May 2014: Mirage on ARM, Irmin and Xen Hackathon">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-05-27">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-05-27</h1>
+  </header>
+
+  <div class="article-content">
+    <p>27th May 2014: Mirage on ARM, Irmin and Xen Hackathon</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Mirage on ARM</li>
+  <li>OCaml-Conduit/Ctypes</li>
+  <li>Vchan</li>
+  <li>Irmin/Xenstore</li>
+  <li>Xen Hackathon</li>
+  <li>GSoC/OPW</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Anil Madhavapeddy, Mindy Preston and David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-on-arm">Mirage on ARM</h4>
+
+<p>Managed to run mir-console on ARM! Sent patches to <code class="highlighter-rouge">libm</code> to enable package
+support and they’ve been merged so should be in next release. They were very
+responsive to patches.</p>
+
+<p>ThomasL is currently getting everything working with packages and scripts
+and other stuff. when ready will send PR to Mirage. Not tried any device
+drivers yet, just console. Anil is curious if block device works yet - it’s
+straight-forward to debug in the post-mortem. <code class="highlighter-rouge">mirage-net-xen</code> might be good
+to try next. Thomas will have a look. Could get something working by the Xen
+Hackathon (or at the Hackathon).</p>
+
+<h4 id="conduitctypes">Conduit/Ctypes</h4>
+
+<p>Ctypes 0.3.0 was <a href="https://github.com/ocamllabs/ocaml-ctypes/releases/tag/ocaml-ctypes-0.3">released</a>, with stub generation, which
+unlocks a bunch of other work that was waiting on it. Anil did a quick
+release of <a href="https://opam.ocaml.org/packages/conduit/conduit.0.5.0/">ocaml-conduit</a> last month and has spent time since then
+refactoring and improving interfaces. Hoping to get a new release out by the
+end of the week, which will then unlock a bunch of others e.g. the <a href="https://github.com/mirleft/ocaml-tls">TLS</a>
+work, <a href="http://opam.ocaml.org/packages/cohttp/cohttp.0.11.2/">cohttp</a> and a number of others.  Anil will update the list when
+things are settled.</p>
+
+<h4 id="vchan">vchan</h4>
+
+<p>The linking problem mentioned last time was fixed and Dave believes it’s all
+working and Jon can do more at the Hackathon.</p>
+
+<h4 id="irminxenstore">Irmin/Xenstore</h4>
+
+<p>Note: Irminsule has been renamed to to <strong>Irmin</strong> and the <a href="https://github.com/mirage/irmin">repo</a>
+moved into the Mirage GitHub organisation.</p>
+
+<p>Update on Xenstore and Irmin (Anil wants to call it ‘Xirminstore’ - no-one
+else seems keen). Dave, wants to make it fault-tolerant. Will focus on
+making the interface better and get to a demo for the Xen Hackathon and
+using Irmin to keep all the logs for debugging.</p>
+
+<p>ThomasG is working on improving the Irmin API so there are some changes
+coming (Dave has now been warned).  A release due very soon and Thomas will
+be giving a talk on the 6th of June in France.  Benjamin Farinier, who’s
+<a href="/blog/welcome-to-our-summer-hackers">joined for the summer</a>, is also making good progress.</p>
+
+<h4 id="xen-hackathon">Xen Hackathon</h4>
+
+<p>The <a href="http://wiki.xenproject.org/wiki/Hackathon/May2014">Xen Developer Hackathon</a> is taking place this week. The
+schedule is up and there are several topics of interest to us including
+Docker. You can see the full list on the <a href="http://wiki.xenproject.org/wiki/Hackathon/May2014#Topics_to_Discuss.2C_Code.2C_Work_on.2C_..._at_the_Hackathon">Xen wiki page</a>.</p>
+
+<p>Anil, ThomasL, Dave and Jon are all registered to go with Nik Sultana on the
+wait list.  There are others who we should talk to at the event including
+Joao and Filipe about ClickOS and Hwanju about PVH. Could possibly ask the
+organisers for a Unikernel table. Our aims for the hackathon should be:</p>
+
+<ul>
+  <li>Get vchan working and Mirage ARM pinging</li>
+  <li>Work on fault-tolerant Xenstore/Irmin</li>
+  <li>Upstream miniOS patches/packages and discuss how best to do this</li>
+  <li>Talk to people about PVH, ARM, suspend/resume and MAC.</li>
+</ul>
+
+<p>Anil notes that we’re at risk of turning the hackathon into a chatathon.</p>
+
+<h4 id="gsocopw">GSoC/OPW</h4>
+
+<p>Anil wrote a <a href="/blog/welcome-to-our-summer-hackers">blog post</a> about this summer’s Mirage hackers,
+including those from GSoC and OPW. Intros have been made on the mailing list
+and they’re off to a flying start!</p>
+
+<p><a href="http://somerandomidiot.com/">Mindy</a> joined the call this week and she’s run through some tests of
+cohttp. Came up against a roadblock until there’s more differentiation of
+results between invalid requests and invalid pipes.  Submitted an issue
+about this but is aware that there are releases coming soon.  Instead she
+switched over to looking at more client side things. Anil suggested looking
+at the TCP stack as it’s only been tested for the common case and there are
+probably a lot of issues that could be surfaced. Can’t really use Travis for
+this as it needs a network, which you don’t get in a container. Mindy
+already has a working Xen box so this shouldn’t be an issue.
+You can also read Mindy’s recent post on
+<a href="http://somerandomidiot.com/blog/2014/05/22/throwing-some-fuzzy-dice/">throwing some fuzzy dice</a> to see what she’s been up to.</p>
+
+<h4 id="aob">AoB</h4>
+
+<p>Anil mentioned that it would be fun to get people who are running unikernels
+(e.g their websites) to automatically be listed on the Mirage site or get
+some kind of shiny badge for their own.  This could be automatic once the
+TLS libs are usable as it can simply be part of the configuration. Amir
+laments that his unikernel site is languishing in a Git repo until he can
+deploy them to the Bytemark machines. Will put this on the agenda for the
+next call.</p>
+
+<p>Next call will be 10th June and items can be added to the <a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">Agenda</a>.</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

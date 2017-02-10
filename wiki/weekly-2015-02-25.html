@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2015-02-25</title>
+  <meta name="description" content="25th Feb 2015: Races, Testing, Deployment, Pioneers and Roadmapping">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2015-02-25">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2015-02-25</h1>
+  </header>
+
+  <div class="article-content">
+    <p>25th Feb 2015: Races, Testing, Deployment, Pioneers and Roadmapping</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">mirage-net-xen</code> race issue</li>
+  <li>Quality and test infrastructure</li>
+  <li>Deployment automation</li>
+  <li>Irmin progress</li>
+  <li>Steps to Mirage.io</li>
+  <li>Pioneer Projects</li>
+  <li>3.0 Planning</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Heidi Howard,
+David Kaloper, Thomas Leonard, Anil Madhavapeddy, Hannes Mehnert,
+Richard Mortier, Dave Scott, Mindy Preston, Nicolas Ojeda Bar
+and Magnus Skjegstad</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="mirage-net-xen-race-issue">mirage-net-xen race issue</h4>
+
+<p>There seems to be a dead-lock/race issue somewhere in the <a href="https://github.com/mirage/mirage-net-xen">mirage-net-xen</a>
+1.3.0 release (<a href="https://github.com/mirage/mirage-net-xen/issues/20">mirage/mirage-net-xen#20</a>). We originally thought this might
+be something to do with one of Dave’s patches but it’s not clear that’s really
+the case. Currently, we’re not even sure if it’s <em>definitely</em> a v1.3 issue but
+things do seem to work under v1.2.  It’s even possible that it could be a dom0
+problem.  A reproduction of the issue from others would be quite helpful and
+Magnus mentioned he would give this a shot. Either way, this tells us we need
+more unit tests, as we’ve <a href="http://openmirage.org/wiki/weekly-2015-02-11#ImprovingQuality">previously discussed</a>.</p>
+
+<h4 id="quality-and-test-infrastructure">Quality and test infrastructure</h4>
+
+<p><a href="http://openmirage.org/wiki/weekly-2015-02-11#ImprovingQuality">Last time</a>, we discussed whether we may be able to do certain things
+with OPAM remotes (e.g like splicing between remotes).  After a chat with
+Louis, the lead maintainer of OPAM, it seems this would not be a
+straightforward thing to do — which means it’s not an avenue we can explore
+for now.</p>
+
+<p>What we can realistically do in the short term is improve our own practices.
+We have all the pieces in place so it’s a matter of using them and getting
+into the habit of incorporating them into our normal process. Something that
+would really help is a QuickCheck style library. [<em>It seems <a href="http://opam.ocaml.org/packages/quickcheck/quickcheck.1.0.2/">QuickCheck</a>
+is in OPAM but code maintenance is quite unclear - Amir</em>]</p>
+
+<p>It was raised that we have a nice modular network stack which is abstracted
+away from things underneath. There may be a way to use this approach to
+benefit more systematic testing. This is relevant to the trace-checking work
+that DavidK is working on and in addition, trying to get <code class="highlighter-rouge">pcap</code> input would be
+good. Many of these things are tied to the performance framework and getting
+to something that would let us run <code class="highlighter-rouge">Iperf</code> everyday would be great.</p>
+
+<p>Anil proposed forming a breakout squad with himself, DavidK and Mindy who would
+think about testing and performance issues — Hannes was also suggested but
+he declined, stating dryly that he doesn’t really care about performance
+(resulting in laughter from everyone else). Someone else who’s done things in
+this area is Luke Dunstan (another contributor), so it’s worth being aware of
+those efforts.</p>
+
+<p>In general, the approach should be that we should work on the simple things
+before the more complicated things.  However, it’s not always clear what is
+meant by ‘simple’.  To help clarify this, we should constrain it to things
+within a single unikernel — no aspects of dom0 or anything else.</p>
+
+<p>Since testing and quality is such an important issue, Amir will keep it on the
+agenda for each call.</p>
+
+<h4 id="deployment-automation">Deployment automation</h4>
+
+<p>Amir’s interested to see what solutions/scripts people have created around how
+we <em>deploy</em> unikernels.  He’s particularly interested in automated processes
+that pick up from where his previous <a href="http://amirchaudhry.com/from-jekyll-to-unikernel-in-fifty-lines/">Jekyll to Unikernel post</a>
+left off (i.e. with a unikernel committed into a deployment repo).</p>
+
+<p>After a quick poll of attendees, it seems that the deployment processes people
+use is quite diverse.  Mindy has a set of scripts for EC2, Anil uses a cronjob
+and Dave has used XAPI.  Each of these seems bespoke and it’s unlikely
+anything is shared between them (compare with the TravisCI set up, which has
+become quite consistent across projects).</p>
+
+<p>Amir will look over these to see where things stand and will likely write up a
+blog post about his ideal deployment workflow. Ultimately, his desire is to
+set up an end-to-end system such that a git push to a repo will finish with a
+newly built unikernel being started on one of our Bytemark machines.</p>
+
+<h4 id="irmin-progress">Irmin progress</h4>
+
+<p>ThomasL is making a browser-based ToDo app that uses Irmin with local HTML5
+storage.  This is to replace his current task management system (also
+browser-based).  At present, it’s not talking to any server (so no backup), is
+fully in the browser and commits on every change. It’s not too difficult to do
+sync but it is difficult to use any git tools (due to lack of support) — 
+ThomasL is not using the Git backend yet. One very useful thing would be
+getting the SHA-1 code implemented elsewhere. We can either expose it from
+where it is currently or put the code elsewhere.  The next step for ThomasG is
+to compile zlib library to Xen.</p>
+
+<p>When this system works it would be really useful for Real World OCaml
+commenting system.  It would allow the comment to be stored locally first and
+<em>then</em> synced to the GitHub ‘back-end’ — thus solving a problem some users
+have reported about comments being lost in transit.</p>
+
+<p>The repository with ThomasL’s app is <a href="https://github.com/talex5/cuekeeper">cuekeeper</a> — though be aware that it
+doesn’t do anything yet!  There’s also a useful thread on the mailing list,
+which has both Thomas’ involved, where questions about the library and API
+have been discussed. That thread is likely useful for anyone wanting to
+explore Irmin, with the caveat that it’s alpha/beta stage and there have
+almost certainly been changes pushed during the discussions (email thread is:
+“<a href="http://lists.xenproject.org/archives/html/mirageos-devel/2015-02/msg00049.html">Irmin API newbie questions</a>”).</p>
+
+<h4 id="steps-to-mirageio">Steps to Mirage.io</h4>
+
+<p>Amir would like to switch to using <a href="http://mirage.io">mirage.io</a> as the primary domain
+(it currently redirects to openmirage.org - so he’s using it already).  This
+is more than just a straightforward record change as we’ll begin to use more
+of our other tools as part of the underlying site infrastructure (e.g. DNS
+zone). To this end, Anil has been reinstalling the second Bytemark machine in
+order to run a version of Xenserver. We will also need to sort out
+certificates as we should be running HTTPS for the site.</p>
+
+<h4 id="pioneer-projects">Pioneer Projects</h4>
+
+<p>It seems there’s been caution from new users about taking on Pioneer Projects
+as the meaning of the difficulty levels is a little vague.  This partly
+relates to expected knowledge of OCaml and also domain-specific expertise (e.g
+networking, security, storage, etc.).  Our thoughts are that trying to learn
+<em>both</em> OCaml <em>and</em> a new area as part of a Pioneer Project will be quite
+challenging. Hence the suggestion is for a newcomer to pick an area that
+they’re familiar with so that they have some grounding and can learn how we’ve
+implemented things.  If the projects listed do not overlap with someone’s
+existing area of knowledge then that person should mention their experience on
+the <a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> so we can consider new categories of projects.</p>
+
+<p>If someone only has limited experience from elsewhere to draw on, and is
+completely new to OCaml, then we should point to existing resources so that
+they can get up speed (e.g. <a href="https://realworldocaml.org">Real World OCaml</a>, etc).</p>
+
+<p>We must take care with the difficulty levels as what we consider to be a
+2-star project from our perspective may be perceived as quite challenging by
+the person undertaking the project.  This could have a detrimental effect if
+people think everything is actually harder than advertised.</p>
+
+<p>Having said this, we really do need more 1-star projects. There are likely
+many things we’ve thought about doing that we haven’t quite got around to.
+Please look through your issue trackers in case it helps you come up with
+something. One suggestion was that writing a CLI client front-end for
+something like the <a href="https://opam.ocaml.org/packages/imaplet-lwt/imaplet-lwt.0.1.9/">IMAP server</a>, would be useful and straightforward.
+Indeed, CLIs for many other libraries would be valuable, including TLS,
+Syndic etc.</p>
+
+<p>Anil will put together a simple cohttp project, ThomasG already added a 2-star
+project and Amir will write an explanatory page to go alongside the current
+Pioneer Projects page to describe the thoughts above.</p>
+
+<h4 id="planning">3.0 Planning</h4>
+
+<p>Amir’s put together a <a href="https://github.com/mirage/mirage-www/wiki/Roadmap">Roadmap</a> page on the wiki, where we can (1) collect
+thoughts about what we might like to see in future versions of MirageOS and
+(2) filter that list into an agreed set of efforts for the next major release.
+Note that these are two <em>separate</em> processes and we should take care not to
+conflate them.  Essentially, one is about ideation/creativity and the other is
+about decisive filtering and prioritisation.  Hopefully, it’s self-evident as
+to why it can be difficult to do both in one step (especially with large
+groups of people).</p>
+
+<p>It’s worth pointing out that the roadmap is <em>not</em> a feature-list. It’s meant
+to be a description of the <em>areas</em> where we think we should focus efforts.
+This lends itself to defining clearer goals which we can collectively commit
+to — knowing that our efforts will be in aligned with everyone else’s.  It may
+help to think of specific scenarios if the above description feels too broad.</p>
+
+<p>Some thoughts from the attendees included:
+- Quality/Testing is a feature
+- Treat 3.0 as the deployment release — i.e. will run in ‘production’ for a long time so act accordingly
+- Could think of this as the one that ties up all the loose ends
+- Improve the docs and onboarding process
+- Better integration between components (“end up back in n-squared space”)
+- Javascript</p>
+
+<p>This agenda item will be brought up once a month and we will converge on the
+efforts we want to focus on for the 3.0 release. This may happen very quickly
+or it may take more discussion but either way, it will be recorded in these
+notes.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p>Amir is mentoring the <strong>Static Site Pioneer Project</strong> with David Sheets and
+someone has stepped forward to work on this (yay!) — will report back as
+things progress</p>
+  </li>
+  <li>
+    <p><strong>OPAM testing</strong>: <a href="https://github.com/ocaml/opam/releases/tag/1.2.1-beta3">Beta 3</a> is now out and <em>should</em> be stable so
+please do try it out!</p>
+  </li>
+  <li>
+    <p>The next call is scheduled for <strong>Wednesday, 11th March</strong> - Please add any
+<a href="https://github.com/mirage/mirage-www/wiki/Call-Agenda">agenda items</a> you wish to discuss in advance and refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

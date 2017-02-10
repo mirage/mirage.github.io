@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Contributing to MirageOS</title>
+  <meta name="description" content="MirageOS welcomes contributions from anyone interested in the project.  If you are planning a large contribution, be it a piece of documentation, a patch to ...">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/contributing">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Contributing to MirageOS</h1>
+  </header>
+
+  <div class="article-content">
+    <p>MirageOS welcomes contributions from anyone interested in the project.  If you are planning a large contribution, be it a piece of documentation, a patch to the software, a new driver, or something else, please do send a note to <a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">the MirageOS development mailing list</a> describing your planned contribution - you may discover that other contributors are willing to help.</p>
+
+<p>More information on being in touch with other MirageOS contributors <a href="http://www.openmirage.org/community">is available</a>.</p>
+
+<h2 id="reporting-issues">Reporting Issues</h2>
+
+<p>Issues (e.g. bugs in the software, unclear documentation, missing functionality) are best reported on the main <a href="http://www.github.com/mirage/mirage/issues">MirageOS repository</a> at GitHub, unless the issue is clearly contained in, and only relevant to, another specific repository.</p>
+
+<p>When reporting an issue, please try to include any information you think may be relevant, including</p>
+
+<ul>
+  <li>a link to the source code you’re building with MirageOS</li>
+  <li>relevant version info, e.g. your opam version (<code class="highlighter-rouge">opam --version</code>) and your MirageOS version (<code class="highlighter-rouge">mirage --version</code>), and your operating system and version.</li>
+  <li>if applicable, a terminal log representing how you trigger the issue, and what happens when the problem is occurring</li>
+  <li>a description of any way you may have tried to solve the issue, or gather more information about it</li>
+</ul>
+
+<h2 id="submitting-changes">Submitting Changes</h2>
+
+<p>MirageOS uses the <a href="https://help.github.com/articles/using-pull-requests">pull request</a> facility of GitHub to manage patches for both code and documentation.  Patches should be as self-contained as possible, with one patch corresponding to (at most) one bugfix or feature.  For large changes, please coordinate with other contributors via the <a href="https://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a>.</p>
+
+<p>The mechanics for submitting a pull request are as follows:</p>
+
+<ul>
+  <li><a href="https://github.com/signup">Set up a free GitHub account</a>.</li>
+  <li><a href="https://help.github.com/articles/fork-a-repo">Fork</a> the repository to which you intend to commit your code.  For example, a patch to the TCP/IP stack in MirageOS should fork <a href="http://www.github.com/mirage/mirage-tcpip">mirage-tcpip</a>, and a patch correcting a problem with the website’s documentation should fork <a href="http://www.github.com/mirage/mirage-www">mirage-www</a>.</li>
+  <li>Make a <a href="https://github.com/blog/1377-create-and-delete-branches">branch</a> with a descriptive name for the changes you plan to make.</li>
+  <li>If you are making code changes, you may wish to point <code class="highlighter-rouge">opam</code> to your local repository for that code with <code class="highlighter-rouge">opam pin</code>.  <a href="https://opam.ocaml.org/doc/Packaging.html">More details on using opam when developing are available at the <code class="highlighter-rouge">opam</code> site.</a></li>
+  <li>Make changes in your local repository.  <a href="https://wiki.gnome.org/Git/CommitMessages">Here are some simple guidelines on commit messages.</a></li>
+  <li>When you’re satisfied that your changes are ready to be submitted, <a href="https://help.github.com/articles/pushing-to-a-remote">push your changes to GitHub</a>.</li>
+  <li>The web view for your repository should now have a button labeled <code class="highlighter-rouge">submit pull request</code>, where you can view the summary of your change and request that it be merged into the main repository.</li>
+  <li>Keep an eye out for notifications on your pull request!  By default, GitHub will email you when other contributors have questions or comments that they’d like to discuss with you before merging your changes.</li>
+</ul>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

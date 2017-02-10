@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2013-05-28</title>
+  <meta name="description" content="28 May 2013: Build pain reduced to mild ache, Try Mirage, Benchmarking available">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2013-05-28">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2013-05-28</h1>
+  </header>
+
+  <div class="article-content">
+    <p>28 May 2013: Build pain reduced to mild ache, Try Mirage, Benchmarking available</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Build progress since last week</li>
+  <li>Exploring a Try Mirage site for launch</li>
+  <li>Benchmarking progress with Core_bench</li>
+</ul>
+
+<p><em>Attendees</em>: Balraj Singh, Anil Madhavapeddy, Amir Chaudhry, David Sheets, Jonathan Ludlam, Thomas Gazagnaire, Prashanth Mundkur, Vincent Bernardoff, Mike McClurg, Daniel Buenzli</p>
+
+<h3 id="build-update">Build update</h3>
+
+<p>Dave: An obuild 0.0.2 snapshot has been uploaded to OPAM that fixed lots of bugs and is
+generally very usable.</p>
+
+<p>Anil: we would like to use Jenga in Real World OCaml, but it’s still not
+portable to the Mac (there is ongoing work in ocaml-plugin to make this work
+there).</p>
+
+<p>Thomas: ocp-build is working nicely but not well-documented due to lack of
+time. The front end isn’t great but it’s designed to be generated from other
+tools (Fabrice is willing to improve it).  We would like input on what is
+required would not be difficult to adapt it.</p>
+
+<p>Anil: One nice feature of Mirari is that dependencies can be auto-installed
+during the configure phase. We like OPAM to understand build a bit more and
+automate things more easily in the longer-term.  e.g Parse OASIS file and
+generate meta files.  Jenga doesn’t have that.</p>
+
+<p>Thomas: We need something more concrete in the build space, or we won’t
+make progress.</p>
+
+<p>Anil: We’re driven by the 1.0 deadlie in July at the moment, and can then take
+some breathing room to work on the longer term solution. Sounds like it comes
+down to OASIS being ok for now, and Mirari being an interface to the application
+construction. (general agreement from the room)</p>
+
+<h3 id="try-mirage">Try Mirage</h3>
+
+<p>Anil: Many people want to try Mirage, but blocked by not having Xen
+installation handy. Can we figure out a way to expose a machine for people to
+build quickly (e.g. for few mins), or is this too painful?  We can seed this
+effort from the Lab (but do actually need the machines for research).</p>
+
+<p>Dave Scott: possible to find VMs, but hosting within Citrix firewall is
+problematic due to (entirely valid) security concerns.</p>
+
+<p>Anil: would be good to get EC2 bindings sorted soon, as we should be able
+to run the main website on it again.  Vincent: he has ported barko’s AWS
+bindings to the newest Cohttp already, but not tested it.</p>
+
+<p>Balraj: The TCP stack should be fine to run a live site on.  All the current
+bugs are deep in microbenchmarks such as 1-byte writes and far from the
+day-to-day stuff a website would see. (muttering of “famous last words” from
+the room).</p>
+
+<p>Anil: xen.openmirage.org has been running on EC2 for 20 months and seems ok (but don’t all visit at once!).</p>
+
+<h3 id="benchmarking-and-visualisation">Benchmarking and visualisation</h3>
+
+<p>Anil: I’ve just written a bunch of Real World OCaml text that uses Core_bench, and it’s an execllent library.  Can we generate visual graphs from Daniel’s library?</p>
+
+<p>Daniel: Having some issues with glyphs in the Canvas backend, but should be ok aside from that.</p>
+
+<p>Anil: How dependant are we on the browser output? Is there an SVG output? can we build graphs that don’t depend on Canvas?</p>
+
+<p>(the answer to all the above questions are affirmative)</p>
+
+<p>David Sheets: I’d like to be able to plot stats curves for Ocamlot for queue length and worker utilization.</p>
+
+<p>Daniel: This should be ok from now.  Just need to look at the glyphs thing.</p>
+
+<p>Anil: Going to wait until tuntap is stable and then breakup the network stack
+to aid benchmarking.  Helps other people to use (and contribute to) these other
+libraries.  Vincent has been Ocamldoc-ing as he goes along and that’s been
+<em>very</em> useful.  It’s hard to do that in one go but as you go along its much
+easier.  Please do this for the libs that you are working on.</p>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

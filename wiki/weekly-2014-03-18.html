@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-03-18</title>
+  <meta name="description" content="18th March 2014: Crypto, GSoC and a Mirage tutorial day.">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-03-18">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-03-18</h1>
+  </header>
+
+  <div class="article-content">
+    <p>18th March 2014: Crypto, GSoC and a Mirage tutorial day.</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>SSL + crypto</li>
+  <li>GSoC / OPW</li>
+  <li>Mirage tutorial day</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Jonathan Ludlam,
+Anil Madhavapeddy, Richard Mortier and David Scott</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="tlssslcrypto">TLS/SSL/crypto</h4>
+
+<p>Anil managed to get the SSL stack working and wondered if anyone else has
+been tried it. Has played around in Unix but not tried anything with Xen yet.
+Seems there’s still some work to to do as it’s missing the ability to
+synthesise a flow interface but don’t have a first-class interface for this
+yet.  Could take existing type and use that, which everyone thinks is the
+best we got for now. Dependencies for TLS are ASN1 and TLS (pure ocaml) and
+ocaml-nocrypto (has some C). Still waiting for ctypes stub-generation to be
+released before we can do a big change. Should have more pairs of eyes
+looking over this code.  If anyone can mess around with this and provide
+feedback, it would be be appreciated.</p>
+
+<p>Edit: Code is available at
+<a href="https://github.com/mirleft/ocaml-tls">https://github.com/mirleft/ocaml-tls</a></p>
+
+<h4 id="google-summer-of-code--outreach-program-for-women">Google Summer of Code / Outreach Program for Women</h4>
+
+<p><em>GSoC</em> - Student applications close on the 21st (3 days from now).  After
+this, the mentoring organisations need to review and rank student proposals.
+Mort has spoken to many students about GSoC from undergrads to Masters and
+encouraged them to apply. Others have been in touch on the mailing list.
+Anil will check the system to see how applications have been going. In
+general, everyone should be encouraging applications.</p>
+
+<p><em>OPW</em> - Xen has one slot for an <a href="https://gnome.org/opw/">OPW</a> project and has had couple of good
+applicants, with some interest in Cloud API.  Mirage is also open to these
+applicants as one of the <a href="http://wiki.xenproject.org/wiki/OutreachProgramForWomen/Round8#Community_Reviewed_Project_List">reviewed list of projects</a>.</p>
+
+<h4 id="mirage-tutorial-day">Mirage tutorial day</h4>
+
+<p>Considerations for the tutorial day:</p>
+
+<ul>
+  <li>Audience?</li>
+  <li>Full day vs half-day?</li>
+  <li>Break-down of sessions?</li>
+  <li>Location?</li>
+  <li>Proposed date?</li>
+</ul>
+
+<p><strong>Audience</strong> - In general we want this to be accessible to a relatively wide
+audience of programmers (i.e experience of OCaml is not assumed - but
+programming experience is).  There are a number of people in the Lab who
+would be interested and also from Citrix as well as others once a date is
+announced (would be good to have Xen platform team involved).  Would
+probably need to restrict numbers to around 30 to ensure we can give each
+person individual attention. Should capture details of all people interested
+so that if we run this again, we have a self-selected list of people to
+reach out to.</p>
+
+<p><strong>Full/Half day</strong> - This should be a full day to make sure that we can cover
+enough of the details and take a hands-on approach to the sessions, rather
+than lecture-style.</p>
+
+<p><strong>Sessions</strong> - Will need to spend time on structuring this. Would be good if
+each session had a tangible goal to reach (e.g get something running up on
+Rackspace). Should cover networking, storage and a bunch of basic items.
+Making reusable sessions would be extremely useful as they can become the
+basis of more formal modules and expanded with more stuff about Xen or the
+cloud. These could even become a nice undergraduate systems module with
+Mirage as the basis.  Specific breakdown might be to have the first part of
+the day be about OCaml basics (e.g Ch1-Ch7 of <a href="https://realworldocaml.org">RWO</a>), and then dive down
+into Mirage and Xen.  There are already elements that could be reused from
+much earlier tutorials (Japan?) but would need dusting off for the
+(wonderful) new world of OPAM et al.</p>
+
+<p><strong>Location</strong> - Will do first tutorial in Cambridge and could either do this
+in the Lab or perhaps at Citrix.  Amir will contact Lars to see if Citrix is
+a viable option.</p>
+
+<p><strong>Date</strong> - From a brief poll it seems that sometime during the week of 19
+May is a good one but this is <em>not</em> confirmed so we still need to pin down
+the exact date. Should keep whatever date we select within the school
+term-time (for obvious reasons).</p>
+
+<h4 id="other">Other</h4>
+
+<p>Irminsule is being used by Dominic in Nottingham and it does stuff related
+to maildir. Mort has put Dominic in touch with Gregory (who’s working on
+IMAP).  Exciting stuff!</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Frequently Asked Questions (FAQ)</title>
+  <meta name="description" content="Q: Is MirageOS ‘still’ Linux? Does it require a Linux host on which to run?">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/faq">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Frequently Asked Questions (FAQ)</h1>
+  </header>
+
+  <div class="article-content">
+    <p><em>Q: Is MirageOS ‘still’ Linux? Does it require a Linux host on which to run?</em></p>
+
+<p>MirageOS is a ‘<a href="http://anil.recoil.org/papers/2013-asplos-mirage.pdf">library operating system</a>’, which means that it can run on any target for which a suitable bootloader and drivers exist. The most mature targets are Unix and Xen.  Support for KVM via <a href="/blog/introducing-solo5">solo5</a> is also fairly well-supported.  We have prototypes that compile the same application source code (e.g. the MirageOS website) to run as kernel modules inside FreeBSD, or even to JavaScript. MirageOS provides support to more easily target such diverse environments due to its emphasis on modular programming and compile-time specialisation.  If you’d like to dig into some code, see <a href="https://github.com/mirage/mirage-platform">the mirage-platform library</a>, which has the OCaml modules referred to in the Unix and Xen targets.</p>
+
+<p><em>Q: Is MirageOS ‘production ready’?</em></p>
+
+<p>The 1.0 release is the first ‘stable toolkit’ release that is sufficient to self-host its infrastructure on the Internet.  <a href="https://github.com/mirage/mirage/releases/latest">The current release</a> includes many improvements to stability and more supported features, including support for <a href="/blog/mirage-entropy">gathering entropy</a>, <a href="http://roscidus.com/blog/blog/2014/10/27/visualising-an-asynchronous-monad/">execution trace collection and visualisation</a>, and <a href="https://mirage.io/blog/introducing-xen-minios-arm">ARM</a>.  The various libraries used in MirageOS (e.g. <a href="https://github.com/mirage/mirage-tcpip">mirage-tcpip</a> and <a href="https://github.com/mirage/irmin">Irmin</a>) follow their own release cadences, but similarly are in use in self-hosting infrastructure.  Some libraries are currently being used in large-scale commercial products like <a href="https://blog.docker.com/2016/03/docker-for-mac-windows-beta/">Docker for Mac and Windows</a>.</p>
+
+<p><em>Q: How does MirageOS compare against other cloud-friendly OS options (e.g like OSv) and also different approaches like like containers (e.g Docker)?</em></p>
+
+<p>MirageOS represents our desire for a radically simpler way of building complex distributed systems using a modern modular, functional and type-safe programming language such as OCaml. Unlike other cloud-friendly operating systems such as OSv, we do not attempt to optimize <em>existing</em> code, but instead focus on a toolkit to make it easier to quickly assemble <em>new</em> systems without having to be a domain expert in (e.g.) kernel programming.</p>
+
+<p>The downside to our approach is that we only work with open protocols, since we cannot build clean-slate versions of closed protocols for which we have no specification.  Instead, we hope to build a system which enables easy development of arbitrary protocols and integration of them into the stack; a measure of our success is whether users can implement such protocols themselves, without specialised systems or kernel knowledge.</p>
+
+<p>On the other hand, the current release contains clean-slate libraries for <a href="https://github.com/mirleft/ocaml-tls">TLS</a>, <a href="https://github.com/mirage/mirage-tcpip">TCP/IP</a>, <a href="https://github.com/mirage/ocaml-dns">DNS</a>, Xen <a href="https://github.com/mirage/mirage-net-xen">network</a> and <a href="https://github.com/mirage/mirage-block-xen">storage</a> device drivers], <a href="https://github.com/mirage/ocaml-cohttp">HTTP</a>, and other common Internet protocols, but all written in a completely type-safe fashion so that they are resistant to attacks such as buffer overflows that are plaguing the Internet. There’s a good chance that a few years from now, existing systems will still be suffering those attacks, but MirageOS will continue to grow and mature its protocol implementations without sacrificing safety.</p>
+
+<p><em>Q: What’s next for MirageOS?</em></p>
+
+<p>Xen has thrown open the doors to experimental new operating systems such as ours, and it is fitting that we (as Xen developers too) improve the state of cloud management toolstacks. Many of the MirageOS libraries (such as the device driver implementations) are being used in XenServer as part of the disaggregation of the monolithic driver domain into multiple, less-privileged “stub domains”. While the low-level plumbing for stub domains has existed for some years, they are difficult to build and debug in practise. MirageOS’s first major application is to transform the XAPI control stack into a standalone distributed system that can run an entire cluster of hosts with a greater degree of reliability, security and scalability than exists today.</p>
+
+<p>Back in the Cambridge Computer Laboratory, we are embarking on several major, multi-year projects that use MirageOS at their heart. The <a href="http://usercentricnetworking.eu">User Centric Networking</a> project (with Nottingham and Technicolor among others) is building a privacy-preserving distributed system for recommender and content delivery systems. Instead of a monolithic cloud storing our personal data, we are porting MirageOS to Xen/ARM and deploying small, energy efficient devices inside people’s homes. This “personal information hub” will talk to third-party service providers and enable control over what personal data is transmitted and allow users to balance their desire for social networking vs the cost of privacy breaches.</p>
+
+<p>We’ve built prototypes of this technology in the past, but quickly discovered that securing and managing embedded devices running Linux and C code is incredibly difficult. Cloud providers employ an army of security professions to secure their perimeters, but embedded devices do not have this luxury. Since OCaml has supported fast native code compilation to ARM for over a decade, MirageOS provides the perfect balance of resource efficiency and security to drive these embedded systems and benefit the coming wave of the Internet of Things.</p>
+
+<p>OCaml (the programming language that we use under the hood of MirageOS) also has deep connections to the formal methods community, with other major tools such as Coq (a widely used theorem prover) and CompCert (a verified C compiler) written in it. We have several initiatives (<a href="http://rems.io">http://rems.io</a>) ongoing to verify components of MirageOS (such as the garbage collector), to support hardware compilation to FPGAs for datacenters (via the EPSRC-funded Networks-as-a-Service project) and support new experimental CPU targets such as the <a href="http://www.cl.cam.ac.uk/research/security/ctsrd/beri.html">BERI processor</a>.</p>
+
+<p>We’re extremely grateful to our research funding bodies (RCUK, EPSRC, EU FP7 and DARPA) for supporting such long-term research and making MirageOS possible. <a href="http://janestreet.com">Jane Street</a> and <a href="http://www.citrix.com">Citrix</a> have also contributed funding and expertise for an entire research group called <a href="http://www.cl.cam.ac.uk/projects/ocamllabs/">OCaml Labs</a> in the Cambridge Computer Lab to support the continued growth of the functional programming ecosystem. Anil has also recently published an O’Reilly book called Real World OCaml that’s freely available at <a href="https://realworldocaml.org">https://realworldocaml.org</a>.</p>
+
+<p>Last but not least it’s simply more fun to exploit the flexibility of the MirageOS approach as a programmer to regain control over the myriad complexity of current software systems. Too much of modern systems construction involves wrestling with configuration files, mystical kernel policies, and occasionally documented APIs. Simply put, MirageOS is just a lot more enjoyable to use and develop code in when building server systems and network services. Several of the developers have rewritten their own homepages in MirageOS and are hosting them on EC2, and Anil is experimenting with writing Oculus VR applications in MirageOS and WebGL…</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

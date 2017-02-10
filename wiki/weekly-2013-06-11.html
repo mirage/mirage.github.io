@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2013-06-11</title>
+  <meta name="description" content="11th June 2013: the end of the start is in sight">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2013-06-11">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2013-06-11</h1>
+  </header>
+
+  <div class="article-content">
+    <p>11th June 2013: the end of the start is in sight</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<p>Work through the integration of:</p>
+
+<ul>
+  <li>the new UNIX backend which spins off a separate unikernel process</li>
+  <li>the elimination of OPAM switch from the mirari workflow</li>
+  <li>binary package generation</li>
+</ul>
+
+<p>Attendees: Anil Madhavapeddy, David Scott, Vincent Bernardoff, Daniel Buenzli, Jonathan Ludlam</p>
+
+<h3 id="notes">Notes</h3>
+
+<p>Vincent’s patchset successfully split out much of the UNIX dependencies into
+smaller libraries.  Anil has been code-reviewing and integrating them, and now
+has a working Mirage again in trunk!</p>
+
+<p>The new OPAM scheme breaks up:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">mirage</code> into <code class="highlighter-rouge">mirage-unix</code> and <code class="highlighter-rouge">mirage-xen</code></li>
+  <li><code class="highlighter-rouge">mirage-net</code> into <code class="highlighter-rouge">mirage-net-direct</code> and <code class="highlighter-rouge">mirage-net-socket</code></li>
+  <li>Adds a dependency of the form <code class="highlighter-rouge">(mirage-unix|mirage-xen)</code> to the now-dummy <code class="highlighter-rouge">mirage</code> package.</li>
+  <li>Adds conflicts to each other on <code class="highlighter-rouge">mirage-unix</code> and <code class="highlighter-rouge">mirage-xen</code>.</li>
+</ul>
+
+<p>This all means that we no longer need to use a separate compiler switch for
+compiling UNIX and Xen backends, thus simplifying mirari considerably.  Dave
+added a patch which stubs out <code class="highlighter-rouge">mmap</code>, also eliminating the need for the
+<code class="highlighter-rouge">xenbigarray</code> package.</p>
+
+<p>Anil will push all these changes to trunk and cut a new set of releases with this
+scheme.  This should be the last of the changes required before a beta!</p>
+
+<p>Anil: trunk compiler seems broken with Xen due to missing symbols Dave: yes, as
+they have been added since 4.00.1 was released.  Decision to stick with 4.00
+for now, as we don’t require the 4.1 features (but they speed up the unikernel
+a lot, but performance isn’t priority just yet).</p>
+
+<h3 id="next-steps">Next Steps</h3>
+
+<p>We’re going to aim to stabilize everything for two weeks.</p>
+
+<ul>
+  <li>Vincent: get EC2 bindings in shape.</li>
+  <li>Anil: try out libvirt</li>
+  <li>Anil: look at plumbing through block storage in mirari.</li>
+  <li>Dave: fixing Balraj’s network ring reservation query.</li>
+  <li>Dave: look at pulling out FAT32 (still using Bitstring).</li>
+  <li>Vincent: write blog post on Mirari.</li>
+  <li>Vincent/Dave: look at evtchn unification and test cases for event handling.</li>
+</ul>
+
+<p>Anil will chat with David Sheets about getting continuous builds runnings now
+that it’s all part of the mainline.</p>
+
+<h3 id="binary-packages">Binary packages</h3>
+
+<p>Discussion about whether we could use OCamlot for binary distribution
+generation, as Dave and Jon have been knocking out RPM spec files at an
+alarming rate.  We also need this to generate binary distribution of Mirage for
+the OSCON preview.</p>
+
+<p>Jon/Dave/Citrix are working with upstream CentOS, so this is the first place to start. 
+Anil: we can customise OCamlot much more easily than Jenkins, so this should be good to hook in.</p>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

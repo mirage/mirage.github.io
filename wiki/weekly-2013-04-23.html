@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2013-04-23</title>
+  <meta name="description" content="23th April 2013: Irminsule, concurrent revisions and release checklist">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2013-04-23">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2013-04-23</h1>
+  </header>
+
+  <div class="article-content">
+    <p>23th April 2013: Irminsule, concurrent revisions and release checklist</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Thomas Gazagnaire: <a href="http://www.cl.cam.ac.uk/projects/ocamllabs/tasks/t2.html#Irminsule">Irminsule</a> demonstration</li>
+  <li>Richard Mortier: <a href="http://research.microsoft.com/en-us/projects/revisions/">Concurrent revisions</a> implementation in OCaml</li>
+  <li>Anil Madhavapeddy: <a href="/wiki/dev-preview-checklist">Release checklist</a> review</li>
+</ul>
+
+<p><em>Attendees</em>: Anil Madhavapeddy, Dave Scott, Vincent Bernardoff, Thomas Gazagnaire, Richard Mortier, Daniel Bünzli, Prashanth Mundkur.</p>
+
+<h3 id="irminsule-early-demo">Irminsule Early Demo</h3>
+
+<p>We managed to get screen-sharing working from Dave’s iPad, with pinch-to-zoom
+maxing the screen-size and everyone realising that we are living in the
+future!  Thomas walked us through the Irminsule interfaces, available on <a href="https://github.com/samoht/irminsule">Github</a>.
+Irminsule has three parts, discussed in more detail below: a low-level immutable collection of binary blobs, some structured
+objects and revision-branching structure.</p>
+
+<h4 id="low-level-immutable-database">Low-level immutable database</h4>
+
+<p>When you write a value, you get a key (SHA1 or SHA256?). You can read the value
+with a key, if you don’t have a key you get a null.  This is non-blocking.</p>
+
+<h4 id="structured-objects">Structured objects</h4>
+
+<p>On top of immutable DB you have some structured objects, like trees. If you
+give a root and hash, it’ll give you back some key.</p>
+
+<p><em>Anil:</em> how come the <code class="highlighter-rouge">merge</code> function maps a <code class="highlighter-rouge">value</code> to <code class="highlighter-rouge">value</code> and not <code class="highlighter-rouge">tree</code> to <code class="highlighter-rouge">tree</code>?
+Conversation discussing the type of the <code class="highlighter-rouge">merge</code> function, and how higher level
+abstractions could be built on top of it.  More design work needed to ensure
+that existing git merge strategies can be implemented using it.</p>
+
+<p><em>Anil:</em> Can Irminsule replace Xenstore with a persistent version?
+Consensus is this should be easy once Dave finishes his xenstore refactoring to
+isolate the database, and careful encoding of existing transaction semantics
+into Irminsule (which Thomas is familiar with as he did lots of work on
+Xenstore).  Dave Scott agrees with this assessment and thinks a distributed xenstore isnt too bad.</p>
+
+<p><em>Prashanth:</em> What about traversal order in the tree? would it make sense to have specified order of traversal?
+Answer: there is a stable order, but in the future we may want to define
+iterators instead of creating lots of temporary list. This is just an
+allocation optimisation and not important for version 1.</p>
+
+<h4 id="revision-structure">Revision Structure</h4>
+
+<p>On top of structured objects, you have a revision structure.  Read <a href="http://ftp.newartisans.com/pub/git.from.bottom.up.pdf">Git from the Bottom Up</a> for a design perspective on this. Tags are the only mutable structure, and annotated tags create objects with tags associated with them.  Thomas started to work on (only two days) how to sync between two repositories via a pull/push model, and begin to model existing concurrency models on top of the branch-consistent model exposed by Irminsule.</p>
+
+<p><em>Anil:</em> How do you construct a remote node?
+<em>Thomas:</em> right now the module types are kept abstract deliberately, but the implementation provides a constructor function (e.g. TCP).</p>
+
+<p><em>Anil:</em> Sounds like this almost ready for David Sheets to pick up and have a look at for OCamlot.  We only need basic stuff for OCamlot and could build simple queues on top of this.  Is persistence like the git file format?   Thomas: yes, see <a href="http://github.com/samoht/cagit">samoht/cagit</a> for the pure-OCaml git library.</p>
+
+<p><em>Prashanth:</em> What is the list of labels in the TREE.set function for?
+<em>Answer:</em> the label list is the list of path fragments in the DAG, analogous to a filename under UNIX.</p>
+
+<p><em>Anil:</em> points out a typo in the <code class="highlighter-rouge">let</code> in TG’s code.  The world breaths a sigh of relief.</p>
+
+<h3 id="concurrent-revisions">Concurrent revisions</h3>
+
+<p>Mort spoke about <a href="http://github.com/mor1/froctal">froctal</a>, which is a wrapper to track configuration dependencies in Mirage code. See his <a href="https://github.com/mor1/froctal">README</a> for thoughts so far.
+He first looked at <a href="https://github.com/avsm/ocaml-ld">ocaml-md</a> which was toy experiment last summer to track reconfiguration and then tried Jake Donham’s <a href="http://github.com/jaked/froc">Froc</a> library during ASPLOS.  Then he was thinking about what we could use FRP for in Mirage. Self-scaling web services doesn’t necessarily seem to need FRP, but just simpler configuration tracking instead.</p>
+
+<p>Anil: There’s a healthy followup list of papers, specifically from MSR on <a href="http://research.microsoft.com/en-us/projects/revisions/">Concurrent Revisions</a>.  The cloud types even provide automatic reconciliation, and so are a good fit for the Irminsule model.</p>
+
+<p>Mort then described the beginnings of an attempt of implementation of concurrent revisions, with alternate versions using modules and objects (which are closer to the original pseudocode in the paper), but is running into the hard bits of classes in OCaml.  General sounds of sympathy from the group, and advice that classes aren’t necessary for many uses of objects in OCaml, and that straightforward object definitions and polymorphism might be easier instead.</p>
+
+<p>Repos are: <a href="http://github.com/mor1/froctal">froctal</a> and <a href="http://github.com/mor1/ocaml-revisions">ocaml-revisions</a> on Mort’s github.  All work-in-progress, obviously.</p>
+
+<h4 id="mirage-library-review">Mirage library review</h4>
+
+<p>Around 53 libraries in three states, with more coming in fast:</p>
+
+<ul>
+  <li>Not started! (only three of these)</li>
+  <li>Waiting to die! (should be broken up etc)</li>
+  <li>80% finished! (need docs and interface improvements)</li>
+</ul>
+
+<p>Anil: Note that some OCL people are working on improvements to tooling around documentation, such as <a href="http://www.cl.cam.ac.uk/projects/ocamllabs/tasks/platform.html#OPAM%20Doc">opam-doc</a>.
+Should go though list of libs and define what will get done.
+See the <a href="/wiki/dev-preview-checklist">dev preview checklist</a> on the wiki for more information on progress.</p>
+
+<h4 id="aob">AoB</h4>
+
+<p>Mort: Does anyone else have issues with tuntap on Linux?
+Turns out no-one else has really tried as most of us use Tuntap on MacOS X and the Xen backend on Linux.  Vincent’s ocaml-tuntap tests should be sufficient to try a unit test though.</p>
+
+<h4 id="next-week">Next week:</h4>
+
+<ul>
+  <li>Solidify the story with actor libraries and concurrency from the 1.0 release checklist.</li>
+  <li>Figure out the SSL options for 1.0.</li>
+</ul>
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>

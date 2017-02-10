@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weekly Meeting: 2014-11-12</title>
+  <meta name="description" content="12th Nov 2014: TLS, IPv6, OCaml 4.02.1, Library requests and Xenstore">
+  <!-- todo: include this into main.css -->
+  <link rel="stylesheet" href="/css/font-awesome.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://mirage.github.io//wiki/weekly-2014-11-12">
+  <link rel="alternate" type="application/rss+xml" title="Mirage" href="https://mirage.github.io//feed.xml">
+</head>
+
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="three columns">
+          <header class="site-header">
+
+  <h2 class="logo">
+   <a href="/">Mirage</a><br />
+  </h2>
+
+  <div class="nav">
+    
+    <label for="menu-toggle" class="menu-icon">
+        <!--div data-icon="ei-navicon"></div-->
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+    </label>
+    <input type="checkbox" id="menu-toggle">
+
+    <div class="site-nav">
+      <nav>
+        <ul class="page-link">
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/doc">Docs</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/talks">Talks</a></li>
+          <li><a href="/code">Code</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+        </div>
+
+        <div class="nine columns" style="z-index:100;">
+          <div class="wrapper">
+            <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Weekly Meeting: 2014-11-12</h1>
+  </header>
+
+  <div class="article-content">
+    <p>12th Nov 2014: TLS, IPv6, OCaml 4.02.1, Library requests and Xenstore</p>
+
+<h3 id="agenda">Agenda</h3>
+
+<ul>
+  <li>Review previous notes</li>
+  <li>mirage-dev releases (and future thereof)</li>
+  <li>TLS integration into conduit</li>
+  <li>IPv6 patchset</li>
+  <li>Xenstore TNG</li>
+  <li>4.02 support</li>
+  <li>mirage-vagrant-vms</li>
+  <li>mirage-profile status</li>
+  <li>Preliminary thoughts for 3.0</li>
+</ul>
+
+<p>Attendees: Amir Chaudhry (chair), Thomas Gazagnaire, Thomas Leonard,
+Jon Ludlam, Anil Madhavapeddy, Hannes Mehnert, Richard Mortier,
+Nicolas Ojeda Bar, Mindy Preston, Dave Scott, Magnus Skjegstad and Nik Sultana</p>
+
+<h3 id="notes">Notes</h3>
+
+<h4 id="future-of-mirage-dev">Future of mirage-dev</h4>
+
+<p>Releases are done! Yay!</p>
+
+<p>Have yet to update the website to remove the refs to <code class="highlighter-rouge">mirage-dev</code> in the
+installation instructions. It would be great if someone could do this.</p>
+
+<h4 id="tls-integration-into-conduit">TLS integration into conduit</h4>
+
+<p>Not keen to fix <code class="highlighter-rouge">lwt-ssl</code> bindings. Would be keen to get people to use TLS
+stack and it would be good to have environment variable to switch between
+stacks. Perhaps import it in now but not as the default and later make it the
+default.</p>
+
+<p>We should begin serving the site over https using the unix backend (Mirage
+doesn’t serve https yet). Actually, we should merge in the
+<a href="https://github.com/mirage/mirage/pull/319">IPv6 stack</a> and then serve that.  For example we could start
+doing this with one of our live deployments and then roll it out elsewhere e.g
+start with blobs.openmirage.org</p>
+
+<p>Can continue the <a href="https://github.com/mirage/ocaml-conduit/pull/23">thread on the conduit repo</a> and Hannes is
+welcome to add more debugging etc to conduit.</p>
+
+<h4 id="ipv6-patchset">IPv6 patchset</h4>
+
+<p>Nicolas been working on this and it touches many different parts of Mirage.
+There’s an <a href="https://github.com/mirage/mirage/pull/319">RFC and discussion thread</a> for those who wish to keep
+up.</p>
+
+<p>Nicolas is current modifying the V2 types of Mirage and Dave says we could use
+both but have to pick one from within. It’s not clear to people how we use V1
+and V2.  V1 became stable with the Mirage 2.0.0 release so V2 is now the
+development version. In other words, for stable users we want V1 to be used
+and for developers we want to use the V2 interface.  This will need some
+clarification to avoid confusion.</p>
+
+<p>Want to fix networking in the next release and are thinking of getting rid of
+the StackV4 interface entirely.</p>
+
+<p>For now, Nicolas can sync V1 and V2 in Mirage and get a release and anything
+modified is in V2, then we can set a flag for dev versions. It’s worth noting
+that in OPAM 1.2 we can select specific versions of packages with constraints
+on the command line (e.g opam install mirage &gt; 2.0.0).</p>
+
+<h4 id="xenstore-tng">Xenstore TNG</h4>
+
+<p><em>[TNG → The Next Generation – in case you were as confused
+as I was. AC]</em></p>
+
+<p>New version of Xenstore is coming that includes the work James Bielman did on
+adding Mandatory Access Control (MAC).  Also want to improve the client
+interface and version control using Irmin. Some of the changes will be
+disruptive but we can take care over this.</p>
+
+<p>It would be useful to have a functor to xenstore (i.e an abstract way to
+read/write, which we can use in conduit and Jitsu etc). In addition, the UI
+needs improvement as using it feels like ping pong.</p>
+
+<h4 id="support">4.02.1 support</h4>
+
+<p>Mirage currently only works on 4.01.0 but the latest OCaml compiler version is
+4.02.1, (<a href="http://ocaml.org/releases/4.02.html">released in October</a>). There are a number of 
+improvements we can benefit from so we should work on this.</p>
+
+<p>Anil has already made a start on it but may want to hold off due to the number
+of outstanding patch reviews. Supporting 4.02.1 means porting the OCaml
+runtime out as a separate C-lib. This can then benefit from opam constraints
+(i.e pull down the appropriate runtime based on the compiler). We’ve done this
+well for miniOS and the ocaml-dev team would also be interested in this
+approach.</p>
+
+<p>This is probably about a week’s worth of work and if anyone has time to look
+at it, please do email the list. It would also be good to be benchmarking this
+at some point.</p>
+
+<h4 id="mirage-vagrant-vms">mirage-vagrant-vms</h4>
+
+<p>This has worked worked for Dave and Mort. The plan is to have it running for
+testing and then also be able to add other IDEs etc. If anyone wants to look
+at vagrant clouds and go from code to binaries, that would be quite useful. We
+would have to host the binaries, which is fine as we do that currently. We
+just need to provide a URL, description and some metadata and can point back
+to blobs. Can advertise the vagrant thing at an upcoming conference
+(<a href="http://operatingsystems.io">operatingsystems.io</a>).  The repo is at
+<a href="https://github.com/mirage/mirage-vagrant-vms">mirage/mirage-vagrant-vms</a>.</p>
+
+<p>Jon uses the vagrant cloud a lot but has not looked at Mirage yet. Has boxes
+of XenServer if anyone wants to try those. Also has scripts that automatically
+update version numbers and can share this with Nik.</p>
+
+<h4 id="mirage-profile-status">mirage-profile status</h4>
+
+<p>ThomasL sent a message to list with a <a href="http://lists.xenproject.org/archives/html/mirageos-devel/2014-11/msg00044.html">status update</a>. It’s
+now in <code class="highlighter-rouge">mirage-dev</code> but there is nothing depending on it. Will send PRs to
+platform, TCPIP and so on.  Mindy is trying out some tracing at the moment.
+Also looking at GC and there may be some stuff to upstream as it may be
+helpful to know when GC starts and how long it lasts. At the moment just
+checks with registered callback so doesn’t change OCaml interface.</p>
+
+<h4 id="preliminary-thoughts-for-30">Preliminary thoughts for 3.0</h4>
+
+<p>Amir is keen that we start getting ideas down for what Mirage 3.0 will look
+like and start working our way towards it. Would prefer that we time things
+well so that libs can be upstreamed to opam proper at the same time we
+announce (i.e not have things in dev or that require pins).</p>
+
+<p>Thoughts include a working Javascript backend, can have things working with
+iOS and Android at that point. Could consider this the ‘multiscale release’ as
+we’re setting ourselves up to be able to work with multiple backends. Amir
+will bring up this agenda point every few calls to see where thoughts are.</p>
+
+<p>–</p>
+
+<h4 id="aob">AoB</h4>
+
+<ul>
+  <li>
+    <p><strong>Library request!</strong> ThomasG and Anil have built <code class="highlighter-rouge">ez</code> versions of Daniel
+Bunzli’s libs, such as <a href="http://opam.ocaml.org/packages/ezxmlm/ezxmlm.1.0.1/">ezxmlm</a> and <a href="http://opam.ocaml.org/packages/ezjsonm/ezjsonm.0.3.0/">ezjsonm</a>, which are less flexible but
+provide more convenient functions. They’d like to have an <code class="highlighter-rouge">ezcmdliner</code>, which
+takes notions of terms and does <code class="highlighter-rouge">unix.get-env</code>. It would let them replace
+adhoc environment parsing in configuration and let them assemble an
+environment.  One of the interpretations would be a dialog-based interface and
+could do bash-shell completion. This way, <code class="highlighter-rouge">mirage configure</code> can drop you into
+a UI to select the things you wanted. It should be a simple library and only a
+couple of days work as it’s just a front end to <code class="highlighter-rouge">cmdliner</code> itself. After some
+discussion, it seems that Dave might have pieces of this so he’ll dig it out
+and have a look but others are very welcome to dive in.</p>
+  </li>
+  <li>
+    <p>Change of call day: After some brief discussion, it seems that <strong>Wednesday</strong>
+is actually better for most people so we’ll switch the call day accordingly.
+Same time, different day.</p>
+  </li>
+  <li>
+    <p>With the above change of day in mind, the next call is scheduled for
+<strong>Wednesday, 10th December</strong> - Please refer to the
+<a href="http://lists.xenproject.org/cgi-bin/mailman/listinfo/mirageos-devel">mailing list</a> for actual details a day or so in advance.</p>
+  </li>
+</ul>
+
+
+  </div>
+
+</article>
+
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+  <div class="container">
+    <div class="footer left column one-half">
+      <section class="small-font">
+        Content © 2012-2017 under a <a href="https://wiki.creativecommons.org/wiki/CC0">CC0</a> license.<br />
+        Theme based on <a href="https://github.com/wild-flame/jekyll-simple">Jekyll-Simple</a> by <a href="http://wildflame.me">wildflame</a>.
+      </section>
+    </div>
+
+    <div class="footer right column one-half">
+      <section class="small-font">
+        
+        
+      </section>
+    </div>
+  </div>
+</footer>
+ 
+    </div>
+  </body>
+</html>
